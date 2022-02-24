@@ -183,11 +183,22 @@ class Web3Client {
         .then((s) => hexToInt(s).toInt());
   }
 
+  // TODO: Add getBlockByNumberWithTransactionHashes, then deprecate this.
   Future<BlockInformation> getBlockInformation(
       {String blockNumber = 'latest', bool isContainFullObj = true}) {
     return _makeRPCCall<Map<String, dynamic>>(
             'eth_getBlockByNumber', [blockNumber, isContainFullObj])
         .then((json) => BlockInformation.fromJson(json));
+  }
+
+  Future<BlockInformationWithTransactions> getBlockByNumberWithTransactions(
+    BlockNum blockNum,
+  ) async {
+    final map = await _makeRPCCall<Map<String, dynamic>>(
+      'eth_getBlockByNumber',
+      [blockNum.toBlockParam(), true],
+    );
+    return BlockInformationWithTransactions.fromMap(map);
   }
 
   /// Gets the balance of the account with the specified address.
