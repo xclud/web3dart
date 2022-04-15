@@ -4,7 +4,7 @@ library web3dart.internal.js.creds;
 import 'dart:typed_data';
 
 import 'package:js/js.dart';
-import 'package:web3dart/web3dart.dart';
+import 'package:web3dart_macaron/web3dart.dart';
 
 import '../../../crypto.dart';
 

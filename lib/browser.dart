@@ -7,8 +7,8 @@
 /// import 'dart:html';
 /// import 'dart:typed_data';
 ///
-/// import 'package:web3dart/browser.dart';
-/// import 'package:web3dart/web3dart.dart';
+/// import 'package:web3dart_macaron/browser.dart';
+/// import 'package:web3dart_macaron/web3dart.dart';
 ///
 /// Future<void> main() async {
 ///   final eth = window.ethereum;

@@ -38,7 +38,7 @@ const testCases = <String, String>{
 ]''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
     '[{"inputs":[{"internalType":"uint240","name":"first","type":"uint240"},{"internalType":"uint248","name":"second","type":"uint248"}],"name":"retrieve3","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"}]',
@@ -131,7 +131,7 @@ class Retrieve3 {
 ]''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
     '[{"inputs":[],"name":"giveMeHello","outputs":[{"internalType":"string","name":"message","type":"string"},{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint256","name":"num2","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"retrieve","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"num","type":"uint256"}],"name":"store","outputs":[],"stateMutability":"nonpayable","type":"function"}]',
@@ -216,7 +216,7 @@ class GiveMeHello {
 ]''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
     '[{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userTotalAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]',
@@ -256,7 +256,7 @@ class Contract extends _i1.GeneratedContract {
 ]''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
     '[{"payable":true,"stateMutability":"payable","type":"fallback"},{"stateMutability":"payable","type":"receive"}]',
@@ -288,7 +288,7 @@ class Contract extends _i1.GeneratedContract {
 ]''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
     '[{"inputs":[],"name":"test","outputs":[{"internalType":"string[][6][3]","name":"","type":"string[][6][3]"}],"stateMutability":"view","type":"function"}]',
@@ -330,7 +330,7 @@ class Contract extends _i1.GeneratedContract {
 }''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson('[]', 'Contract');
 
@@ -398,7 +398,7 @@ class Contract extends _i1.GeneratedContract {
 ]''': r'''
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
-import 'package:web3dart/web3dart.dart' as _i1;
+import 'package:web3dart_macaron/web3dart.dart' as _i1;
 import 'dart:typed_data' as _i2;
 
 final _contractAbi = _i1.ContractAbi.fromJson(

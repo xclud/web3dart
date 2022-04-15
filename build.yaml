@@ -2,7 +2,7 @@ builders:
   abi_generator:
     build_extensions: 
       ".abi.json": [".g.dart"]
-    import: "package:web3dart/src/builder/builders.dart"
+    import: "package:web3dart_macaron/src/builder/builders.dart"
     builder_factories: ["abiGenerator"]
     build_to: source
     auto_apply: dependents
@@ -10,7 +10,7 @@ builders:
 
 post_process_builders:
   delete_abi_source:
-    import: "package:web3dart/src/builder/builders.dart"
+    import: "package:web3dart_macaron/src/builder/builders.dart"
     input_extensions: [".abi.json"]
     builder_factory: "deleteSource"
     defaults:

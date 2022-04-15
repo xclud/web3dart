@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:web3dart/crypto.dart';
+import 'package:web3dart_macaron/crypto.dart';
 
 final pubKeys = {
   '038e5d1fccb6b800b4e0fde5080a8c3628a302c4767e7687bea79ba24c6ac268e2':

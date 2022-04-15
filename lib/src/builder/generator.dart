@@ -6,7 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart';
-import 'package:web3dart/contracts.dart';
+import 'package:web3dart_macaron/contracts.dart';
 
 import '../../crypto.dart';
 import 'documentation.dart';

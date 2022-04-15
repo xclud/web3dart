@@ -1,3 +1,7 @@
+## 2.4.1
+
+- Update readme.
+
 ## 2.4.0
 
 - Support Binance Wallet for browser connection.
@@ -51,12 +55,12 @@
 
 ## 2.1.0
 
-- Add `package:web3dart/browser.dart`, a library for using this package in
+- Add `package:web3dart_macaron/browser.dart`, a library for using this package in
   Ethereum-enabled browsers.
 - Add code generator for smart contracts. To use it, just put the generated abi
   json into a `.abi.json` file, add a dev-dependency on `build_runner` and run
   `(flutter | dart) pub run build_runner build`.
-- Add the `package:web3dart/contracts/erc20.dart` library for interacting with an
+- Add the `package:web3dart_macaron/contracts/erc20.dart` library for interacting with an
   [ERC-20](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md) smart contract.
 
 ## 2.0.0
@@ -121,7 +125,7 @@ This version contains breaking changes! Here is an overview listing some of them
 | :------------- | -----:|
 | Creating credentials via `Credentials.fromPrivateKeyHex`   | Use the `EthPrivateKey` class or, even better, `client.credentialsFromPrivateKey` |
 | Sending transactions or calling contract functions | The api has been changed to just a single methods instead of a transaction builder. See the examples for details. |
-| Low-level cryptographic operations like signing, hashing and converting hex <-> byte array <-> integer  | Not available in the core library. Import `package:web3dart/crypto.dart` instead |
+| Low-level cryptographic operations like signing, hashing and converting hex <-> byte array <-> integer  | Not available in the core library. Import `package:web3dart_macaron/crypto.dart` instead |
 
 If you run into problems after updating, please [create an issue](https://github.com/simolus3/web3dart/issues/new).
 

@@ -1,4 +1,4 @@
-part of 'package:web3dart/web3dart.dart';
+part of 'package:web3dart_macaron/web3dart.dart';
 
 /// Signature for a function that opens a socket on which json-rpc operations
 /// can be performed.
@@ -7,7 +7,7 @@ part of 'package:web3dart/web3dart.dart';
 /// pub is suitable to create websockets. An implementation using that library
 /// could look like this:
 /// ```dart
-/// import "package:web3dart/web3dart.dart";
+/// import "package:web3dart_macaron/web3dart.dart";
 /// import "package:web_socket_channel/io.dart";
 ///
 /// final client = Web3Client(rpcUrl, Client(), socketConnector: () {

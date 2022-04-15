@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
-import 'package:web3dart/crypto.dart';
-import 'package:web3dart/src/utils/rlp.dart' as rlp;
-import 'package:web3dart/src/utils/typed_data.dart';
-import 'package:web3dart/web3dart.dart';
+import 'package:web3dart_macaron/crypto.dart';
+import 'package:web3dart_macaron/src/utils/rlp.dart' as rlp;
+import 'package:web3dart_macaron/src/utils/typed_data.dart';
+import 'package:web3dart_macaron/web3dart.dart';
 
 const rawJson = '''[
     {

@@ -17,7 +17,7 @@ builders:
   abi_generator:
     build_extensions: 
       ".abi.json": [".g.dart"]
-    import: "package:web3dart/src/builder/builders.dart"
+    import: "package:web3dart_macaron/src/builder/builders.dart"
     builder_factories: ["abiGenerator"]
     build_to: source
     auto_apply: root_package

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:web3dart/contracts.dart';
-import 'package:web3dart/crypto.dart';
-import 'package:web3dart/src/utils/typed_data.dart';
+import 'package:web3dart_macaron/contracts.dart';
+import 'package:web3dart_macaron/crypto.dart';
+import 'package:web3dart_macaron/src/utils/typed_data.dart';
 
 void main() {
   const baz = ContractFunction('baz', [

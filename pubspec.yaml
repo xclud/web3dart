@@ -1,6 +1,6 @@
-name: web3dart
+name: web3dart_macaron
 description: Dart library to connect to Ethereum clients. Send transactions and interact with smart contracts!
-version: 2.4.0
+version: 2.4.1
 homepage: https://macaronswap.finance
 repository: https://github.com/macaronswap/web3dart
 

@@ -4,7 +4,7 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  web3dart:
+  web3dart_macaron:
     path: ../..
 
 dev_dependencies:

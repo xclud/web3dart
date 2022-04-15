@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:test/test.dart';
-import 'package:web3dart/src/crypto/random_bridge.dart';
+import 'package:web3dart_macaron/src/crypto/random_bridge.dart';
 
 class MockRandom implements Random {
   // using BigInt because 1 << 32 is 0 in js
