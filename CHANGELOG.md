@@ -1,3 +1,7 @@
+## 2.4.0
+
+- Support Binance Wallet for browser connection.
+
 ## 2.3.5
 
 - Ensuring quality and performance.

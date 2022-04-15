@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:js/js.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../../crypto.dart';
+import '../../../crypto.dart';
 
 import 'dart_wrappers.dart';
 import 'javascript.dart';
