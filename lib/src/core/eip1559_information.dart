@@ -7,18 +7,18 @@ class EIP1559Information {
     required this.estimatedGas,
   });
 
-  factory EIP1559Information.fromJson(Map<String, double> json) =>
+  factory EIP1559Information.fromJson(Map<String, String> json) =>
       EIP1559Information(
         maxPriorityFeePerGas:
-            EtherAmount.inWei(BigInt.from(json['maxPriorityFeePerGas']!)),
-        maxFeePerGas: EtherAmount.inWei(BigInt.from(json['maxFeePerGas']!)),
-        estimatedGas: BigInt.from(json['estimatedGas']!),
+            EtherAmount.inWei(BigInt.parse(json['maxPriorityFeePerGas']!)),
+        maxFeePerGas: EtherAmount.inWei(BigInt.parse(json['maxFeePerGas']!)),
+        estimatedGas: BigInt.parse(json['estimatedGas']!),
       );
 
-  Map<String, double> toJson() => {
-        'maxPriorityFeePerGas': maxPriorityFeePerGas.getInWei.toDouble(),
-        'maxFeePerGas': maxFeePerGas.getInWei.toDouble(),
-        'estimatedGas': estimatedGas.toDouble(),
+  Map<String, String> toJson() => {
+        'maxPriorityFeePerGas': maxPriorityFeePerGas.getInWei.toString(),
+        'maxFeePerGas': maxFeePerGas.getInWei.toString(),
+        'estimatedGas': estimatedGas.toString(),
       };
 
   final EtherAmount maxPriorityFeePerGas;
