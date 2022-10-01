@@ -448,6 +448,56 @@ class Web3Client {
     return hexToInt(amountHex);
   }
 
+  Future<Map<String, EIP1559Information>> getGasInEIP1559() async {
+    List<String> rates = ['slow', 'medium', 'fast'];
+    int historicalBlocks = 10;
+    List<Map<String, dynamic>> history = [];
+    Map<String, EIP1559Information> result = {};
+
+    Map<String, dynamic> feeHistory = await getFeeHistory(
+      historicalBlocks,
+      atBlock: BlockNum.pending(),
+      rewardPercentiles: [25, 50, 75],
+    );
+
+    for (int index = 0; index < historicalBlocks; index++) {
+      history.add({
+        'blockNumber': feeHistory['oldestBlock'] + BigInt.from(index),
+        'baseFeePerGas': feeHistory['baseFeePerGas'][index],
+        'gasUsedRatio': feeHistory['gasUsedRatio'][index],
+        'priorityFeePerGas': feeHistory['reward'][index],
+      });
+    }
+
+    BlockInformation latestBlock = await getBlockInformation(
+      blockNumber: BlockNum.pending().toString(),
+    );
+    BigInt baseFee = latestBlock.baseFeePerGas!.getInWei;
+
+    for (int index = 0; index < rates.length; index++) {
+      List<BigInt> allPriorityFee = history.map<BigInt>((e) {
+        return e['priorityFeePerGas'][index];
+      }).toList();
+      BigInt priorityFee = allPriorityFee.max;
+      BigInt estimatedGas = BigInt.from(
+        0.9 * baseFee.toDouble() + priorityFee.toDouble(),
+      );
+      BigInt maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
+
+      if (priorityFee >= maxFee || priorityFee <= BigInt.zero) {
+        throw Exception('Max fee must exceed the priority fee');
+      }
+
+      result[rates[index]] = EIP1559Information(
+        maxPriorityFeePerGas: EtherAmount.inWei(priorityFee),
+        maxFeePerGas: EtherAmount.inWei(maxFee),
+        estimatedGas: estimatedGas,
+      );
+    }
+
+    return result;
+  }
+
   /// Sends a raw method call to a smart contract.
   ///
   /// The connected node must be able to calculate the result locally, which
