@@ -284,6 +284,35 @@ class Web3Client {
     });
   }
 
+  /// Returns fee history of some blocks
+  Future<Map<String, dynamic>> getFeeHistory(
+    int blockCount, {
+    BlockNum? atBlock,
+    List<double>? rewardPercentiles,
+  }) {
+    final blockParam = _getBlockParam(atBlock);
+
+    return _makeRPCCall<Map<String, dynamic>>(
+      'eth_feeHistory',
+      [blockCount, blockParam, rewardPercentiles],
+    ).then((history) {
+      return history.map((key, dynamic value) {
+        if (key == 'baseFeePerGas') {
+          value = value.map((dynamic e) => hexToInt(e)).toList();
+        } else if (key == 'reward') {
+          value = value.map(
+            (dynamic eList) {
+              return eList.map((dynamic e) => hexToInt(e)).toList();
+            },
+          ).toList();
+        } else if (key == 'oldestBlock') {
+          value = hexToInt(value);
+        }
+        return MapEntry(key, value);
+      });
+    });
+  }
+
   /// Signs the given transaction using the keys supplied in the [cred]
   /// object to upload it to the client so that it can be executed.
   ///
