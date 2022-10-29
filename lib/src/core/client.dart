@@ -298,15 +298,15 @@ class Web3Client {
     ).then((history) {
       return history.map((key, dynamic value) {
         if (key == 'baseFeePerGas') {
-          value = value.map((dynamic e) => hexToInt(e)).toList();
+          value = value.map((dynamic e) => hexToInt(e.toString())).toList();
         } else if (key == 'reward') {
           value = value.map(
             (dynamic eList) {
-              return eList.map((dynamic e) => hexToInt(e)).toList();
+              return eList.map((dynamic e) => hexToInt(e.toString())).toList();
             },
           ).toList();
         } else if (key == 'oldestBlock') {
-          value = hexToInt(value);
+          value = hexToInt(value.toString());
         }
         return MapEntry(key, value);
       });
@@ -449,14 +449,14 @@ class Web3Client {
   }
 
   Future<Map<String, EIP1559Information>> getGasInEIP1559() async {
-    List<String> rates = ['slow', 'medium', 'fast'];
-    int historicalBlocks = 10;
-    List<Map<String, dynamic>> history = [];
-    Map<String, EIP1559Information> result = {};
+    final List<String> rates = ['slow', 'medium', 'fast'];
+    const int historicalBlocks = 10;
+    final List<Map<String, dynamic>> history = [];
+    final Map<String, EIP1559Information> result = {};
 
-    Map<String, dynamic> feeHistory = await getFeeHistory(
+    final Map<String, dynamic> feeHistory = await getFeeHistory(
       historicalBlocks,
-      atBlock: BlockNum.pending(),
+      atBlock: const BlockNum.pending(),
       rewardPercentiles: [25, 50, 75],
     );
 
@@ -469,20 +469,20 @@ class Web3Client {
       });
     }
 
-    BlockInformation latestBlock = await getBlockInformation(
-      blockNumber: BlockNum.pending().toString(),
+    final BlockInformation latestBlock = await getBlockInformation(
+      blockNumber: const BlockNum.pending().toString(),
     );
-    BigInt baseFee = latestBlock.baseFeePerGas!.getInWei;
+    final BigInt baseFee = latestBlock.baseFeePerGas!.getInWei;
 
     for (int index = 0; index < rates.length; index++) {
-      List<BigInt> allPriorityFee = history.map<BigInt>((e) {
-        return e['priorityFeePerGas'][index];
+      final List<BigInt> allPriorityFee = history.map<BigInt>((e) {
+        return e['priorityFeePerGas'][index] as BigInt;
       }).toList();
-      BigInt priorityFee = allPriorityFee.max;
-      BigInt estimatedGas = BigInt.from(
+      final BigInt priorityFee = allPriorityFee.max;
+      final BigInt estimatedGas = BigInt.from(
         0.9 * baseFee.toDouble() + priorityFee.toDouble(),
       );
-      BigInt maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
+      final BigInt maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
 
       if (priorityFee >= maxFee || priorityFee <= BigInt.zero) {
         throw Exception('Max fee must exceed the priority fee');
