@@ -69,17 +69,4 @@ jobs:
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
       - uses: dart-lang/setup-dart@v1
       - run: dart test -x expensive --platform chrome,firefox
-  
-  integration_tests:
-    name: "Integration Tests"
-    needs: get_dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: .dart_tool
-          key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
-      - uses: dart-lang/setup-dart@v1
-      - run: sudo npm i -g ganache-cli
-      - run: dart run tool/integration_test.dart
+
