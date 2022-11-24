@@ -1,13 +1,10 @@
-@TestOn('vm')
-import 'dart:io';
-
 import 'package:http/http.dart';
 import 'package:test/test.dart';
 import 'package:web3dart/web3dart.dart';
 
-void main() {
-  final infuraProjectId = Platform.environment['INFURA_ID'];
+const infuraProjectId = String.fromEnvironment('INFURA_ID');
 
+void main() {
   group(
     'integration',
     () {
@@ -38,7 +35,7 @@ void main() {
         );
       });
     },
-    skip: infuraProjectId == null || infuraProjectId.length < 32
+    skip: infuraProjectId.isEmpty
         ? 'Tests require the INFURA_ID environment variable'
         : null,
   );

@@ -63,7 +63,7 @@ Future<void> main() async {
     },
   );
   final credentials = EthPrivateKey.fromHex(privateKey);
-  final ownAddress = await credentials.extractAddress();
+  final ownAddress = credentials.address;
 
   // read the contract abi and tell web3dart where it's deployed (contractAddr)
   final token = Token(address: contractAddr, client: client);

@@ -9,6 +9,7 @@ import 'package:pointycastle/key_generators/api.dart';
 import 'package:pointycastle/key_generators/ec_key_generator.dart';
 import 'package:pointycastle/macs/hmac.dart';
 import 'package:pointycastle/signers/ecdsa_signer.dart';
+import 'package:sec/sec.dart';
 
 import '../utils/typed_data.dart';
 import 'formatting.dart';
@@ -89,19 +90,9 @@ MsgSignature sign(Uint8List messageHash, Uint8List privateKey) {
 
   final publicKey = bytesToUnsignedInt(privateKeyBytesToPublic(privateKey));
 
-  //Implementation for calculating v naively taken from there, I don't understand
-  //any of this.
-  //https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Sign.java
-  var recId = -1;
-  for (var i = 0; i < 4; i++) {
-    final k = _recoverFromSignature(i, sig, messageHash, params);
-    if (k == publicKey) {
-      recId = i;
-      break;
-    }
-  }
+  final recId = EC.secp256k1.calculateRecoveryId(publicKey, sig, messageHash);
 
-  if (recId == -1) {
+  if (recId == null) {
     throw Exception(
       'Could not construct a recoverable key. This should never happen',
     );
