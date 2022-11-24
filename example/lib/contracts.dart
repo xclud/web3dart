@@ -1,11 +1,11 @@
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'token.g.dart';
 
 const String rpcUrl = 'http://localhost:8545';
-const String wsUrl = 'ws://localhost:8545';
+final wsUrl = Uri.parse('ws://localhost:8545');
 
 const String privateKey =
     '9a43d93a50b622761d88c80c90567c02c82442746335a01b72f49b3c867c037d';
@@ -59,7 +59,7 @@ Future<void> main() async {
     rpcUrl,
     Client(),
     socketConnector: () {
-      return IOWebSocketChannel.connect(wsUrl).cast<String>();
+      return WebSocketChannel.connect(wsUrl).cast<String>();
     },
   );
   final credentials = EthPrivateKey.fromHex(privateKey);
