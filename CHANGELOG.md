@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Deprecate async methods.
+
 ## 2.4.1
 
 * Update dependencies.
