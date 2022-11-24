@@ -37,25 +37,6 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - run: "dart format --output=none --set-exit-if-changed ."
       - run: dart analyze --fatal-infos
-
-  vm_tests:
-    name: "Unit Tests (Dart VM)"
-    needs: get_dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: .dart_tool
-          key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
-      - uses: dart-lang/setup-dart@v1
-      - run: dart test --coverage test_coverage
-        env:
-          INFURA_ID: ${{ secrets.INFURA_ID }}
-      - run: dart run tool/format_coverage.dart
-      - uses: codecov/codecov-action@v1
-        with:
-          files: lcov.info
   
   browser_tests:
     name: "Unit Tests (Browser)"
