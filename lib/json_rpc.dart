@@ -50,7 +50,6 @@ class JsonRPC extends RpcService {
     );
 
     final data = json.decode(response.body) as Map<String, dynamic>;
-    final id = data['id'] as int;
 
     if (data.containsKey('error')) {
       final error = data['error'];
@@ -62,6 +61,7 @@ class JsonRPC extends RpcService {
       throw RPCError(code, message, errorData);
     }
 
+    final id = data['id'] as int;
     final result = data['result'];
     return RPCResponse(id, result);
   }
