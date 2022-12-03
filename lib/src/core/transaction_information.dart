@@ -2,7 +2,7 @@ part of 'package:web3dart/web3dart.dart';
 
 class TransactionInformation {
   TransactionInformation.fromMap(Map<String, dynamic> map)
-      : blockHash = map['blockHash'] as String,
+      : blockHash = map['blockHash'] as String?,
         blockNumber = map['blockNumber'] != null
             ? BlockNum.exact(int.parse(map['blockNumber'] as String))
             : const BlockNum.pending(),
