@@ -100,10 +100,11 @@ var apiUrl = "http://localhost:7545"; //Replace with your API
 var httpClient = Client();
 var ethClient = Web3Client(apiUrl, httpClient);
 
-var credentials = ethClient.credentialsFromPrivateKey("0x...");
+var credentials = EthPrivateKey.fromHex("0x...");
+var address = await credentials.extractAddress();
 
 // You can now call rpc methods. This one will query the amount of Ether you own
-EtherAmount balance = ethClient.getBalance(credentials.address);
+EtherAmount balance = ethClient.getBalance(address);
 print(balance.getValueInUnit(EtherUnit.ether));
 ```
 
@@ -118,7 +119,7 @@ import 'package:web3dart/web3dart.dart';
 /// [...], you need to specify the url and your client, see example above
 var ethClient = Web3Client(apiUrl, httpClient);
 
-var credentials = ethClient.credentialsFromPrivateKey("0x...");
+var credentials = EthPrivateKey.fromHex("0x...");
 
 await client.sendTransaction(
   credentials,
