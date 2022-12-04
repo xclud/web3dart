@@ -1,6 +1,11 @@
-# web3dart
-
-[![pub package](https://img.shields.io/pub/v/web3dart.svg)](https://pub.dartlang.org/packages/web3dart)
+[![pub package](https://img.shields.io/pub/v/web3dart)](https://pub.dartlang.org/packages/web3dart)
+[![likes](https://img.shields.io/pub/likes/web3dart)](https://pub.dartlang.org/packages/web3dart/score)
+[![points](https://img.shields.io/pub/points/web3dart)](https://pub.dartlang.org/packages/web3dart/score)
+[![popularity](https://img.shields.io/pub/popularity/web3dart)](https://pub.dartlang.org/packages/web3dart/score)
+[![license](https://img.shields.io/github/license/xclud/web3dart)](https://pub.dartlang.org/packages/web3dart)
+[![stars](https://img.shields.io/github/stars/simolus3/web3dart)](https://github.com/xclud/web3dart/stargazers)
+[![forks](https://img.shields.io/github/forks/simolus3/web3dart)](https://github.com/xclud/web3dart/network/members)
+[![sdk version](https://badgen.net/pub/sdk-version/web3dart)](https://pub.dartlang.org/packages/web3dart)
 
 A dart library that connects to interact with the Ethereum blockchain. It connects
 to an Ethereum node to send transactions, interact with smart contracts and much
@@ -95,10 +100,11 @@ var apiUrl = "http://localhost:7545"; //Replace with your API
 var httpClient = Client();
 var ethClient = Web3Client(apiUrl, httpClient);
 
-var credentials = ethClient.credentialsFromPrivateKey("0x...");
+var credentials = EthPrivateKey.fromHex("0x...");
+var address = await credentials.extractAddress();
 
 // You can now call rpc methods. This one will query the amount of Ether you own
-EtherAmount balance = ethClient.getBalance(credentials.address);
+EtherAmount balance = ethClient.getBalance(address);
 print(balance.getValueInUnit(EtherUnit.ether));
 ```
 
@@ -113,7 +119,7 @@ import 'package:web3dart/web3dart.dart';
 /// [...], you need to specify the url and your client, see example above
 var ethClient = Web3Client(apiUrl, httpClient);
 
-var credentials = ethClient.credentialsFromPrivateKey("0x...");
+var credentials = EthPrivateKey.fromHex("0x...");
 
 await client.sendTransaction(
   credentials,
@@ -134,7 +140,7 @@ the signed transaction but don't intend to send it, you can use
 ### Smart contracts
 
 The library can parse the abi of a smart contract and send data to it. It can also
-listen for events emitted by smart contracts. See [this file](https://github.com/simolus3/web3dart/blob/development/example/contracts.dart)
+listen for events emitted by smart contracts. See [this file](https://github.com/xclud/web3dart/blob/development/example/contracts.dart)
 for an example.
 
 ### Dart Code Generator
@@ -146,7 +152,7 @@ To use this feature, put a contract abi json somewhere into `lib/`.
 The filename has to end with `.abi.json`.
 Then, add a `dev_dependency` on the `build_runner` package and run
 
-```
+```dart
 pub run build_runner build
 ```
 
@@ -160,7 +166,7 @@ Note that this has the side effect of suppressing serious errors as well, should
 
 Create a file named `analysis_options.yaml` in the root directory of your project:
 
-```
+```dart
 analyzer:
   exclude: 
     - '**/*.g.dart'
@@ -173,4 +179,4 @@ See [Customizing static analysis](https://dart.dev/guides/language/analysis-opti
 Please file feature requests and bugs at the [issue tracker][tracker].
 If you want to contribute to this library, please submit a Pull Request.
 
-[tracker]: https://github.com/simolus3/web3dart/issues/new
+[tracker]: https://github.com/xclud/web3dart/issues/new

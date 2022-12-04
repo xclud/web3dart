@@ -57,8 +57,12 @@ void main() {
 
   test('decodes values', () {
     expect(
-        staticTuple.decode(bufferFromHex(staticEncoded), 0).data, staticData);
-    expect(dynamicTuple.decode(bufferFromHex(dynamicEncoded), 0).data,
-        dynamicData);
+      staticTuple.decode(bufferFromHex(staticEncoded), 0).data,
+      staticData,
+    );
+    expect(
+      dynamicTuple.decode(bufferFromHex(dynamicEncoded), 0).data,
+      dynamicData,
+    );
   });
 }

@@ -1,23 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
+import 'package:eip55/eip55.dart';
 
 import '../crypto/formatting.dart';
 import '../crypto/keccak.dart';
 import '../crypto/secp256k1.dart';
 
 /// Represents an Ethereum address.
-@immutable
 class EthereumAddress {
-  static final RegExp _basicAddress =
-      RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-
-  /// The length of an ethereum address, in bytes.
-  static const addressByteLength = 20;
-
-  final Uint8List addressBytes;
-
   /// An ethereum address from the raw address bytes.
   const EthereumAddress(this.addressBytes)
       : assert(addressBytes.length == addressByteLength);
@@ -36,8 +27,11 @@ class EthereumAddress {
   /// chars, the address must be valid according to [EIP 55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md).
   factory EthereumAddress.fromHex(String hex, {bool enforceEip55 = false}) {
     if (!_basicAddress.hasMatch(hex)) {
-      throw ArgumentError.value(hex, 'address',
-          'Must be a hex string with a length of 40, optionally prefixed with "0x"');
+      throw ArgumentError.value(
+        hex,
+        'address',
+        'Must be a hex string with a length of 40, optionally prefixed with "0x"',
+      );
     }
 
     if (!enforceEip55 &&
@@ -53,13 +47,22 @@ class EthereumAddress {
       final hashedPos = int.parse(hash[i], radix: 16);
       if ((hashedPos > 7 && address[i].toUpperCase() != address[i]) ||
           (hashedPos <= 7 && address[i].toLowerCase() != address[i])) {
-        throw ArgumentError('Address has invalid case-characters and is'
-            'thus not EIP-55 conformant, rejecting. Address was: $hex');
+        throw ArgumentError(
+          'Address has invalid case-characters and is'
+          'thus not EIP-55 conformant, rejecting. Address was: $hex',
+        );
       }
     }
 
     return EthereumAddress(hexToBytes(hex));
   }
+
+  static final RegExp _basicAddress =
+      RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+
+  /// The length of an ethereum address, in bytes.
+  static const addressByteLength = 20;
+  final Uint8List addressBytes;
 
   /// A hexadecimal representation of this address, padded to a length of 40
   /// characters or 20 bytes, and prefixed with "0x".
@@ -76,19 +79,9 @@ class EthereumAddress {
   /// uppercase depending on [EIP 55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md).
   String get hexEip55 {
     // https://eips.ethereum.org/EIPS/eip-55#implementation
-    final hex = hexNo0x.toLowerCase();
-    final hash = bytesToHex(keccakAscii(hexNo0x));
 
-    final eip55 = StringBuffer('0x');
-    for (var i = 0; i < hex.length; i++) {
-      if (int.parse(hash[i], radix: 16) >= 8) {
-        eip55.write(hex[i].toUpperCase());
-      } else {
-        eip55.write(hex[i]);
-      }
-    }
-
-    return eip55.toString();
+    final eip55 = toChecksumAddress(hexNo0x);
+    return '0x$eip55';
   }
 
   @override

@@ -58,14 +58,6 @@ String _encodeParameters(Iterable<FunctionParameter> params) {
 /// Defines the abi of a deployed Ethereum contract. The abi contains
 /// information about the functions defined in that contract.
 class ContractAbi {
-  /// Name of the contract
-  final String name;
-
-  /// All functions (including constructors) that the ABI of the contract
-  /// defines.
-  final List<ContractFunction> functions;
-  final List<ContractEvent> events;
-
   ContractAbi(this.name, this.functions, this.events);
 
   factory ContractAbi.fromJson(String jsonData, String name) {
@@ -82,8 +74,12 @@ class ContractAbi {
         final components = <EventComponent>[];
 
         for (final entry in element['inputs']) {
-          components.add(EventComponent(
-              _parseParam(entry as Map), entry['indexed'] as bool));
+          components.add(
+            EventComponent(
+              _parseParam(entry as Map),
+              entry['indexed'] as bool,
+            ),
+          );
         }
 
         events.add(ContractEvent(anonymous, name, components));
@@ -97,17 +93,27 @@ class ContractAbi {
       final inputs = _parseParams(element['inputs'] as List?);
       final outputs = _parseParams(element['outputs'] as List?);
 
-      functions.add(ContractFunction(
-        name,
-        inputs,
-        outputs: outputs,
-        type: parsedType,
-        mutability: mutability ?? StateMutability.nonPayable,
-      ));
+      functions.add(
+        ContractFunction(
+          name,
+          inputs,
+          outputs: outputs,
+          type: parsedType,
+          mutability: mutability ?? StateMutability.nonPayable,
+        ),
+      );
     }
 
     return ContractAbi(name, functions, events);
   }
+
+  /// Name of the contract
+  final String name;
+
+  /// All functions (including constructors) that the ABI of the contract
+  /// defines.
+  final List<ContractFunction> functions;
+  final List<ContractEvent> events;
 
   static List<FunctionParameter> _parseParams(List? data) {
     if (data == null || data.isEmpty) return [];
@@ -134,11 +140,16 @@ class ContractAbi {
   }
 
   static CompositeFunctionParameter _parseTuple(
-      String name, String typeName, List<FunctionParameter> components) {
+    String name,
+    String typeName,
+    List<FunctionParameter> components,
+  ) {
     // The type will have the form tuple[3][]...[1], where the indices after the
     // tuple indicate that the type is part of an array.
-    assert(RegExp(r'^tuple(?:\[\d*\])*$').hasMatch(typeName),
-        '$typeName is an invalid tuple type');
+    assert(
+      RegExp(r'^tuple(?:\[\d*\])*$').hasMatch(typeName),
+      '$typeName is an invalid tuple type',
+    );
 
     final arrayLengths = <int?>[];
     var remainingName = typeName;
@@ -161,6 +172,14 @@ class ContractAbi {
 
 /// A function defined in the ABI of an compiled contract.
 class ContractFunction {
+  const ContractFunction(
+    this.name,
+    this.parameters, {
+    this.outputs = const [],
+    this.type = ContractFunctionType.function,
+    this.mutability = StateMutability.nonPayable,
+  });
+
   /// The name of the function. Can be empty if it's an constructor or the
   /// default function.
   final String name;
@@ -204,14 +223,6 @@ class ContractFunction {
   /// contract.
   bool get isPayable => mutability == StateMutability.payable;
 
-  const ContractFunction(
-    this.name,
-    this.parameters, {
-    this.outputs = const [],
-    this.type = ContractFunctionType.function,
-    this.mutability = StateMutability.nonPayable,
-  });
-
   /// Encodes a call to this function with the specified parameters for a
   /// transaction or a call that can be sent to the network.
   ///
@@ -230,7 +241,10 @@ class ContractFunction {
   Uint8List encodeCall(List<dynamic> params) {
     if (params.length != parameters.length) {
       throw ArgumentError.value(
-          params.length, 'params', 'Must match function parameters');
+        params.length,
+        'params',
+        'Must match function parameters',
+      );
     }
 
     final sink = LengthTrackingByteSink()
@@ -277,6 +291,8 @@ class ContractFunction {
 
 /// An event that can be emitted by a smart contract during a transaction.
 class ContractEvent {
+  ContractEvent(this.anonymous, this.name, this.components);
+
   /// Whether this events was declared as anonymous in solidity.
   final bool anonymous;
   final String name;
@@ -284,8 +300,6 @@ class ContractEvent {
   /// A list of types that represent the parameters required to call this
   /// function.
   final List<EventComponent> components;
-
-  ContractEvent(this.anonymous, this.name, this.components);
 
   /// The user-visible signature of this event, consisting of its name and the
   /// type of its parameters.
@@ -354,18 +368,16 @@ class ContractEvent {
 /// A [FunctionParameter] that is a component of an event. Contains additional
 /// information about whether the parameter is [indexed].
 class EventComponent<T> {
+  const EventComponent(this.parameter, this.indexed);
   final FunctionParameter<T> parameter;
   final bool indexed;
-
-  const EventComponent(this.parameter, this.indexed);
 }
 
 /// The parameter of a function with its name and the expected type.
 class FunctionParameter<T> {
+  const FunctionParameter(this.name, this.type);
   final String name;
   final AbiType<T> type;
-
-  const FunctionParameter(this.name, this.type);
 }
 
 /// A function parameter that includes other named parameter instead of just
@@ -388,6 +400,8 @@ class FunctionParameter<T> {
 /// enough. Similarly, we want to know the names of the parameters of `T` in
 /// `S.c`.
 class CompositeFunctionParameter extends FunctionParameter<dynamic> {
+  CompositeFunctionParameter(String name, this.components, this.arrayLengths)
+      : super(name, _constructType(components, arrayLengths));
   final List<FunctionParameter> components;
 
   /// If the composite type is wrapped in arrays, contains the length of these
@@ -396,11 +410,10 @@ class CompositeFunctionParameter extends FunctionParameter<dynamic> {
   /// `S` and [arrayLengths] of `[3, null, 4]`.
   final List<int?> arrayLengths;
 
-  CompositeFunctionParameter(String name, this.components, this.arrayLengths)
-      : super(name, _constructType(components, arrayLengths));
-
   static AbiType<dynamic> _constructType(
-      List<FunctionParameter> components, List<int?> arrayLengths) {
+    List<FunctionParameter> components,
+    List<int?> arrayLengths,
+  ) {
     AbiType type = TupleType(components.map((c) => c.type).toList());
 
     for (final len in arrayLengths) {

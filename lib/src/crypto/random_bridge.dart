@@ -7,9 +7,8 @@ import 'package:web3dart/crypto.dart';
 /// Utility to use dart:math's Random class to generate numbers used by
 /// pointycastle.
 class RandomBridge implements SecureRandom {
-  Random dartRandom;
-
   RandomBridge(this.dartRandom);
+  Random dartRandom;
 
   @override
   String get algorithmName => 'DartRandom';

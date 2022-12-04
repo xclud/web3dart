@@ -23,21 +23,6 @@ enum EtherUnit {
 /// Utility class to easily convert amounts of Ether into different units of
 /// quantities.
 class EtherAmount {
-  static final Map<EtherUnit, BigInt> _factors = {
-    EtherUnit.wei: BigInt.one,
-    EtherUnit.kwei: BigInt.from(10).pow(3),
-    EtherUnit.mwei: BigInt.from(10).pow(6),
-    EtherUnit.gwei: BigInt.from(10).pow(9),
-    EtherUnit.szabo: BigInt.from(10).pow(12),
-    EtherUnit.finney: BigInt.from(10).pow(15),
-    EtherUnit.ether: BigInt.from(10).pow(18)
-  };
-
-  final BigInt _value;
-
-  BigInt get getInWei => _value;
-  BigInt get getInEther => getValueInUnitBI(EtherUnit.ether);
-
   const EtherAmount.inWei(this._value);
 
   EtherAmount.zero() : this.inWei(BigInt.zero);
@@ -66,6 +51,21 @@ class EtherAmount {
   /// calculations or storage. You should store and process amounts of ether by
   /// using a BigInt storing the amount in wei.
   BigInt getValueInUnitBI(EtherUnit unit) => _value ~/ _factors[unit]!;
+
+  static final Map<EtherUnit, BigInt> _factors = {
+    EtherUnit.wei: BigInt.one,
+    EtherUnit.kwei: BigInt.from(10).pow(3),
+    EtherUnit.mwei: BigInt.from(10).pow(6),
+    EtherUnit.gwei: BigInt.from(10).pow(9),
+    EtherUnit.szabo: BigInt.from(10).pow(12),
+    EtherUnit.finney: BigInt.from(10).pow(15),
+    EtherUnit.ether: BigInt.from(10).pow(18)
+  };
+
+  final BigInt _value;
+
+  BigInt get getInWei => _value;
+  BigInt get getInEther => getValueInUnitBI(EtherUnit.ether);
 
   /// Gets the value of this amount in the specified unit. **WARNING**: Due to
   /// rounding errors, the return value of this function is not reliable,

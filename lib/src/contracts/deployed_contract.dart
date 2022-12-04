@@ -7,14 +7,14 @@ import 'abi/abi.dart';
 /// A future version of this library will automatically generate subclasses of
 /// this based on the abi given, making it easier to call methods in contracts.
 class DeployedContract {
+  DeployedContract(this.abi, this.address);
+
   /// The lower-level ABI of this contract used to encode data to send in
   /// transactions when calling this contract.
   final ContractAbi abi;
 
   /// The Ethereum address at which this contract is reachable.
   final EthereumAddress address;
-
-  DeployedContract(this.abi, this.address);
 
   /// Get a list of all functions defined by the contract ABI.
   List<ContractFunction> get functions => abi.functions;

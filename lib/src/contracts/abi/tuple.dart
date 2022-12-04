@@ -5,10 +5,10 @@ import 'integers.dart';
 import 'types.dart';
 
 class TupleType extends AbiType<List<dynamic>> {
+  const TupleType(this.types);
+
   /// The types used to encode the individual components of this tuple.
   final List<AbiType> types;
-
-  const TupleType(this.types);
 
   @override
   String get name {
@@ -77,7 +77,10 @@ class TupleType extends AbiType<List<dynamic>> {
 
       // replace the 32 zero-bytes with the actual encoded offset
       const UintType().encodeReplace(
-          dynamicHeaderPositions[i], BigInt.from(currentDynamicOffset), buffer);
+        dynamicHeaderPositions[i],
+        BigInt.from(currentDynamicOffset),
+        buffer,
+      );
 
       final lengthBefore = buffer.length;
       types[i].encode(data[i], buffer);

@@ -2,7 +2,7 @@ part of 'package:web3dart/web3dart.dart';
 
 class TransactionInformation {
   TransactionInformation.fromMap(Map<String, dynamic> map)
-      : blockHash = map['blockHash'] as String,
+      : blockHash = map['blockHash'] as String?,
         blockNumber = map['blockNumber'] != null
             ? BlockNum.exact(int.parse(map['blockNumber'] as String))
             : const BlockNum.pending(),
@@ -76,19 +76,20 @@ class TransactionInformation {
 }
 
 class TransactionReceipt {
-  TransactionReceipt(
-      {required this.transactionHash,
-      required this.transactionIndex,
-      required this.blockHash,
-      required this.cumulativeGasUsed,
-      this.blockNumber = const BlockNum.pending(),
-      this.contractAddress,
-      this.status,
-      this.from,
-      this.to,
-      this.gasUsed,
-      this.effectiveGasPrice,
-      this.logs = const []});
+  TransactionReceipt({
+    required this.transactionHash,
+    required this.transactionIndex,
+    required this.blockHash,
+    required this.cumulativeGasUsed,
+    this.blockNumber = const BlockNum.pending(),
+    this.contractAddress,
+    this.status,
+    this.from,
+    this.to,
+    this.gasUsed,
+    this.effectiveGasPrice,
+    this.logs = const [],
+  });
 
   TransactionReceipt.fromMap(Map<String, dynamic> map)
       : transactionHash = hexToBytes(map['transactionHash'] as String),
@@ -108,7 +109,8 @@ class TransactionReceipt {
             map['gasUsed'] != null ? hexToInt(map['gasUsed'] as String) : null,
         effectiveGasPrice = map['effectiveGasPrice'] != null
             ? EtherAmount.inWei(
-                BigInt.parse(map['effectiveGasPrice'] as String))
+                BigInt.parse(map['effectiveGasPrice'] as String),
+              )
             : null,
         contractAddress = map['contractAddress'] != null
             ? EthereumAddress.fromHex(map['contractAddress'] as String)
@@ -118,7 +120,10 @@ class TransactionReceipt {
             : null,
         logs = map['logs'] != null
             ? (map['logs'] as List<dynamic>)
-                .map((log) => FilterEvent.fromMap(log as Map<String, dynamic>))
+                .map(
+                  (dynamic log) =>
+                      FilterEvent.fromMap(log as Map<String, dynamic>),
+                )
                 .toList()
             : [];
 

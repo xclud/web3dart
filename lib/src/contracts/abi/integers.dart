@@ -1,13 +1,15 @@
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
-
 import '../../../credentials.dart';
 import '../../crypto/formatting.dart';
 import '../../utils/length_tracking_byte_sink.dart';
 import 'types.dart';
 
 abstract class _IntTypeBase extends AbiType<BigInt> {
+  const _IntTypeBase(this.length)
+      : assert(length % 8 == 0),
+        assert(0 < length && length <= 256);
+
   /// The length of this uint, int bits. Must be a multiple of 8.
   final int length;
 
@@ -19,11 +21,6 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
   @override
   String get name => _namePrefix + length.toString();
 
-  const _IntTypeBase(this.length)
-      : assert(length % 8 == 0),
-        assert(0 < length && length <= 256);
-
-  @internal
   void validate() {
     if (length % 8 != 0 || length < 0 || length > 256) {
       throw Exception('Invalid length for int type: was $length');
@@ -34,8 +31,9 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
   DecodingResult<BigInt> decode(ByteBuffer buffer, int offset) {
     // we're always going to read a 32-byte block for integers
     return DecodingResult(
-        _decode32Bytes(buffer.asUint8List(offset, sizeUnitBytes)),
-        sizeUnitBytes);
+      _decode32Bytes(buffer.asUint8List(offset, sizeUnitBytes)),
+      sizeUnitBytes,
+    );
   }
 
   BigInt _decode32Bytes(Uint8List data);
@@ -48,10 +46,9 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
 
 /// The solidity uint<M> type that encodes unsigned integers.
 class UintType extends _IntTypeBase {
+  const UintType({int length = 256}) : super(length);
   @override
   String get _namePrefix => 'uint';
-
-  const UintType({int length = 256}) : super(length);
 
   @override
   void encode(BigInt data, LengthTrackingByteSink buffer) {
@@ -66,7 +63,10 @@ class UintType extends _IntTypeBase {
   }
 
   void encodeReplace(
-      int startIndex, BigInt data, LengthTrackingByteSink buffer) {
+    int startIndex,
+    BigInt data,
+    LengthTrackingByteSink buffer,
+  ) {
     final bytes = unsignedIntToBytes(data);
     final padLen = calculatePadLength(bytes.length);
 
@@ -115,7 +115,9 @@ class AddressType extends AbiType<EthereumAddress> {
   @override
   DecodingResult<EthereumAddress> decode(ByteBuffer buffer, int offset) {
     final addressBytes = buffer.asUint8List(
-        offset + _paddingLen, EthereumAddress.addressByteLength);
+      offset + _paddingLen,
+      EthereumAddress.addressByteLength,
+    );
     return DecodingResult(EthereumAddress(addressBytes), sizeUnitBytes);
   }
 
@@ -130,11 +132,10 @@ class AddressType extends AbiType<EthereumAddress> {
 
 /// Solidity bool type
 class BoolType extends AbiType<bool> {
+  const BoolType();
   static final Uint8List _false = Uint8List(sizeUnitBytes);
   static final Uint8List _true = Uint8List(sizeUnitBytes)
     ..[sizeUnitBytes - 1] = 1;
-
-  const BoolType();
 
   @override
   EncodingLengthInfo get encodingLength =>
@@ -167,10 +168,9 @@ class BoolType extends AbiType<bool> {
 
 /// The solidity int<M> types that encodes twos-complement integers.
 class IntType extends _IntTypeBase {
+  const IntType({int length = 256}) : super(length);
   @override
   String get _namePrefix => 'int';
-
-  const IntType({int length = 256}) : super(length);
 
   @override
   void encode(BigInt data, LengthTrackingByteSink buffer) {
