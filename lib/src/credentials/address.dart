@@ -8,7 +8,7 @@ import '../crypto/keccak.dart';
 import '../crypto/secp256k1.dart';
 
 /// Represents an Ethereum address.
-class EthereumAddress {
+class EthereumAddress implements Comparable<EthereumAddress> {
   /// An ethereum address from the raw address bytes.
   const EthereumAddress(this.addressBytes)
       : assert(addressBytes.length == addressByteLength);
@@ -97,5 +97,11 @@ class EthereumAddress {
   @override
   int get hashCode {
     return hex.hashCode;
+  }
+
+  @override
+  int compareTo(EthereumAddress other) {
+    // TODO (alexeyinkin): Faster comparison, maybe by words using asUint64List.
+    return hexNo0x.compareTo(other.hexNo0x);
   }
 }
