@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
+import 'package:web3dart/src/utils/equality.dart' as eq;
 import 'package:pointycastle/ecc/api.dart' show ECPoint;
 
 import '../../web3dart.dart' show Transaction;
@@ -228,7 +228,7 @@ class EthPrivateKey extends CredentialsWithKnownAddress {
       identical(this, other) ||
       other is EthPrivateKey &&
           runtimeType == other.runtimeType &&
-          const ListEquality().equals(privateKey, other.privateKey);
+          eq.equals(privateKey, other.privateKey);
 
   @override
   int get hashCode => privateKey.hashCode;

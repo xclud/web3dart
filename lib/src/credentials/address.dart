@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
+import 'package:web3dart/src/utils/equality.dart' as eq;
 import 'package:eip55/eip55.dart';
 
 import '../crypto/formatting.dart';
@@ -91,7 +91,7 @@ class EthereumAddress implements Comparable<EthereumAddress> {
   bool operator ==(other) {
     return identical(this, other) ||
         (other is EthereumAddress &&
-            const ListEquality().equals(addressBytes, other.addressBytes));
+            eq.equals(addressBytes, other.addressBytes));
   }
 
   @override

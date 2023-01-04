@@ -180,9 +180,9 @@ class TransactionReceipt {
       identical(this, other) ||
       other is TransactionReceipt &&
           runtimeType == other.runtimeType &&
-          const ListEquality().equals(transactionHash, other.transactionHash) &&
+          eq.equals(transactionHash, other.transactionHash) &&
           transactionIndex == other.transactionIndex &&
-          const ListEquality().equals(blockHash, other.blockHash) &&
+          eq.equals(blockHash, other.blockHash) &&
           blockNumber == other.blockNumber &&
           from == other.from &&
           to == other.to &&
@@ -191,7 +191,7 @@ class TransactionReceipt {
           contractAddress == other.contractAddress &&
           status == other.status &&
           effectiveGasPrice == other.effectiveGasPrice &&
-          const ListEquality().equals(logs, other.logs);
+          eq.equals(logs, other.logs);
 
   @override
   int get hashCode =>

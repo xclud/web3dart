@@ -217,7 +217,7 @@ class FilterEvent {
           blockNum == other.blockNum &&
           address == other.address &&
           data == other.data &&
-          const ListEquality().equals(topics, other.topics);
+          eq.equals(topics, other.topics);
 
   @override
   int get hashCode =>
