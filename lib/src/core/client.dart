@@ -243,7 +243,9 @@ class Web3Client {
 
   /// Returns the information about a transaction requested by transaction hash
   /// [transactionHash].
-  Future<TransactionInformation?> getTransactionByHash(String transactionHash) async {
+  Future<TransactionInformation?> getTransactionByHash(
+    String transactionHash,
+  ) async {
     final map = await _makeRPCCall<Map<String, dynamic>?>(
       'eth_getTransactionByHash',
       [transactionHash],
