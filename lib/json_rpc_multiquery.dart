@@ -37,7 +37,7 @@ class JsonRPCMultiQuery extends JsonRPC implements MultiQueryRpcService {
           'jsonrpc': '2.0',
           'method': query.function,
           'params': query.params ?? [],
-          'id': _currentRequestId++,
+          'id': query.id ?? _currentRequestId++,
         },
       );
     }
