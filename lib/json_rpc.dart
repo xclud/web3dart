@@ -78,8 +78,9 @@ class RPCResponse {
 
 /// Exception thrown when an the server returns an error code to an rpc request.
 class RPCError implements Exception {
-  const RPCError(this.errorCode, this.message, this.data);
+  const RPCError(this.errorCode, this.message, this.data, [this.id]);
 
+  final int? id;
   final int errorCode;
   final String message;
   final dynamic data;
