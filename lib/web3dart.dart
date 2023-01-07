@@ -14,6 +14,7 @@ import 'contracts.dart';
 import 'credentials.dart';
 import 'crypto.dart';
 import 'json_rpc.dart';
+import 'json_rpc_multiquery.dart';
 import 'src/core/amount.dart';
 import 'src/core/block_information.dart';
 import 'src/core/block_number.dart';
@@ -29,6 +30,7 @@ export 'src/core/block_information.dart';
 export 'src/core/block_number.dart';
 export 'src/core/sync_information.dart';
 
+part 'src/core/multiquery_client.dart';
 part 'src/core/client.dart';
 part 'src/core/filters.dart';
 part 'src/core/transaction.dart';
