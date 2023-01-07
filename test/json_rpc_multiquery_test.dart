@@ -3,9 +3,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
+import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/json_rpc_multiquery.dart';
-
-final uri = Uri.parse('url');
 
 void main() {
   late MockClient client;
@@ -25,13 +24,23 @@ void main() {
     await JsonRPCMultiQuery('url', client).callMultiQuery(queries);
 
     final request = client.request!;
+
     expect(
       request.headers,
       containsPair('Content-Type', startsWith('application/json')),
     );
+
+    expect(
+      request,
+      isA<Request>(),
+    );
+
+    final expectedBody =
+        '[{"jsonrpc":"2.0","method":"eth_gasPrice","params":[],"id":1},{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x95222290dd7278aa32dd189cc1e1d165cc4bafe5"],"id":2}]';
+    expect((request as Request).body, equals(expectedBody));
   });
 
-  test('increments request id', () async {
+  test('automatically increments request id when none provided', () async {
     final rpc = JsonRPCMultiQuery('url', client);
     final queries = [
       RPCQuery('eth_gasPrice'),
@@ -49,7 +58,7 @@ void main() {
     );
   });
 
-  test('throws errors', () {
+  test('returns errors', () {
     final rpc = JsonRPCMultiQuery('url', client);
     client.nextResponse = StreamedResponse(
       Stream.value(
@@ -69,7 +78,7 @@ void main() {
       rpc.callMultiQuery(
         [RPCQuery('eth_gasPrice')],
       ),
-      throwsException,
+      completion(anyElement(isA<RPCError>())),
     );
   });
 }
