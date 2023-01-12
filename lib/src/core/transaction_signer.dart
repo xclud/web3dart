@@ -87,11 +87,11 @@ Uint8List prependTransactionType(int type, Uint8List transaction) {
     ..setAll(1, transaction);
 }
 
-Uint8List _signTransaction(
+Future<Uint8List> _signTransaction(
   Transaction transaction,
   Credentials c,
   int? chainId,
-) {
+) async{
   if (transaction.isEIP1559 && chainId != null) {
     final encodedTx = LengthTrackingByteSink();
     encodedTx.addByte(0x02);
@@ -100,7 +100,7 @@ Uint8List _signTransaction(
     );
 
     encodedTx.close();
-    final signature = c.signToEcSignature(
+    final signature = await c.signToSignature(
       encodedTx.asBytes(),
       chainId: chainId,
       isEIP1559: transaction.isEIP1559,

@@ -70,7 +70,7 @@ class ContractAbi {
       final name = (element['name'] as String?) ?? '';
 
       if (type == 'event') {
-        final anonymous = element['anonymous'] as bool;
+        final anonymous = element['anonymous'] as bool? ?? false;
         final components = <EventComponent>[];
 
         for (final entry in element['inputs']) {
@@ -369,6 +369,7 @@ class ContractEvent {
 /// information about whether the parameter is [indexed].
 class EventComponent<T> {
   const EventComponent(this.parameter, this.indexed);
+
   final FunctionParameter<T> parameter;
   final bool indexed;
 }
@@ -376,6 +377,7 @@ class EventComponent<T> {
 /// The parameter of a function with its name and the expected type.
 class FunctionParameter<T> {
   const FunctionParameter(this.name, this.type);
+
   final String name;
   final AbiType<T> type;
 }

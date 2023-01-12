@@ -351,7 +351,7 @@ class Web3Client {
       client: this,
     );
 
-    return _signTransaction(
+    return await _signTransaction(
       signingInput.transaction,
       signingInput.credentials,
       signingInput.chainId,
