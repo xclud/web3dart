@@ -7,9 +7,10 @@ repository: https://github.com/xclud/web3dart
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
-dependencies: 
+dependencies:
   web3dart:
-    path: ../
+    git:
+      url: https://github.com/iota9star/web3dart.git
   http: ^0.13.0
   web_socket_channel: ^2.2.0
 
@@ -17,3 +18,8 @@ dev_dependencies:
   test: ^1.22.0
   coverage: ^1.1.0
   lints: ^2.0.0
+  build_runner: ^2.3.2
+  web3dart_builder:
+    git:
+      url: https://github.com/iota9star/web3dart.git
+      path: builder
