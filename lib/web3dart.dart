@@ -18,6 +18,7 @@ import 'json_rpc_multiquery.dart';
 import 'src/core/amount.dart';
 import 'src/core/block_information.dart';
 import 'src/core/block_number.dart';
+import 'src/core/eth_rpc_query/eth_rpc_query.dart';
 import 'src/core/sync_information.dart';
 import 'src/utils/rlp.dart' as rlp;
 import 'src/utils/typed_data.dart';

@@ -1,14 +1,12 @@
+// ignore_for_file: sort_constructors_first
+
 library json_rpc_multiquery;
 
 import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import 'contracts.dart';
-import 'credentials.dart';
-import 'crypto.dart';
 import 'json_rpc.dart';
-import 'src/core/block_number.dart';
 
 abstract class MultiQueryRpcService {
   /// Performs a single RPC request, asking the server to execute several queries
@@ -79,38 +77,4 @@ class RPCQuery {
   final String function;
   final String? id;
   final List<dynamic>? params;
-}
-
-/// Useful class to
-class EthContractCall {
-  EthContractCall({
-    this.sender,
-    required this.contract,
-    required this.function,
-    required this.params,
-    this.atBlock = const BlockNum.current(),
-  });
-
-  final EthereumAddress? sender;
-  final DeployedContract contract;
-  final ContractFunction function;
-  final List<dynamic> params;
-  final BlockNum? atBlock;
-
-  RPCQuery toRPCQuery(String id) {
-    final data = function.encodeCall(params);
-    final rawParamsBody = {
-      'to': contract.address.hex,
-      'data': bytesToHex(data, include0x: true, padToEvenLength: true),
-      if (sender != null) 'from': sender!.hex,
-    };
-    return RPCQuery(
-      'eth_call',
-      [
-        rawParamsBody,
-        atBlock,
-      ],
-      id,
-    );
-  }
 }
