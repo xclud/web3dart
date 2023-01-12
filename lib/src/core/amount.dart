@@ -1,3 +1,5 @@
+import 'package:web3dart/crypto.dart';
+
 enum EtherUnit {
   ///Wei, the smallest and atomic amount of Ether
   wei,
@@ -43,6 +45,12 @@ class EtherAmount {
     }
 
     return EtherAmount.inWei(parsedAmount * _factors[unit]!);
+  }
+
+  /// Constructs an amount of Ether in wei from an hex String
+  factory EtherAmount.fromHex(String hex) {
+    final amountInBigInt = hexToInt(hex);
+    return EtherAmount.inWei(amountInBigInt);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
