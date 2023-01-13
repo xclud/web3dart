@@ -29,10 +29,10 @@ class MultiQueryWeb3Client extends Web3Client {
           'You must assign an id to each call or leave all calls without any assigned id');
     }
 
-    final Map<String, EthRPCQuery> preparedQueries = {};
+    final Map<int, EthRPCQuery> preparedQueries = {};
     int lastId = 0;
     for (var q in queries) {
-      final id = q.id ?? (lastId++).toString();
+      final id = q.id ?? lastId++;
       preparedQueries[id] = q.copyWithId(id);
     }
 
@@ -45,8 +45,7 @@ class MultiQueryWeb3Client extends Web3Client {
       // each response can be either an error or a correct value returned
       if (res is RPCResponse) {
         final correspondingQuery = preparedQueries[res.id]!;
-        final decodedResult =
-            correspondingQuery.decodeResult(res.result as String);
+        final decodedResult = correspondingQuery.decodeResult(res.result);
 
         decodedResponses.add(decodedResult);
       } else if (res is RPCError) {

@@ -75,6 +75,6 @@ class RPCQuery {
   RPCQuery(this.function, [this.params, this.id]);
 
   final String function;
-  final String? id;
+  final int? id;
   final List<dynamic>? params;
 }
