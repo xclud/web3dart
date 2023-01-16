@@ -48,10 +48,6 @@ class EtherAmount {
   /// using a BigInt storing the amount in wei.
   BigInt getValueInUnitBI(EtherUnit unit) => _value ~/ _factors[unit]!;
 
-  /// Gets the value of this amount in the specified decimals int as a whole number.
-  BigInt getValueInDecimalsBI(int decimals) =>
-      getValueInUnitBI(getUintDecimals(decimals));
-
   static final Map<EtherUnit, BigInt> _factors = {
     EtherUnit.wei: BigInt.one,
     EtherUnit.kwei: BigInt.from(10).pow(3),
@@ -78,19 +74,6 @@ class EtherAmount {
     final remainder = _value.remainder(factor);
 
     return value.toInt() + (remainder.toInt() / factor.toInt());
-  }
-
-  /// Gets the value of this amount in the specified decimals int.
-  double getValueInDecimals(int decimals) =>
-      getValueInUnit(getUintDecimals(decimals));
-
-  /// Gets Uint of decimals by decimals int
-  static EtherUnit getUintDecimals(int decimals) {
-    for (EtherUnit uint in EtherUnit.values) {
-      if (uint.name == 'decimals$decimals') return uint;
-    }
-
-    throw Exception('invalid $decimals value of decimals must be 1 to 29');
   }
 
   @override
