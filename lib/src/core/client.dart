@@ -482,11 +482,12 @@ class Web3Client {
       final List<BigInt> allPriorityFee = history.map<BigInt>((e) {
         return e['priorityFeePerGas'][index] as BigInt;
       }).toList();
-      final BigInt priorityFee = allPriorityFee.max;
-      final BigInt estimatedGas = BigInt.from(
+      final priorityFee =
+          allPriorityFee.reduce((curr, next) => curr > next ? curr : next);
+      final estimatedGas = BigInt.from(
         0.9 * baseFee.toDouble() + priorityFee.toDouble(),
       );
-      final BigInt maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
+      final maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
 
       if (priorityFee >= maxFee || priorityFee <= BigInt.zero) {
         throw Exception('Max fee must exceed the priority fee');

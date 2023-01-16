@@ -14,22 +14,22 @@ import 'contracts.dart';
 import 'credentials.dart';
 import 'crypto.dart';
 import 'json_rpc.dart';
-import 'src/core/amount.dart';
 import 'src/core/block_information.dart';
 import 'src/core/block_number.dart';
 import 'src/core/sync_information.dart';
 import 'src/utils/rlp.dart' as rlp;
 import 'src/utils/typed_data.dart';
-import 'src/core/eip1559_information.dart';
 
 export 'contracts.dart';
 export 'credentials.dart';
 
-export 'src/core/amount.dart';
 export 'src/core/block_information.dart';
 export 'src/core/block_number.dart';
 export 'src/core/sync_information.dart';
-export 'src/core/eip1559_information.dart';
+
+part 'src/core/ether_unit.dart';
+part 'src/core/ether_amount.dart';
+part 'src/core/eip1559_information.dart';
 
 part 'src/core/client.dart';
 part 'src/core/filters.dart';

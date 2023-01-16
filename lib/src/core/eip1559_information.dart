@@ -1,4 +1,4 @@
-import 'package:web3dart/src/core/amount.dart';
+part of web3dart;
 
 class EIP1559Information {
   EIP1559Information({
@@ -12,7 +12,9 @@ class EIP1559Information {
         maxPriorityFeePerGas:
             EtherAmount.inWei(BigInt.parse(json['maxPriorityFeePerGas']!)),
         maxFeePerGas: EtherAmount.inWei(BigInt.parse(json['maxFeePerGas']!)),
-        estimatedGas: BigInt.parse(json['estimatedGas']!),
+        estimatedGas: BigInt.parse(
+          json['estimatedGas']!,
+        ),
       );
 
   Map<String, String> toJson() => {
