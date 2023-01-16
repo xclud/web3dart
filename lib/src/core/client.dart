@@ -452,55 +452,8 @@ class Web3Client {
     return hexToInt(amountHex);
   }
 
-  Future<Map<String, EIP1559Information>> getGasInEIP1559() async {
-    final List<String> rates = ['slow', 'medium', 'fast'];
-    const int historicalBlocks = 10;
-    final List<Map<String, dynamic>> history = [];
-    final Map<String, EIP1559Information> result = {};
-
-    final Map<String, dynamic> feeHistory = await getFeeHistory(
-      historicalBlocks,
-      atBlock: const BlockNum.pending(),
-      rewardPercentiles: [25, 50, 75],
-    );
-
-    for (int index = 0; index < historicalBlocks; index++) {
-      history.add({
-        'blockNumber': feeHistory['oldestBlock'] + BigInt.from(index),
-        'baseFeePerGas': feeHistory['baseFeePerGas'][index],
-        'gasUsedRatio': feeHistory['gasUsedRatio'][index],
-        'priorityFeePerGas': feeHistory['reward'][index],
-      });
-    }
-
-    final BlockInformation latestBlock = await getBlockInformation(
-      blockNumber: const BlockNum.pending().toString(),
-    );
-    final BigInt baseFee = latestBlock.baseFeePerGas!.getInWei;
-
-    for (int index = 0; index < rates.length; index++) {
-      final List<BigInt> allPriorityFee = history.map<BigInt>((e) {
-        return e['priorityFeePerGas'][index] as BigInt;
-      }).toList();
-      final priorityFee =
-          allPriorityFee.reduce((curr, next) => curr > next ? curr : next);
-      final estimatedGas = BigInt.from(
-        0.9 * baseFee.toDouble() + priorityFee.toDouble(),
-      );
-      final maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
-
-      if (priorityFee >= maxFee || priorityFee <= BigInt.zero) {
-        throw Exception('Max fee must exceed the priority fee');
-      }
-
-      result[rates[index]] = EIP1559Information(
-        maxPriorityFeePerGas: EtherAmount.inWei(priorityFee),
-        maxFeePerGas: EtherAmount.inWei(maxFee),
-        estimatedGas: estimatedGas,
-      );
-    }
-
-    return result;
+  Future<List<eip1559.Fee>> getGasInEIP1559() async {
+    return eip1559.getGasInEIP1559(_jsonRpc.url);
   }
 
   /// Sends a raw method call to a smart contract.

@@ -1,5 +1,4 @@
-import 'package:web3dart/src/crypto/formatting.dart';
-import 'package:web3dart/web3dart.dart';
+part of web3dart;
 
 class BlockInformation {
   BlockInformation({

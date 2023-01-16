@@ -7,6 +7,10 @@ import 'package:http/http.dart';
 
 // ignore: one_member_abstracts
 abstract class RpcService {
+  RpcService(this.url);
+
+  final String url;
+
   /// Performs an RPC request, asking the server to execute the function with
   /// the given name and the associated parameters, which need to be encodable
   /// with the [json] class of dart:convert.
@@ -18,9 +22,8 @@ abstract class RpcService {
 }
 
 class JsonRPC extends RpcService {
-  JsonRPC(this.url, this.client);
+  JsonRPC(String url, this.client) : super(url);
 
-  final String url;
   final Client client;
 
   int _currentRequestId = 1;
