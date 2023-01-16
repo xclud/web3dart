@@ -124,11 +124,11 @@ void main() {
         nonce: tx['nonce'] as int,
         maxGas: tx['gasLimit'] as int,
         value: EtherAmount.inWei(BigInt.from(tx['value'] as int)),
-        maxFeePerGas: EtherAmount.fromUnitAndValue(
+        maxFeePerGas: EtherAmount.fromBigInt(
           EtherUnit.wei,
           BigInt.from(tx['maxFeePerGas'] as int),
         ),
-        maxPriorityFeePerGas: EtherAmount.fromUnitAndValue(
+        maxPriorityFeePerGas: EtherAmount.fromBigInt(
           EtherUnit.wei,
           BigInt.from(tx['maxPriorityFeePerGas'] as int),
         ),

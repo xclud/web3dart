@@ -8,15 +8,37 @@ class EtherAmount {
   EtherAmount.zero() : this.inWei(BigInt.zero);
 
   /// Constructs an amount of Ether by a unit and its amount. [amount] can
-  /// either be a base10 string, an int, double or a BigInt.
+  /// either be a base10 string, an int or a BigInt.
+  @Deprecated(
+    'Please use fromInt, fromBigInt or fromBase10String.',
+  )
   factory EtherAmount.fromUnitAndValue(EtherUnit unit, dynamic amount) {
     if (amount is String) {
       amount = double.parse(amount);
     }
 
-    return EtherAmount.inWei(
-      BigInt.from(amount.toDouble() * _factors[unit]!.toDouble()),
-    );
+    return EtherAmount.inWei(BigInt.from(amount * _factors[unit]!));
+  }
+
+  /// Constructs an amount of Ether by a unit and its amount.
+  factory EtherAmount.fromInt(EtherUnit unit, int amount) {
+    final wei = _factors[unit]! * BigInt.from(amount);
+
+    return EtherAmount.inWei(wei);
+  }
+
+  /// Constructs an amount of Ether by a unit and its amount.
+  factory EtherAmount.fromBigInt(EtherUnit unit, BigInt amount) {
+    final wei = _factors[unit]! * amount;
+
+    return EtherAmount.inWei(wei);
+  }
+
+  /// Constructs an amount of Ether by a unit and its amount.
+  factory EtherAmount.fromBase10String(EtherUnit unit, String amount) {
+    final wei = _factors[unit]! * BigInt.parse(amount);
+
+    return EtherAmount.inWei(wei);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
