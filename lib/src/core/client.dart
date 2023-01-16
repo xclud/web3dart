@@ -173,7 +173,7 @@ class Web3Client {
   Future<EtherAmount> getGasPrice() async {
     final data = await _makeRPCCall<String>('eth_gasPrice');
 
-    return EtherAmount.fromUnitAndValue(EtherUnit.wei, hexToInt(data));
+    return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
   }
 
   /// Returns the number of the most recent block on the chain.
@@ -201,7 +201,7 @@ class Web3Client {
 
     return _makeRPCCall<String>('eth_getBalance', [address.hex, blockParam])
         .then((data) {
-      return EtherAmount.fromUnitAndValue(EtherUnit.wei, hexToInt(data));
+      return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
     });
   }
 
@@ -285,6 +285,35 @@ class Web3Client {
       [filter._createParamsObject(true)],
     ).then((logs) {
       return logs.map(filter.parseChanges).toList();
+    });
+  }
+
+  /// Returns fee history of some blocks
+  Future<Map<String, dynamic>> getFeeHistory(
+    int blockCount, {
+    BlockNum? atBlock,
+    List<double>? rewardPercentiles,
+  }) {
+    final blockParam = _getBlockParam(atBlock);
+
+    return _makeRPCCall<Map<String, dynamic>>(
+      'eth_feeHistory',
+      [blockCount, blockParam, rewardPercentiles],
+    ).then((history) {
+      return history.map((key, dynamic value) {
+        if (key == 'baseFeePerGas') {
+          value = value.map((dynamic e) => hexToInt(e.toString())).toList();
+        } else if (key == 'reward') {
+          value = value.map(
+            (dynamic eList) {
+              return eList.map((dynamic e) => hexToInt(e.toString())).toList();
+            },
+          ).toList();
+        } else if (key == 'oldestBlock') {
+          value = hexToInt(value.toString());
+        }
+        return MapEntry(key, value);
+      });
     });
   }
 
@@ -421,6 +450,57 @@ class Web3Client {
       ],
     );
     return hexToInt(amountHex);
+  }
+
+  Future<Map<String, EIP1559Information>> getGasInEIP1559() async {
+    final List<String> rates = ['slow', 'medium', 'fast'];
+    const int historicalBlocks = 10;
+    final List<Map<String, dynamic>> history = [];
+    final Map<String, EIP1559Information> result = {};
+
+    final Map<String, dynamic> feeHistory = await getFeeHistory(
+      historicalBlocks,
+      atBlock: const BlockNum.pending(),
+      rewardPercentiles: [25, 50, 75],
+    );
+
+    for (int index = 0; index < historicalBlocks; index++) {
+      history.add({
+        'blockNumber': feeHistory['oldestBlock'] + BigInt.from(index),
+        'baseFeePerGas': feeHistory['baseFeePerGas'][index],
+        'gasUsedRatio': feeHistory['gasUsedRatio'][index],
+        'priorityFeePerGas': feeHistory['reward'][index],
+      });
+    }
+
+    final BlockInformation latestBlock = await getBlockInformation(
+      blockNumber: const BlockNum.pending().toString(),
+    );
+    final BigInt baseFee = latestBlock.baseFeePerGas!.getInWei;
+
+    for (int index = 0; index < rates.length; index++) {
+      final List<BigInt> allPriorityFee = history.map<BigInt>((e) {
+        return e['priorityFeePerGas'][index] as BigInt;
+      }).toList();
+      final priorityFee =
+          allPriorityFee.reduce((curr, next) => curr > next ? curr : next);
+      final estimatedGas = BigInt.from(
+        0.9 * baseFee.toDouble() + priorityFee.toDouble(),
+      );
+      final maxFee = BigInt.from(1.5 * estimatedGas.toDouble());
+
+      if (priorityFee >= maxFee || priorityFee <= BigInt.zero) {
+        throw Exception('Max fee must exceed the priority fee');
+      }
+
+      result[rates[index]] = EIP1559Information(
+        maxPriorityFeePerGas: EtherAmount.inWei(priorityFee),
+        maxFeePerGas: EtherAmount.inWei(maxFee),
+        estimatedGas: estimatedGas,
+      );
+    }
+
+    return result;
   }
 
   /// Sends a raw method call to a smart contract.

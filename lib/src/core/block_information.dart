@@ -10,7 +10,7 @@ class BlockInformation {
   factory BlockInformation.fromJson(Map<String, dynamic> json) {
     return BlockInformation(
       baseFeePerGas: json.containsKey('baseFeePerGas')
-          ? EtherAmount.fromUnitAndValue(
+          ? EtherAmount.fromBigInt(
               EtherUnit.wei,
               hexToInt(json['baseFeePerGas'] as String),
             )
