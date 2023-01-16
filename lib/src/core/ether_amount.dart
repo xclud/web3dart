@@ -13,11 +13,19 @@ class EtherAmount {
     'Please use fromInt, fromBigInt or fromBase10String.',
   )
   factory EtherAmount.fromUnitAndValue(EtherUnit unit, dynamic amount) {
-    if (amount is String) {
-      amount = double.parse(amount);
+    BigInt parsedAmount;
+
+    if (amount is BigInt) {
+      parsedAmount = amount;
+    } else if (amount is int) {
+      parsedAmount = BigInt.from(amount);
+    } else if (amount is String) {
+      parsedAmount = BigInt.parse(amount);
+    } else {
+      throw ArgumentError('Invalid type, must be BigInt, string or int');
     }
 
-    return EtherAmount.inWei(BigInt.from(amount * _factors[unit]!));
+    return EtherAmount.inWei(parsedAmount * _factors[unit]!);
   }
 
   /// Constructs an amount of Ether by a unit and its amount.
