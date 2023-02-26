@@ -24,7 +24,7 @@ abstract class MultiQueryRpcService {
 class JsonRPCMultiQuery extends JsonRPC implements MultiQueryRpcService {
   JsonRPCMultiQuery(String url, Client client) : super(url, client);
 
-  int _currentRequestId = 1;
+  int _currentRequestId = 0;
 
   @override
   Future<List<dynamic>> callMultiQuery(List<RPCQuery> queries) async {
