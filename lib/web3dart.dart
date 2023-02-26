@@ -30,6 +30,7 @@ export 'src/core/amount.dart';
 export 'src/core/block_information.dart';
 export 'src/core/block_number.dart';
 export 'src/core/sync_information.dart';
+export 'src/core/eth_rpc_query/eth_rpc_query.dart';
 
 part 'src/core/multiquery_client.dart';
 part 'src/core/client.dart';
