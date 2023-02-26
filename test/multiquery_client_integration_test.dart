@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
-import 'package:web3dart/src/core/eth_rpc_query/eth_rpc_query.dart';
 import 'package:web3dart/web3dart.dart';
 
 const infuraProjectId = String.fromEnvironment('INFURA_ID');
@@ -31,11 +30,13 @@ void main() {
     test('Multiquery request success', () async {
       final queries = [
         EthRPCQuery.getBalance(
+          id: 2,
           address: EthereumAddress.fromHex(
             '0x81bEdCC7314baf7606b665909CeCDB4c68b180d6',
           ),
         ),
         EthRPCQuery.callContract(
+          id: 1,
           contractCallParams: EthContractCallParams(
             contract: contract,
             function: contract.function('balanceOf'),
@@ -46,7 +47,10 @@ void main() {
             ],
           ),
         ),
-        EthRPCQuery.getBlockInformation(block: BlockNum.exact(8302276))
+        EthRPCQuery.getBlockInformation(
+          block: BlockNum.exact(8302276),
+          id: 3,
+        )
       ];
 
       final responses = await client.multiqueryCall(queries);
@@ -78,7 +82,7 @@ void main() {
   });
 
   group(
-    'query id assignment',
+    'Query id assignment',
     () {
       late final MultiQueryWeb3Client client;
 
@@ -94,7 +98,7 @@ void main() {
             address: EthereumAddress.fromHex(
               '0x81bEdCC7314baf7606b665909CeCDB4c68b180d6',
             ),
-            id: 2,
+            id: 0,
           ),
           EthRPCQuery.getBalance(
             address: EthereumAddress.fromHex(
@@ -111,7 +115,27 @@ void main() {
           returnsNormally,
         );
       });
+      test('Multiquery request arguments - no ids assigned', () async {
+        final queries = [
+          EthRPCQuery.getBalance(
+            address: EthereumAddress.fromHex(
+              '0x81bEdCC7314baf7606b665909CeCDB4c68b180d6',
+            ),
+          ),
+          EthRPCQuery.getBalance(
+            address: EthereumAddress.fromHex(
+              '0x81bEdCC7314baf7606b665909CeCDB4c68b180d6',
+            ),
+          ),
+        ];
 
+        expect(
+          () {
+            client.multiqueryCall(queries);
+          },
+          returnsNormally,
+        );
+      });
       test('Multiquery request arguments - failure, bad rpc ids assignment',
           () async {
         final queries = [
@@ -162,8 +186,8 @@ class MockClient extends BaseClient {
           StreamedResponse(
             Stream.value(
               utf8.encode(
-                '[{"id": 1, "jsonrpc": "2.0", "result": "0x1"},'
-                '{"id": 2, "jsonrpc": "2.0", "result": "0x1"}]',
+                '[{"id": "0", "jsonrpc": "2.0", "result": "0x1"},'
+                '{"id": "1", "jsonrpc": "2.0", "result": "0x1"}]',
               ),
             ),
             200,
