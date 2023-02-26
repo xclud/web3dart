@@ -44,6 +44,7 @@ analyzer:
     prefer_is_empty: error
     prefer_final_fields: error
     prefer_single_quotes: error
+    public_member_api_docs: error
     require_trailing_commas: error
     sized_box_for_whitespace: error
     sort_constructors_first: error
@@ -64,7 +65,8 @@ linter:
     avoid_print: false
     prefer_interpolation_to_compose_strings: true
     prefer_single_quotes: true
+    public_member_api_docs: flase
     require_trailing_commas: true
-#    always_use_package_imports: true
+    #    always_use_package_imports: true
     sort_constructors_first: true
     sort_unnamed_constructors_first: true
