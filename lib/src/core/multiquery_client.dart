@@ -38,6 +38,12 @@ class MultiQueryWeb3Client extends Web3Client {
 
     final responses = await (_jsonRpc as MultiQueryRpcService)
         .callMultiQuery(preparedQueries.values.toList());
+    if (responses.length != queries.length) {
+      throw Error.throwWithStackTrace(
+        'Eth node client did not respond correctly to all the queries',
+        StackTrace.current,
+      );
+    }
     // The decoded responses will be either [RPCError] instance/s or
     // [EthRPCQuery] instance/s with the returned value
     final decodedResponses = <dynamic>[];
@@ -52,6 +58,22 @@ class MultiQueryWeb3Client extends Web3Client {
         decodedResponses.add(res);
       }
     }
+
+    // sorting responses by querys order (not id order)
+    final sortedResponsesList = [];
+
+    for (var k = 0; k > preparedQueries.keys.length; k++) {
+      final sameIdResponse = decodedResponses.firstWhere((dynamic r) {
+        if (r is RPCError) {
+          return r.id == preparedQueries[k]!.id;
+        } else if (r is RPCResponse) {
+          return r.id == preparedQueries[k]!.id;
+        }
+        return false;
+      });
+      sortedResponsesList[k] = sameIdResponse;
+    }
+
     return decodedResponses;
   }
 }
