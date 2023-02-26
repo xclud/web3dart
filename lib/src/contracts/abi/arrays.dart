@@ -8,6 +8,7 @@ import 'types.dart';
 
 /// The bytes<M> solidity type, which stores up to 32 bytes.
 class FixedBytes extends AbiType<Uint8List> {
+  /// Constructor.
   const FixedBytes(this.length) : assert(0 <= length && length <= 32);
 
   /// The amount of bytes to store, between 0 and 32 (both inclusive).
@@ -22,6 +23,7 @@ class FixedBytes extends AbiType<Uint8List> {
   EncodingLengthInfo get encodingLength =>
       const EncodingLengthInfo(sizeUnitBytes);
 
+  /// Validate.
   void validate() {
     if (length < 0 || length > 32) {
       throw Exception('Invalid length for bytes: was $length');
@@ -59,8 +61,9 @@ class FixedBytes extends AbiType<Uint8List> {
   }
 }
 
+/// Function Type
 class FunctionType extends FixedBytes {
-  // 20 bytes for address, 4 for function name
+  /// 20 bytes for address, 4 for function name
   const FunctionType() : super(24);
 
   @override
@@ -74,7 +77,9 @@ class FunctionType extends FixedBytes {
 
 /// The solidity bytes type, which decodes byte arrays of arbitrary length.
 class DynamicBytes extends AbiType<Uint8List> {
+  /// Constructor.
   const DynamicBytes();
+
   @override
   String get name => 'bytes';
 
@@ -116,7 +121,9 @@ class DynamicBytes extends AbiType<Uint8List> {
 
 /// The solidity string type, which utf-8 encodes strings
 class StringType extends AbiType<String> {
+  /// Constructor.
   const StringType();
+
   @override
   String get name => 'string';
   @override
@@ -153,9 +160,11 @@ abstract class BaseArrayType<T> extends AbiType<List<T>> {
 
 /// The solidity T\[k\] type for arrays whose length is known.
 class FixedLengthArray<T> extends BaseArrayType<T> {
+  /// Constructor.
   const FixedLengthArray({required AbiType<T> type, required this.length})
       : super._(type);
 
+  /// Length.
   final int length;
 
   @override
@@ -245,6 +254,7 @@ class FixedLengthArray<T> extends BaseArrayType<T> {
 
 /// The solidity T[] type for arrays with an dynamic length.
 class DynamicLengthArray<T> extends BaseArrayType<T> {
+  /// Constructor.
   const DynamicLengthArray({required AbiType<T> type}) : super._(type);
 
   @override

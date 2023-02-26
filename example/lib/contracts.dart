@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';

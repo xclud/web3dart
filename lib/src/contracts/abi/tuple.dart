@@ -4,7 +4,9 @@ import '../../utils/length_tracking_byte_sink.dart';
 import 'integers.dart';
 import 'types.dart';
 
+/// Tuple Type
 class TupleType extends AbiType<List<dynamic>> {
+  /// Constructor.
   const TupleType(this.types);
 
   /// The types used to encode the individual components of this tuple.
