@@ -1,4 +1,4 @@
-part of 'eth_rpc_query.dart';
+part of web3dart;
 
 class EthContractCallParams {
   EthContractCallParams({

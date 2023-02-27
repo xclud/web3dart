@@ -1,12 +1,4 @@
-// ignore_for_file: sort_constructors_first
-
-library json_rpc_multiquery;
-
-import 'dart:convert';
-
-import 'package:http/http.dart';
-
-import 'json_rpc.dart';
+part of web3dart;
 
 abstract class MultiQueryRpcService {
   /// Performs a single RPC request, asking the server to execute several queries

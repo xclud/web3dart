@@ -1,16 +1,4 @@
-library eth_rpc_query;
-// ignore_for_file: sort_constructors_first
-
-import 'dart:typed_data';
-
-import 'package:web3dart/web3dart.dart';
-
-import '../../../crypto.dart';
-import '../../../json_rpc_multiquery.dart';
-
-export 'eth_rpc_query.dart';
-
-part 'params_classes.dart';
+part of web3dart;
 
 /// D stands for decoded result
 /// R stands for raw result
@@ -33,8 +21,6 @@ class EthQueryResult<T> {
 }
 
 class EthRPCQuery<D, R> extends RPCQuery {
-  final DecodableFunction<D, R> _decodeFunction;
-
   EthRPCQuery._({
     required String function,
     List<dynamic> params = const [],
@@ -42,6 +28,8 @@ class EthRPCQuery<D, R> extends RPCQuery {
     required DecodableFunction<D, R> decodeFn,
   })  : _decodeFunction = decodeFn,
         super(function, params, id);
+
+  final DecodableFunction<D, R> _decodeFunction;
 
   EthQueryResult decodeResult(R rawResult) =>
       EthQueryResult(_decodeFunction(rawResult), id!);

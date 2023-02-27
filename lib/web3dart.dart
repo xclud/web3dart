@@ -1,6 +1,7 @@
 library web3dart;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:web3dart/src/utils/equality.dart' as eq;
@@ -14,11 +15,9 @@ import 'contracts.dart';
 import 'credentials.dart';
 import 'crypto.dart';
 import 'json_rpc.dart';
-import 'json_rpc_multiquery.dart';
 import 'src/core/amount.dart';
 import 'src/core/block_information.dart';
 import 'src/core/block_number.dart';
-import 'src/core/eth_rpc_query/eth_rpc_query.dart';
 import 'src/core/sync_information.dart';
 import 'src/utils/rlp.dart' as rlp;
 import 'src/utils/typed_data.dart';
@@ -30,8 +29,10 @@ export 'src/core/amount.dart';
 export 'src/core/block_information.dart';
 export 'src/core/block_number.dart';
 export 'src/core/sync_information.dart';
-export 'src/core/eth_rpc_query/eth_rpc_query.dart';
 
+part 'src/core/eth_rpc_query/eth_rpc_query.dart';
+part 'src/core/eth_rpc_query/params_classes.dart';
+part 'json_rpc_multiquery.dart';
 part 'src/core/multiquery_client.dart';
 part 'src/core/client.dart';
 part 'src/core/filters.dart';
