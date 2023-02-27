@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:test/test.dart';
 import 'package:web3dart/json_rpc.dart';
-import 'package:web3dart/json_rpc_multiquery.dart';
+import 'package:web3dart/web3dart.dart';
 
 void main() {
   late MockClient client;
