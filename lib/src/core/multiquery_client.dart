@@ -14,7 +14,7 @@ class MultiQueryWeb3Client extends Web3Client {
   /// one request to the eth client.
   /// The resulting list of responses will a mix of [RPCError] instance/s and/or
   /// [EthRPCQuery] instance/s with the returned value
-  Future<List<dynamic>> multiqueryCall(
+  Future<List<dynamic>> multiQueryCall(
     List<EthRPCQuery> queries,
   ) async {
     // Each instance of contract call is mapped to an id (the index).
