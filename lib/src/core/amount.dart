@@ -47,10 +47,12 @@ class EtherAmount {
     return EtherAmount.inWei(parsedAmount * _factors[unit]!);
   }
 
-  /// Constructs an amount of Ether in wei from an hex String
-  factory EtherAmount.fromHex(String hex) {
+  /// Constructs an amount of Ether from an hex String.
+  /// Most of the times, the amount comes express in wei, but any unit cna be
+  /// used.
+  factory EtherAmount.fromHex(String hex, [EtherUnit unit = EtherUnit.wei]) {
     final amountInBigInt = hexToInt(hex);
-    return EtherAmount.inWei(amountInBigInt);
+    return EtherAmount.fromUnitAndValue(unit, amountInBigInt);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
