@@ -53,7 +53,7 @@ void main() {
         )
       ];
 
-      final responses = await client.multiqueryCall(queries);
+      final responses = await client.multiQueryCall(queries);
 
       expect(responses, everyElement(isA<EthQueryResult>()));
 
@@ -110,7 +110,7 @@ void main() {
 
         expect(
           () {
-            client.multiqueryCall(queries);
+            client.multiQueryCall(queries);
           },
           returnsNormally,
         );
@@ -131,7 +131,7 @@ void main() {
 
         expect(
           () {
-            client.multiqueryCall(queries);
+            client.multiQueryCall(queries);
           },
           returnsNormally,
         );
@@ -164,7 +164,7 @@ void main() {
         ];
 
         expect(
-          client.multiqueryCall(queries),
+          client.multiQueryCall(queries),
           throwsArgumentError,
           reason:
               'As a bad assignment in querys id, calling this method should throw',
