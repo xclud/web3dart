@@ -148,6 +148,12 @@ for an example.
 By using [Dart's build system](https://github.com/dart-lang/build/), web3dart can
 generate Dart code to easily access smart contracts.
 
+Install web3dart_builders package
+
+```dart
+pub add web3dart_builders --dev
+```
+
 To use this feature, put a contract abi json somewhere into `lib/`.
 The filename has to end with `.abi.json`.
 Then, add a `dev_dependency` on the `build_runner` package and run
