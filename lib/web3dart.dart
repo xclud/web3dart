@@ -27,7 +27,6 @@ export 'credentials.dart';
 export 'src/core/block_number.dart';
 export 'src/core/sync_information.dart';
 
-
 part 'src/core/ether_unit.dart';
 part 'src/core/ether_amount.dart';
 part 'src/core/block_information.dart';
