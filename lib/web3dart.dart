@@ -3,7 +3,6 @@ library web3dart;
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
-
 import 'package:typed_data/typed_data.dart';
 import 'package:web3dart/src/utils/equality.dart' as eq;
 import 'package:http/http.dart';
