@@ -3,10 +3,11 @@ import 'dart:typed_data';
 
 import '../../crypto/formatting.dart';
 import '../../crypto/keccak.dart';
-import '../../utils/length_tracking_byte_sink.dart';
 import 'arrays.dart';
 import 'tuple.dart';
 import 'types.dart';
+
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 /// Contract Function Type
 enum ContractFunctionType {
