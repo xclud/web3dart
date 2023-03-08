@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
-import '../../utils/length_tracking_byte_sink.dart';
 import 'integers.dart';
 import 'types.dart';
+
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 /// Tuple Type
 class TupleType extends AbiType<List<dynamic>> {

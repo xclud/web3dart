@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import '../../../credentials.dart';
 import '../../crypto/formatting.dart';
-import '../../utils/length_tracking_byte_sink.dart';
 import 'types.dart';
+
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 abstract class _IntTypeBase extends AbiType<BigInt> {
   const _IntTypeBase(this.length)
