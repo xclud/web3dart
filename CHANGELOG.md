@@ -1,3 +1,6 @@
+## 2.5.0
+
+- Support OKX Wallet for browser connection.
 ## 2.4.1
 
 - Update readme.
