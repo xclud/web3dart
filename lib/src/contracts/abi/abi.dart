@@ -3,14 +3,21 @@ import 'dart:typed_data';
 
 import '../../crypto/formatting.dart';
 import '../../crypto/keccak.dart';
-import '../../utils/length_tracking_byte_sink.dart';
 import 'arrays.dart';
 import 'tuple.dart';
 import 'types.dart';
 
+import '../../../web3dart.dart' show LengthTrackingByteSink;
+
+/// Contract Function Type
 enum ContractFunctionType {
+  /// Function
   function,
+
+  /// Constructor
   constructor,
+
+  /// Fallback
   fallback,
 }
 
@@ -58,8 +65,10 @@ String _encodeParameters(Iterable<FunctionParameter> params) {
 /// Defines the abi of a deployed Ethereum contract. The abi contains
 /// information about the functions defined in that contract.
 class ContractAbi {
+  /// Constructor.
   ContractAbi(this.name, this.functions, this.events);
 
+  /// From JSON
   factory ContractAbi.fromJson(String jsonData, String name) {
     final data = json.decode(jsonData);
     final functions = <ContractFunction>[];
@@ -113,6 +122,8 @@ class ContractAbi {
   /// All functions (including constructors) that the ABI of the contract
   /// defines.
   final List<ContractFunction> functions;
+
+  /// Events.
   final List<ContractEvent> events;
 
   static List<FunctionParameter> _parseParams(List? data) {
@@ -172,6 +183,7 @@ class ContractAbi {
 
 /// A function defined in the ABI of an compiled contract.
 class ContractFunction {
+  /// Constructor.
   const ContractFunction(
     this.name,
     this.parameters, {
@@ -291,10 +303,13 @@ class ContractFunction {
 
 /// An event that can be emitted by a smart contract during a transaction.
 class ContractEvent {
+  /// Constructor.
   ContractEvent(this.anonymous, this.name, this.components);
 
   /// Whether this events was declared as anonymous in solidity.
   final bool anonymous;
+
+  /// Name.
   final String name;
 
   /// A list of types that represent the parameters required to call this
@@ -368,17 +383,25 @@ class ContractEvent {
 /// A [FunctionParameter] that is a component of an event. Contains additional
 /// information about whether the parameter is [indexed].
 class EventComponent<T> {
+  /// Constructor.
   const EventComponent(this.parameter, this.indexed);
 
+  /// Parameter.
   final FunctionParameter<T> parameter;
+
+  /// Indexed.
   final bool indexed;
 }
 
 /// The parameter of a function with its name and the expected type.
 class FunctionParameter<T> {
+  /// Constructor.
   const FunctionParameter(this.name, this.type);
 
+  /// Name.
   final String name;
+
+  /// Type.
   final AbiType<T> type;
 }
 
@@ -402,8 +425,11 @@ class FunctionParameter<T> {
 /// enough. Similarly, we want to know the names of the parameters of `T` in
 /// `S.c`.
 class CompositeFunctionParameter extends FunctionParameter<dynamic> {
+  /// Constructor.
   CompositeFunctionParameter(String name, this.components, this.arrayLengths)
       : super(name, _constructType(components, arrayLengths));
+
+  /// Components.
   final List<FunctionParameter> components;
 
   /// If the composite type is wrapped in arrays, contains the length of these

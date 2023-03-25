@@ -1,5 +1,4 @@
-import 'package:web3dart/src/crypto/formatting.dart';
-import 'package:web3dart/web3dart.dart';
+part of web3dart;
 
 class BlockInformation {
   BlockInformation({
@@ -10,7 +9,7 @@ class BlockInformation {
   factory BlockInformation.fromJson(Map<String, dynamic> json) {
     return BlockInformation(
       baseFeePerGas: json.containsKey('baseFeePerGas')
-          ? EtherAmount.fromUnitAndValue(
+          ? EtherAmount.fromBigInt(
               EtherUnit.wei,
               hexToInt(json['baseFeePerGas'] as String),
             )

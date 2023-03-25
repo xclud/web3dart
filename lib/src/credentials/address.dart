@@ -101,7 +101,6 @@ class EthereumAddress implements Comparable<EthereumAddress> {
 
   @override
   int compareTo(EthereumAddress other) {
-    // TODO (alexeyinkin): Faster comparison, maybe by words using asUint64List.
     return hexNo0x.compareTo(other.hexNo0x);
   }
 }

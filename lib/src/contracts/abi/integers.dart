@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import '../../../credentials.dart';
 import '../../crypto/formatting.dart';
-import '../../utils/length_tracking_byte_sink.dart';
 import 'types.dart';
+
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 abstract class _IntTypeBase extends AbiType<BigInt> {
   const _IntTypeBase(this.length)
@@ -46,7 +47,9 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
 
 /// The solidity uint<M> type that encodes unsigned integers.
 class UintType extends _IntTypeBase {
+  /// Constructor.
   const UintType({int length = 256}) : super(length);
+
   @override
   String get _namePrefix => 'uint';
 
@@ -62,6 +65,7 @@ class UintType extends _IntTypeBase {
       ..add(bytes);
   }
 
+  /// Encode Replace.
   void encodeReplace(
     int startIndex,
     BigInt data,
@@ -94,6 +98,7 @@ class UintType extends _IntTypeBase {
 
 /// Solidity address type
 class AddressType extends AbiType<EthereumAddress> {
+  /// Constructor.
   const AddressType();
 
   static const _paddingLen = sizeUnitBytes - EthereumAddress.addressByteLength;
@@ -132,6 +137,7 @@ class AddressType extends AbiType<EthereumAddress> {
 
 /// Solidity bool type
 class BoolType extends AbiType<bool> {
+  /// Constructor.
   const BoolType();
   static final Uint8List _false = Uint8List(sizeUnitBytes);
   static final Uint8List _true = Uint8List(sizeUnitBytes)
@@ -168,6 +174,7 @@ class BoolType extends AbiType<bool> {
 
 /// The solidity int<M> types that encodes twos-complement integers.
 class IntType extends _IntTypeBase {
+  /// Constructor.
   const IntType({int length = 256}) : super(length);
   @override
   String get _namePrefix => 'int';

@@ -1,9 +1,10 @@
 import 'dart:typed_data';
 
-import '../../utils/length_tracking_byte_sink.dart';
 import 'arrays.dart';
 import 'integers.dart';
 import 'tuple.dart';
+
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 /// The length of the encoding of a solidity type is always a multiplicative of
 /// this unit size.
@@ -12,6 +13,7 @@ const int sizeUnitBytes = 32;
 /// A type that can be encoded and decoded as specified in the solidity ABI,
 /// available at https://solidity.readthedocs.io/en/develop/abi-spec.html
 abstract class AbiType<T> {
+  /// Constructor.
   const AbiType();
 
   /// The name of this type, as it would appear in a method signature in the
@@ -24,6 +26,7 @@ abstract class AbiType<T> {
   /// Writes [data] into the [buffer].
   void encode(T data, LengthTrackingByteSink buffer);
 
+  /// Decode.
   DecodingResult<T> decode(ByteBuffer buffer, int offset);
 }
 
@@ -31,7 +34,10 @@ abstract class AbiType<T> {
 /// (dynamic) or is fixed (static). If it's static, also contains information
 /// about the length of the encoding.
 class EncodingLengthInfo {
+  /// Constructor.
   const EncodingLengthInfo(this.length);
+
+  /// Constructor.
   const EncodingLengthInfo.dynamic() : length = null;
 
   /// When this encoding length is not [isDynamic], the length (in bytes) of
@@ -60,9 +66,15 @@ int calculatePadLength(int bodyLength, {bool allowEmpty = false}) {
   return remainder == 0 ? 0 : sizeUnitBytes - remainder;
 }
 
+/// Decoding Result.
 class DecodingResult<T> {
+  /// Constructor.
   DecodingResult(this.data, this.bytesRead);
+
+  /// Data.
   final T data;
+
+  /// Bytes read.
   final int bytesRead;
 
   @override
@@ -94,6 +106,8 @@ const Map<String, AbiType> _easyTypes = {
 };
 
 final RegExp _trailingDigits = RegExp(r'^(?:\D|\d)*\D(\d*)$');
+
+/// Array RegExp.
 final RegExp array = RegExp(r'^(.*)\[(\d*)\]$');
 final RegExp _tuple = RegExp(r'^\((.*)\)$');
 

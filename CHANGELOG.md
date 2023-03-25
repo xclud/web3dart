@@ -1,3 +1,7 @@
+## 2.6.1
+
+* EIP-1559.
+
 ## 2.5.3
 
 * Ditch dependency on collection.
