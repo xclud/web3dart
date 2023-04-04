@@ -13,6 +13,49 @@ class Transaction {
     this.maxPriorityFeePerGas,
   });
 
+  factory Transaction.fromJson(Map<String, dynamic> map) {
+    final from = map['from'];
+    final to = map['to'];
+    final gasPrice = map['gasPrice'] as String?;
+    final value = map['value'] as String?;
+    final nonce = map['nonce'] as String?;
+    final gas = map['gas'] as String?;
+    final data = map['data'] as String?;
+    final maxPriorityFeePerGas = map['maxPriorityFeePerGas'] as String?;
+    final maxFeePerGas = map['maxFeePerGas'] as String?;
+    return Transaction(
+      from: from == null ? null : EthereumAddress.fromHex(from),
+      to: to == null ? null : EthereumAddress.fromHex(to),
+      gasPrice: gasPrice == null
+          ? null
+          : EtherAmount.fromBigInt(
+              EtherUnit.wei,
+              BigInt.parse(gasPrice.substring(2), radix: 16),
+            ),
+      maxPriorityFeePerGas: maxPriorityFeePerGas == null
+          ? null
+          : EtherAmount.fromBigInt(
+              EtherUnit.wei,
+              BigInt.parse(maxPriorityFeePerGas.substring(2), radix: 16),
+            ),
+      maxFeePerGas: maxFeePerGas == null
+          ? null
+          : EtherAmount.fromBigInt(
+              EtherUnit.wei,
+              BigInt.parse(maxFeePerGas.substring(2), radix: 16),
+            ),
+      value: value == null
+          ? null
+          : EtherAmount.fromBigInt(
+              EtherUnit.wei,
+              BigInt.parse(value.substring(2), radix: 16),
+            ),
+      maxGas: gas == null ? null : int.parse(gas.substring(2), radix: 16),
+      nonce: nonce == null ? null : int.parse(nonce.substring(2), radix: 16),
+      data: data == null ? null : hexToBytes(data),
+    );
+  }
+
   /// Constructs a transaction that can be used to call a contract function.
   Transaction.callContract({
     required DeployedContract contract,

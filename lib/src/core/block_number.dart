@@ -3,6 +3,8 @@
 /// from previous states of the blockchain as well. This class specifies which
 /// state to use.
 class BlockNum {
+  const BlockNum(this.blockNum) : useAbsolute = false;
+
   /// Use the state of the blockchain at the block specified.
   const BlockNum.exact(this.blockNum) : useAbsolute = true;
 
@@ -21,6 +23,19 @@ class BlockNum {
   const BlockNum.pending()
       : useAbsolute = false,
         blockNum = 2;
+
+  factory BlockNum.from(String param) {
+    switch (param) {
+      case 'earliest':
+        return BlockNum(0);
+      case 'latest':
+        return BlockNum(1);
+      case 'pending':
+        return BlockNum(2);
+      default:
+        return BlockNum(3); //Can't happen, though
+    }
+  }
 
   final bool useAbsolute;
   final int blockNum;
