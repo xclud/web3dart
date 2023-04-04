@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:eth_sig_util/eth_sig_util.dart';
+import 'package:eth_sig_util/util/bytes.dart';
 import 'package:pointycastle/ecc/api.dart' show ECPoint;
 import 'package:web3dart/src/utils/equality.dart' as eq;
 
@@ -36,8 +38,14 @@ abstract class Credentials {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool useKeccak256 = true,
   }) async {
-    return signToUint8List(payload, chainId: chainId, isEIP1559: isEIP1559);
+    return signToUint8List(
+      payload,
+      chainId: chainId,
+      isEIP1559: isEIP1559,
+      useKeccak256: useKeccak256,
+    );
   }
 
   /// Signs the [payload] with a private key. The output will be like the
@@ -48,9 +56,14 @@ abstract class Credentials {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool useKeccak256 = true,
   }) {
-    final signature =
-        signToEcSignature(payload, chainId: chainId, isEIP1559: isEIP1559);
+    final signature = signToEcSignature(
+      payload,
+      chainId: chainId,
+      isEIP1559: isEIP1559,
+      useKeccak256: useKeccak256,
+    );
 
     final r = padUint8ListTo32(unsignedIntToBytes(signature.r));
     final s = padUint8ListTo32(unsignedIntToBytes(signature.s));
@@ -66,9 +79,15 @@ abstract class Credentials {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool useKeccak256 = true,
   }) {
     return Future.value(
-      signToEcSignature(payload, chainId: chainId, isEIP1559: isEIP1559),
+      signToEcSignature(
+        payload,
+        chainId: chainId,
+        isEIP1559: isEIP1559,
+        useKeccak256: useKeccak256,
+      ),
     );
   }
 
@@ -78,6 +97,7 @@ abstract class Credentials {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool useKeccak256 = true,
   }) =>
       throw UnimplementedError();
 
@@ -101,6 +121,52 @@ abstract class Credentials {
     final concat = uint8ListFromList(prefixBytes + payload);
 
     return signToUint8List(concat, chainId: chainId);
+  }
+
+  Future<String> signTypedData(
+    dynamic data, {
+    TypedDataVersion version = TypedDataVersion.V1,
+    int? chainId,
+    bool isEIP1559 = false,
+  }) async {
+    final payload = data is String ? data : jsonEncode(data);
+    final message =
+        TypedDataUtil.hashMessage(jsonData: payload, version: version);
+    final sig = await signToSignature(
+      message,
+      chainId: chainId,
+      useKeccak256: false,
+      isEIP1559: isEIP1559,
+    );
+    return SignatureUtil.concatSig(
+      toBuffer(sig.r),
+      toBuffer(sig.s),
+      toBuffer(sig.v),
+    );
+  }
+
+  Future<String> signPersonalTypedData(
+    dynamic data, {
+    TypedDataVersion version = TypedDataVersion.V1,
+    int? chainId,
+  }) async {
+    final payload = data is String ? data : jsonEncode(data);
+    final message =
+        TypedDataUtil.hashMessage(jsonData: payload, version: version);
+    final signed = await signPersonalMessage(message, chainId: chainId);
+    return bytesToHex(signed, include0x: true);
+  }
+
+  String ecRecover({
+    required String signature,
+    required Uint8List message,
+    required bool isPersonalSign,
+  }) {
+    return SignatureUtil.ecRecover(
+      signature: signature,
+      message: message,
+      isPersonalSign: isPersonalSign,
+    );
   }
 }
 
@@ -173,8 +239,12 @@ class EthPrivateKey extends CredentialsWithKnownAddress {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool useKeccak256 = true,
   }) {
-    final signature = secp256k1.sign(keccak256(payload), privateKey);
+    final signature = secp256k1.sign(
+      useKeccak256 ? keccak256(payload) : payload,
+      privateKey,
+    );
 
     // https://github.com/ethereumjs/ethereumjs-util/blob/8ffe697fafb33cefc7b7ec01c11e3a7da787fe0e/src/signature.ts#L26
     // be aware that signature.v already is recovery + 27
