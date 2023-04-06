@@ -14,8 +14,8 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Map<String, dynamic> map) {
-    final from = map['from'];
-    final to = map['to'];
+    final from = map['from'] as String?;
+    final to = map['to'] as String?;
     final gasPrice = map['gasPrice'] as String?;
     final value = map['value'] as String?;
     final nonce = map['nonce'] as String?;
@@ -24,27 +24,27 @@ class Transaction {
     final maxPriorityFeePerGas = map['maxPriorityFeePerGas'] as String?;
     final maxFeePerGas = map['maxFeePerGas'] as String?;
     return Transaction(
-      from: from == null ? null : EthereumAddress.fromHex(from),
-      to: to == null ? null : EthereumAddress.fromHex(to),
-      gasPrice: gasPrice == null
+      from: from == null || from.isEmpty ? null : EthereumAddress.fromHex(from),
+      to: to == null || to.isEmpty ? null : EthereumAddress.fromHex(to),
+      gasPrice: gasPrice == null || gasPrice.isEmpty
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,
               BigInt.parse(gasPrice.substring(2), radix: 16),
             ),
-      maxPriorityFeePerGas: maxPriorityFeePerGas == null
+      maxPriorityFeePerGas: maxPriorityFeePerGas == null || maxPriorityFeePerGas.isEmpty
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,
               BigInt.parse(maxPriorityFeePerGas.substring(2), radix: 16),
             ),
-      maxFeePerGas: maxFeePerGas == null
+      maxFeePerGas: maxFeePerGas == null || maxFeePerGas.isEmpty
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,
               BigInt.parse(maxFeePerGas.substring(2), radix: 16),
             ),
-      value: value == null
+      value: value == null || value.isEmpty
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,

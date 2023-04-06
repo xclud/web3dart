@@ -12,7 +12,7 @@ dependencies:
   code_builder: ^4.3.0
   web3dart:
     git:
-      url: https://github.com/iota9star/web3dart.git
+      url: https://github.com/AstroxNetwork/web3dart.git
   built_collection: ^5.1.1
   path: ^1.8.2
   dart_style: ^2.2.4

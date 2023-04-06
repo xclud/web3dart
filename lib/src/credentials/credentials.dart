@@ -114,13 +114,20 @@ abstract class Credentials {
   /// [signToUint8List], but with a special prefix so that this method can't be used to
   /// sign, for instance, transactions.
   Uint8List signPersonalMessageToUint8List(Uint8List payload, {int? chainId}) {
-    final prefix = _messagePrefix + payload.length.toString();
+    return signToUint8List(
+      toPersonalMessage(payload, useKeccak256: false),
+      chainId: chainId,
+    );
+  }
+
+  static Uint8List toPersonalMessage(
+    Uint8List message, {
+    bool useKeccak256 = true,
+  }) {
+    final prefix = _messagePrefix + message.length.toString();
     final prefixBytes = ascii.encode(prefix);
-
-    // will be a Uint8List, see the documentation of Uint8List.+
-    final concat = uint8ListFromList(prefixBytes + payload);
-
-    return signToUint8List(concat, chainId: chainId);
+    final uint8list = Uint8List.fromList(prefixBytes + message);
+    return useKeccak256 ? keccak256(uint8list) : uint8list;
   }
 
   Future<String> signTypedData(
@@ -161,12 +168,17 @@ abstract class Credentials {
     required String signature,
     required Uint8List message,
     required bool isPersonalSign,
+    int? chainId,
   }) {
-    return SignatureUtil.ecRecover(
-      signature: signature,
-      message: message,
-      isPersonalSign: isPersonalSign,
+    final messageHash = isPersonalSign ? toPersonalMessage(message) : message;
+    final publicKey = SignatureUtil.recoverPublicKeyFromSignature(
+      SignatureUtil.fromRpcSig(signature),
+      messageHash,
+      chainId: chainId,
     );
+    if (publicKey == null)
+      throw Exception('Can not recover public key from signature');
+    return bytesToHex(publicKeyToAddress(publicKey), include0x: true);
   }
 }
 
