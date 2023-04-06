@@ -24,8 +24,11 @@ class BlockNum {
       : useAbsolute = false,
         blockNum = 2;
 
-  factory BlockNum.from(String param) {
-    switch (param) {
+  factory BlockNum.parse(String value) {
+    if (value.startsWith('0x')) {
+      return BlockNum.exact(int.parse(value.substring(2), radix: 16));
+    }
+    switch (value) {
       case 'earliest':
         return BlockNum(0);
       case 'latest':
