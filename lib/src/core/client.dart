@@ -45,9 +45,6 @@ class Web3Client {
   rpc.Peer? _streamRpcPeer;
   late final _FilterEngine _filters;
 
-  ///Whether errors, handled or not, should be printed to the console.
-  bool printErrors = false;
-
   Future<T> _makeRPCCall<T>(String function, [List<dynamic>? params]) async {
     try {
       final data = await _jsonRpc.call(function, params);
@@ -57,8 +54,6 @@ class Web3Client {
       return data.result as T;
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      if (printErrors) print(e);
-
       rethrow;
     }
   }
