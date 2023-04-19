@@ -5,14 +5,14 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 
 void main() {
-  test('signs messages', () {
+  test('signs messages', () async {
     final key = EthPrivateKey(
       hexToBytes(
         'a392604efc2fad9c0b3da43b5f698a2e3f270f170d859912be0d54742275c5f6',
       ),
     );
-    final signature =
-        key.signPersonalMessageToUint8List(ascii.encode('A test message'));
+    final signature = await key
+        .signPersonalMessageToUint8List(ascii.encode('A test message'));
 
     expect(
       bytesToHex(signature),
@@ -20,14 +20,14 @@ void main() {
     );
   });
 
-  test('signs message for chainId', () {
+  test('signs message for chainId', () async {
     // https://github.com/ethereumjs/ethereumjs-util/blob/8ffe697fafb33cefc7b7ec01c11e3a7da787fe0e/test/index.js#L532
     final key = EthPrivateKey(
       hexToBytes(
         '3c9229289a6125f7fdf1885a77bb12c37a8d3b4962d936f7e3084dece32a3ca1',
       ),
     );
-    final signature = key.signToUint8List(
+    final signature = await key.signToUint8List(
       hexToBytes(
         '0x3c9229289a6125f7fdf1885a77bb12c37a8d3b4962d936f7e3084dece32a3ca1',
       ),

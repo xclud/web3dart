@@ -52,13 +52,13 @@ abstract class Credentials {
   /// bytes representation of the [eth_sign RPC method](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sign),
   /// but without the "Ethereum signed message" prefix.
   /// The [payload] parameter contains the raw data, not a hash.
-  Uint8List signToUint8List(
+  Future<Uint8List> signToUint8List(
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
     bool useKeccak256 = true,
-  }) {
-    final signature = signToEcSignature(
+  }) async {
+    final signature = await signToSignature(
       payload,
       chainId: chainId,
       isEIP1559: isEIP1559,
@@ -80,26 +80,7 @@ abstract class Credentials {
     int? chainId,
     bool isEIP1559 = false,
     bool useKeccak256 = true,
-  }) {
-    return Future.value(
-      signToEcSignature(
-        payload,
-        chainId: chainId,
-        isEIP1559: isEIP1559,
-        useKeccak256: useKeccak256,
-      ),
-    );
-  }
-
-  /// Signs the [payload] with a private key and returns the obtained
-  /// signature.
-  MsgSignature signToEcSignature(
-    Uint8List payload, {
-    int? chainId,
-    bool isEIP1559 = false,
-    bool useKeccak256 = true,
-  }) =>
-      throw UnimplementedError();
+  });
 
   /// Signs an Ethereum specific signature. This method is equivalent to
   /// [sign], but with a special prefix so that this method can't be used to
@@ -113,7 +94,10 @@ abstract class Credentials {
   /// Signs an Ethereum specific signature. This method is equivalent to
   /// [signToUint8List], but with a special prefix so that this method can't be used to
   /// sign, for instance, transactions.
-  Uint8List signPersonalMessageToUint8List(Uint8List payload, {int? chainId}) {
+  Future<Uint8List> signPersonalMessageToUint8List(
+    Uint8List payload, {
+    int? chainId,
+  }) {
     return signToUint8List(
       toPersonalMessage(payload, useKeccak256: false),
       chainId: chainId,
@@ -247,7 +231,7 @@ class EthPrivateKey extends CredentialsWithKnownAddress {
   ECPoint get publicKey => (params.G * privateKeyInt)!;
 
   @override
-  MsgSignature signToEcSignature(
+  Future<MsgSignature> signToSignature(
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
@@ -268,7 +252,7 @@ class EthPrivateKey extends CredentialsWithKnownAddress {
           ? (signature.v - 27 + (chainId * 2 + 35))
           : signature.v;
     }
-    return MsgSignature(signature.r, signature.s, chainIdV);
+    return Future.value(MsgSignature(signature.r, signature.s, chainIdV));
   }
 
   @override
