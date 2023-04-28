@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:web3dart/web3dart.dart';
 
 // ignore: one_member_abstracts
 
@@ -46,13 +47,16 @@ class JsonRPC extends RpcService {
   Future<RPCResponse> call(String function, [List<dynamic>? params]) async {
     params ??= [];
 
+    final callId = _currentRequestId++;
     final requestPayload = {
       'jsonrpc': '2.0',
       'method': function,
       'params': params,
-      'id': _currentRequestId++,
+      'id': callId,
     };
 
+    Web3Client.printLog
+        ?.call('\nid: $callId\nmethod: $function\nparams: $params\nrpc: $url');
     final response = await client.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -60,19 +64,21 @@ class JsonRPC extends RpcService {
     );
 
     final data = json.decode(response.body) as Map<String, dynamic>;
-
     if (data.containsKey('error')) {
       final error = data['error'];
 
       final code = error['code'] as int;
       final message = error['message'] as String;
       final errorData = error['data'];
-
+      Web3Client.printLog
+          ?.call('\nid: $callId\nmethod: $function\nerror: $error');
       throw RPCError(code, message, errorData);
     }
 
     final id = data['id'] as int;
     final result = data['result'];
+    Web3Client.printLog
+        ?.call('\nid: $callId\nmethod: $function\nresult: $result');
     return RPCResponse(id, result);
   }
 }

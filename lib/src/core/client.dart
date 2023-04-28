@@ -45,6 +45,8 @@ class Web3Client {
   rpc.Peer? _streamRpcPeer;
   late final _FilterEngine _filters;
 
+  static void Function(Object? log)? printLog;
+
   Future<T> _makeRPCCall<T>(String function, [List<dynamic>? params]) async {
     try {
       final data = await _jsonRpc.call(function, params);

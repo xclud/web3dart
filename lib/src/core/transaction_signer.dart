@@ -67,6 +67,8 @@ Future<_SigningInput> _fillMissingData({
     nonce: nonce,
   );
 
+  Web3Client.printLog?.call('\ntransaction:\n=>\n$transaction\n<=\n$modifiedTransaction');
+
   int resolvedChainId;
   if (!loadChainIdFromNetwork) {
     resolvedChainId = chainId!;

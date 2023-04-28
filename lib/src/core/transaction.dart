@@ -138,4 +138,9 @@ class Transaction {
   }
 
   bool get isEIP1559 => maxFeePerGas != null && maxPriorityFeePerGas != null;
+
+  @override
+  String toString() {
+    return 'from: $from\nto: $to\nmaxGas: $maxGas\ngasPrice: $gasPrice\nvalue: $value\ndata: $data\nnonce: $nonce\nmaxPriorityFeePerGas: $maxPriorityFeePerGas\nmaxFeePerGas: $maxFeePerGas';
+  }
 }
