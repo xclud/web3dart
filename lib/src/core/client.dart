@@ -16,6 +16,8 @@ part of 'package:web3dart/web3dart.dart';
 /// ```
 typedef SocketConnector = StreamChannel<String> Function();
 
+typedef PrintLog = void Function(Object? log, {bool error});
+
 /// Class for sending requests over an HTTP JSON-RPC API endpoint to Ethereum
 /// clients. This library won't use the accounts feature of clients to use them
 /// to create transactions, you will instead have to obtain private keys of
@@ -45,7 +47,7 @@ class Web3Client {
   rpc.Peer? _streamRpcPeer;
   late final _FilterEngine _filters;
 
-  static void Function(Object? log)? printLog;
+  static PrintLog? printLog;
 
   Future<T> _makeRPCCall<T>(String function, [List<dynamic>? params]) async {
     try {

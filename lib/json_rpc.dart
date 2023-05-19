@@ -55,8 +55,9 @@ class JsonRPC extends RpcService {
       'id': callId,
     };
 
-    Web3Client.printLog
-        ?.call('\nid: $callId\nmethod: $function\nparams: $params\nrpc: $url');
+    Web3Client.printLog?.call(
+      '->\nid: $callId\nmethod: $function\nparams: $params\nrpc: $url',
+    );
     final response = await client.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -70,15 +71,18 @@ class JsonRPC extends RpcService {
       final code = error['code'] as int;
       final message = error['message'] as String;
       final errorData = error['data'];
-      Web3Client.printLog
-          ?.call('\nid: $callId\nmethod: $function\nerror: $error');
+      Web3Client.printLog?.call(
+        '<-\nid: $callId\nmethod: $function\nerror: $error',
+        error: true,
+      );
       throw RPCError(code, message, errorData);
     }
 
     final id = data['id'] as int;
     final result = data['result'];
-    Web3Client.printLog
-        ?.call('\nid: $callId\nmethod: $function\nresult: $result');
+    Web3Client.printLog?.call(
+      '<-\nid: $callId\nmethod: $function\nresult: $result',
+    );
     return RPCResponse(id, result);
   }
 }

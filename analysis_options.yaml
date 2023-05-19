@@ -70,3 +70,4 @@ linter:
     #    always_use_package_imports: true
     sort_constructors_first: true
     sort_unnamed_constructors_first: true
+    default_value_in_function_type: false

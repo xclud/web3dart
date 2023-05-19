@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import '../../../credentials.dart';
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 import '../../crypto/formatting.dart';
 import 'types.dart';
-
-import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 abstract class _IntTypeBase extends AbiType<BigInt> {
   const _IntTypeBase(this.length)
@@ -19,6 +18,7 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
       const EncodingLengthInfo(sizeUnitBytes);
 
   String get _namePrefix;
+
   @override
   String get name => _namePrefix + length.toString();
 
@@ -31,6 +31,9 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
   @override
   DecodingResult<BigInt> decode(ByteBuffer buffer, int offset) {
     // we're always going to read a 32-byte block for integers
+    if (buffer.lengthInBytes == 0) {
+      buffer = Uint8List(32).buffer;
+    }
     return DecodingResult(
       _decode32Bytes(buffer.asUint8List(offset, sizeUnitBytes)),
       sizeUnitBytes,
@@ -139,6 +142,7 @@ class AddressType extends AbiType<EthereumAddress> {
 class BoolType extends AbiType<bool> {
   /// Constructor.
   const BoolType();
+
   static final Uint8List _false = Uint8List(sizeUnitBytes);
   static final Uint8List _true = Uint8List(sizeUnitBytes)
     ..[sizeUnitBytes - 1] = 1;
@@ -176,6 +180,7 @@ class BoolType extends AbiType<bool> {
 class IntType extends _IntTypeBase {
   /// Constructor.
   const IntType({int length = 256}) : super(length);
+
   @override
   String get _namePrefix => 'int';
 
