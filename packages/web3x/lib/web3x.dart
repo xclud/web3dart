@@ -18,6 +18,7 @@ import 'json_rpc.dart';
 import 'src/core/block_number.dart';
 import 'src/core/sync_information.dart';
 import 'src/utils/equality.dart' as eq;
+import 'src/utils/extensions.dart';
 import 'src/utils/rlp.dart' as rlp;
 import 'src/utils/typed_data.dart';
 

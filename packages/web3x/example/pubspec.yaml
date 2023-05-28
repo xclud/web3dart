@@ -6,7 +6,7 @@ environment:
   sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
-  web3x: ^1.0.0
+  web3x: ^1.0.1
   http: ^0.13.0
   web_socket_channel: ^2.2.0
 
@@ -15,4 +15,4 @@ dev_dependencies:
   coverage: ^1.1.0
   lints: ^2.0.0
   build_runner: ^2.3.2
-  web3x_builders: ^1.0.0
+  web3x_builders: ^1.0.1

@@ -6,6 +6,7 @@ import '../crypto/formatting.dart';
 import '../crypto/keccak.dart';
 import '../crypto/secp256k1.dart';
 import '../utils/equality.dart' as eq;
+import '../utils/extensions.dart';
 
 /// Represents an Ethereum address.
 class EthereumAddress implements Comparable<EthereumAddress> {
@@ -40,7 +41,7 @@ class EthereumAddress implements Comparable<EthereumAddress> {
     }
 
     // Validates as of EIP 55, https://ethereum.stackexchange.com/a/1379
-    final address = strip0x(hex);
+    final address = hex.stripOx();
     final hash = bytesToHex(keccakAscii(address.toLowerCase()));
     for (var i = 0; i < 40; i++) {
       // the nth letter should be uppercase if the nth digit of casemap is 1

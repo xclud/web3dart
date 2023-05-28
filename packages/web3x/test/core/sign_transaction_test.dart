@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:test/test.dart';
 import 'package:web3x/crypto.dart';
+import 'package:web3x/src/utils/extensions.dart';
 import 'package:web3x/src/utils/rlp.dart' as rlp;
 import 'package:web3x/src/utils/typed_data.dart';
 import 'package:web3x/web3x.dart';
@@ -118,7 +119,7 @@ void main() {
     await Future.forEach(data, (element) async {
       final tx = element as Map<String, dynamic>;
       final credentials =
-          EthPrivateKey.fromHex(strip0x(tx['privateKey'] as String));
+          EthPrivateKey.fromHex((tx['privateKey'] as String).stripOx());
       final transaction = Transaction(
         from: credentials.address,
         to: EthereumAddress.fromHex(tx['to'] as String),
@@ -145,7 +146,7 @@ void main() {
             rlp.encode(prependTransactionType(0x02, signature)),
           ),
         ),
-        strip0x(tx['signedTransactionRLP'] as String),
+        (tx['signedTransactionRLP'] as String).stripOx(),
       );
     });
   });

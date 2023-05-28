@@ -30,6 +30,7 @@ class Token extends _i1.GeneratedContract {
     BigInt amount, {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
+    _i1.Transaction? additional,
   }) async {
     final function = self.abi.functions[1];
     assert(checkSignature(function, '90b98a11'));
@@ -38,10 +39,11 @@ class Token extends _i1.GeneratedContract {
       amount,
     ];
     return write(
-      credentials,
-      transaction,
-      function,
-      params,
+      credentials: credentials,
+      base: transaction,
+      additional: additional,
+      function: function,
+      parameters: params,
     );
   }
 
@@ -98,14 +100,19 @@ class Token extends _i1.GeneratedContract {
         result.topics!,
         result.data!,
       );
-      return Transfer(decoded);
+      return Transfer(
+        decoded,
+        result,
+      );
     });
   }
 }
 
 class Transfer {
-  Transfer(List<dynamic> response)
-      : from = (response[0] as _i1.EthereumAddress),
+  Transfer(
+    List<dynamic> response,
+    this.event,
+  )   : from = (response[0] as _i1.EthereumAddress),
         to = (response[1] as _i1.EthereumAddress),
         value = (response[2] as BigInt);
 
@@ -114,4 +121,6 @@ class Transfer {
   final _i1.EthereumAddress to;
 
   final BigInt value;
+
+  final _i1.FilterEvent event;
 }

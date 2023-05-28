@@ -16,13 +16,15 @@ class Transaction {
   factory Transaction.fromJson(Map<String, dynamic> map) {
     final from = map['from'] as String?;
     final to = map['to'] as String?;
-    final gasPrice = map['gasPrice'] as String?;
-    final value = map['value'] as String?;
-    final nonce = map['nonce'] as String?;
-    final gas = map['gas'] as String?;
+    final gasPrice = (map['gasPrice'] as String?)?.stripOx();
+    final value = (map['value'] as String?)?.stripOx();
+    final nonce = (map['nonce'] as String?)?.stripOx();
+    final gasLimit =
+        (map['gasLimit'] as String? ?? map['gas'] as String?)?.stripOx();
     final data = map['data'] as String?;
-    final maxPriorityFeePerGas = map['maxPriorityFeePerGas'] as String?;
-    final maxFeePerGas = map['maxFeePerGas'] as String?;
+    final maxPriorityFeePerGas =
+        (map['maxPriorityFeePerGas'] as String?)?.stripOx();
+    final maxFeePerGas = (map['maxFeePerGas'] as String?)?.stripOx();
     return Transaction(
       from: from == null || from.isEmpty ? null : EthereumAddress.fromHex(from),
       to: to == null || to.isEmpty ? null : EthereumAddress.fromHex(to),
@@ -30,29 +32,33 @@ class Transaction {
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,
-              BigInt.parse(gasPrice.substring(2), radix: 16),
+              BigInt.parse(gasPrice, radix: 16),
             ),
-      maxPriorityFeePerGas: maxPriorityFeePerGas == null || maxPriorityFeePerGas.isEmpty
-          ? null
-          : EtherAmount.fromBigInt(
-              EtherUnit.wei,
-              BigInt.parse(maxPriorityFeePerGas.substring(2), radix: 16),
-            ),
+      maxPriorityFeePerGas:
+          maxPriorityFeePerGas == null || maxPriorityFeePerGas.isEmpty
+              ? null
+              : EtherAmount.fromBigInt(
+                  EtherUnit.wei,
+                  BigInt.parse(maxPriorityFeePerGas, radix: 16),
+                ),
       maxFeePerGas: maxFeePerGas == null || maxFeePerGas.isEmpty
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,
-              BigInt.parse(maxFeePerGas.substring(2), radix: 16),
+              BigInt.parse(maxFeePerGas, radix: 16),
             ),
       value: value == null || value.isEmpty
           ? null
           : EtherAmount.fromBigInt(
               EtherUnit.wei,
-              BigInt.parse(value.substring(2), radix: 16),
+              BigInt.parse(value, radix: 16),
             ),
-      maxGas: gas == null ? null : int.parse(gas.substring(2), radix: 16),
-      nonce: nonce == null ? null : int.parse(nonce.substring(2), radix: 16),
-      data: data == null ? null : hexToBytes(data),
+      maxGas: gasLimit == null || gasLimit.isEmpty
+          ? null
+          : int.parse(gasLimit, radix: 16),
+      nonce:
+          nonce == null || nonce.isEmpty ? null : int.parse(nonce, radix: 16),
+      data: data == null || data.isEmpty ? null : hexToBytes(data),
     );
   }
 

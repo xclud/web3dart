@@ -255,6 +255,14 @@ class _ContractGeneration {
             ..type = transactionType.rebuild((e) => e.isNullable = true),
         ),
       );
+      b.optionalParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'additional'
+            ..named = true
+            ..type = transactionType.rebuild((e) => e.isNullable = true),
+        ),
+      );
     }
 
     final docs = documentation?.forFunction(fun);
@@ -326,12 +334,13 @@ class _ContractGeneration {
 
   Code _bodyForMutable(ContractFunction function, int index) {
     final params = function.parameters.map((e) => refer(e.name)).toList();
-    final funWrite = refer('write').call([
-      argCredentials,
-      refer('transaction'),
-      refer('function'),
-      refer('params'),
-    ]);
+    final funWrite = refer('write').call([], {
+      'credentials': argCredentials,
+      'base': refer('transaction'),
+      'additional': refer('additional'),
+      'function': refer('function'),
+      'parameters': refer('params'),
+    });
 
     return Block((b) {
       _assignFunction(b.statements, function, index);

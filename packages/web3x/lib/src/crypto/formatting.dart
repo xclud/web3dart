@@ -5,13 +5,8 @@ import 'package:convert/convert.dart';
 // ignore: implementation_imports
 import 'package:pointycastle/src/utils.dart' as p_utils;
 
-/// If present, removes the 0x from the start of a hex-string.
-String strip0x(String hex) {
-  if (hex.startsWith('0x')) {
-    return hex.substring(2);
-  }
-  return hex;
-}
+import '../utils/extensions.dart';
+
 
 /// Converts the [bytes] given as a list of integers into a hexadecimal
 /// representation.
@@ -47,7 +42,7 @@ String bytesToHex(
 /// Converts the hexadecimal string, which can be prefixed with 0x, to a byte
 /// sequence.
 Uint8List hexToBytes(String hexStr) {
-  final bytes = hex.decode(strip0x(hexStr));
+  final bytes = hex.decode(hexStr.stripOx());
   if (bytes is Uint8List) {
     return bytes;
   }
@@ -72,10 +67,10 @@ Uint8List intToBytes(BigInt number) => p_utils.encodeBigInt(number);
 
 ///Takes the hexadecimal input and creates a [BigInt].
 BigInt hexToInt(String hex) {
-  return BigInt.parse(strip0x(hex), radix: 16);
+  return BigInt.parse(hex.stripOx(), radix: 16);
 }
 
 /// Converts the hexadecimal input and creates an [int].
 int hexToDartInt(String hex) {
-  return int.parse(strip0x(hex), radix: 16);
+  return int.parse(hex.stripOx(), radix: 16);
 }

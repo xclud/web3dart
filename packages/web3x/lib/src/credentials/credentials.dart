@@ -148,7 +148,7 @@ abstract class Credentials {
     return bytesToHex(signed, include0x: true);
   }
 
-  String ecRecover({
+  static String ecRecover({
     required String signature,
     required Uint8List message,
     required bool isPersonalSign,

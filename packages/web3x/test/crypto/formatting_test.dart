@@ -1,10 +1,11 @@
 import 'package:test/test.dart';
 import 'package:web3x/crypto.dart';
+import 'package:web3x/src/utils/extensions.dart';
 
 void main() {
   test('strip 0x prefix', () {
-    expect(strip0x('0x12F312319235'), '12F312319235');
-    expect(strip0x('123123'), '123123');
+    expect('0x12F312319235'.stripOx(), '12F312319235');
+    expect('123123'.stripOx(), '123123');
   });
 
   test('hexToDartInt', () {

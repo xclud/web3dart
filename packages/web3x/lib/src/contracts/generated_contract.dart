@@ -8,6 +8,7 @@ import '../../web3x.dart';
 abstract class GeneratedContract {
   /// Constructor.
   GeneratedContract(this.self, this.client, this.chainId);
+
   final DeployedContract self;
   final Web3Client client;
   final int? chainId;
@@ -32,12 +33,13 @@ abstract class GeneratedContract {
     );
   }
 
-  Future<String> write(
-    Credentials credentials,
+  Future<String> write({
+    required Credentials credentials,
     Transaction? base,
-    ContractFunction function,
-    List<dynamic> parameters,
-  ) {
+    Transaction? additional,
+    required ContractFunction function,
+    required List<dynamic> parameters,
+  }) {
     final transaction = base?.copyWith(
           data: function.encodeCall(parameters),
           to: self.address,
@@ -46,6 +48,13 @@ abstract class GeneratedContract {
           contract: self,
           function: function,
           parameters: parameters,
+          gasPrice: additional?.gasPrice,
+          maxFeePerGas: additional?.maxFeePerGas,
+          maxPriorityFeePerGas: additional?.maxPriorityFeePerGas,
+          nonce: additional?.nonce,
+          value: additional?.value,
+          from: additional?.from,
+          maxGas: additional?.maxGas,
         );
 
     return client.sendTransaction(
