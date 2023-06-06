@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Support parsing JSON-RPC `id` of non-int type.
+
 ## 1.0.1
 
 - Add an `additional` parameter for calling contract modification methods.

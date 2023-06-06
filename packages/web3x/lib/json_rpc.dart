@@ -1,8 +1,8 @@
-
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart';
+
 import 'web3x.dart';
 
 // ignore: one_member_abstracts
@@ -77,10 +77,11 @@ class JsonRPC extends RpcService {
       throw RPCError(code, message, errorData);
     }
 
-    final id = data['id'] as int;
+    final rid = data['id'];
+    final id = rid is int ? rid : int.parse(rid.toString());
     final result = data['result'];
     Web3Client.printLog?.call(
-      '<-\nid: $callId\nmethod: $function\nresult: $result',
+      '<-\nid: $callId($rid)\nmethod: $function\nresult: $result',
     );
     return RPCResponse(id, result);
   }
