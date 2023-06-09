@@ -40,6 +40,17 @@ Future<_SigningInput> _fillMissingData({
     gasPrice = await client!.getGasPrice();
   }
 
+  var maxFeePerGas = transaction.maxFeePerGas;
+  var maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+
+  if (transaction.isEIP1559) {
+    maxPriorityFeePerGas ??= await _getMaxPriorityFeePerGas();
+    maxFeePerGas ??= await _getMaxFeePerGas(
+      client!,
+      maxPriorityFeePerGas.getInWei,
+    );
+  }
+
   final nonce = transaction.nonce ??
       await client!
           .getTransactionCount(sender, atBlock: const BlockNum.pending());
@@ -52,8 +63,8 @@ Future<_SigningInput> _fillMissingData({
             data: transaction.data,
             value: transaction.value,
             gasPrice: gasPrice,
-            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-            maxFeePerGas: transaction.maxFeePerGas,
+            maxPriorityFeePerGas: maxPriorityFeePerGas,
+            maxFeePerGas: maxFeePerGas,
           )
           .then((bigInt) => bigInt.toInt());
 
@@ -65,6 +76,8 @@ Future<_SigningInput> _fillMissingData({
     data: transaction.data ?? Uint8List(0),
     gasPrice: gasPrice,
     nonce: nonce,
+    maxPriorityFeePerGas: maxPriorityFeePerGas,
+    maxFeePerGas: maxFeePerGas,
   );
 
   int resolvedChainId;
@@ -182,4 +195,28 @@ List<dynamic> _encodeToRlp(Transaction transaction, MsgSignature? signature) {
   }
 
   return list;
+}
+
+Future<EtherAmount> _getMaxPriorityFeePerGas() {
+  // We may want to compute this more accurately in the future,
+  // using the formula "check if the base fee is correct".
+  // See: https://eips.ethereum.org/EIPS/eip-1559
+  return Future.value(EtherAmount.inWei(BigInt.from(1000000000)));
+}
+
+// Max Fee = (2 * Base Fee) + Max Priority Fee
+Future<EtherAmount> _getMaxFeePerGas(
+  Web3Client client,
+  BigInt maxPriorityFeePerGas,
+) async {
+  final blockInformation = await client.getBlockInformation();
+  final baseFeePerGas = blockInformation.baseFeePerGas;
+
+  if (baseFeePerGas == null) {
+    return EtherAmount.zero();
+  }
+
+  return EtherAmount.inWei(
+    baseFeePerGas.getInWei * BigInt.from(2) + maxPriorityFeePerGas,
+  );
 }
