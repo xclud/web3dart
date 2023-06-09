@@ -35,23 +35,20 @@ class EthereumAddress implements Comparable<EthereumAddress> {
       );
     }
 
-    if (!enforceEip55 &&
-        (hex.toUpperCase() == hex || hex.toLowerCase() == hex)) {
-      return EthereumAddress(hexToBytes(hex));
-    }
-
-    // Validates as of EIP 55, https://ethereum.stackexchange.com/a/1379
-    final address = hex.stripOx();
-    final hash = bytesToHex(keccakAscii(address.toLowerCase()));
-    for (var i = 0; i < 40; i++) {
-      // the nth letter should be uppercase if the nth digit of casemap is 1
-      final hashedPos = int.parse(hash[i], radix: 16);
-      if ((hashedPos > 7 && address[i].toUpperCase() != address[i]) ||
-          (hashedPos <= 7 && address[i].toLowerCase() != address[i])) {
-        throw ArgumentError(
-          'Address has invalid case-characters and is '
-          'not EIP-55 compliant, rejecting. Address was: $hex',
-        );
+    if (enforceEip55) {
+      // Validates as of EIP 55, https://ethereum.stackexchange.com/a/1379
+      final address = hex.stripOx();
+      final hash = bytesToHex(keccakAscii(address.toLowerCase()));
+      for (var i = 0; i < 40; i++) {
+        // the nth letter should be uppercase if the nth digit of casemap is 1
+        final hashedPos = int.parse(hash[i], radix: 16);
+        if ((hashedPos > 7 && address[i].toUpperCase() != address[i]) ||
+            (hashedPos <= 7 && address[i].toLowerCase() != address[i])) {
+          throw ArgumentError(
+            'Address has invalid case-characters and is '
+            'not EIP-55 compliant, rejecting. Address was: $hex',
+          );
+        }
       }
     }
 
