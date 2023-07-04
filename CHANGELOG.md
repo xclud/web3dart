@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Use http package version ^1.1.0.
+
 ## 2.6.1
 
 * EIP-1559.
