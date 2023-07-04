@@ -22,12 +22,12 @@ void main() {
     [
       FunctionParameter('b1', DynamicBytes()),
       FunctionParameter('b2', BoolType()),
-      FunctionParameter('b3', DynamicLengthArray(type: UintType()))
+      FunctionParameter('b3', DynamicLengthArray(type: UintType())),
     ],
     outputs: [
       FunctionParameter('b1', DynamicBytes()),
       FunctionParameter('b2', BoolType()),
-      FunctionParameter('b3', DynamicLengthArray(type: UintType()))
+      FunctionParameter('b3', DynamicLengthArray(type: UintType())),
     ],
   );
 
@@ -158,7 +158,7 @@ void main() {
         sam.encodeCall([
           uint8ListFromList(utf8.encode('dave')),
           true,
-          [BigInt.from(1), BigInt.from(2), BigInt.from(3)]
+          [BigInt.from(1), BigInt.from(2), BigInt.from(3)],
         ]),
         include0x: true,
       ),

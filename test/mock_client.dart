@@ -32,7 +32,7 @@ class MockClient extends BaseClient {
     final response = {
       'body': body,
       'id': id,
-      'result': handler(method, params)
+      'result': handler(method, params),
     };
 
     return Response(json.encode(response), 200);

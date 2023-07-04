@@ -72,7 +72,7 @@ class FilterOptions {
     this.toBlock,
   })  : address = contract.address,
         topics = [
-          [bytesToHex(event.signature, padToEvenLength: true, include0x: true)]
+          [bytesToHex(event.signature, padToEvenLength: true, include0x: true)],
         ];
 
   /// The earliest block which should be considered for this filter. Optional,

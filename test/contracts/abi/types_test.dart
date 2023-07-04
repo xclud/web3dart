@@ -28,7 +28,7 @@ final invalidTypes = [
   'bööl',
   '(uint,string',
   'uint19',
-  'int32[three]'
+  'int32[three]',
 ];
 
 void main() {

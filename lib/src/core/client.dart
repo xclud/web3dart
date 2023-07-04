@@ -221,7 +221,7 @@ class Web3Client {
     return _makeRPCCall<String>('eth_getStorageAt', [
       address.hex,
       '0x${position.toRadixString(16)}',
-      blockParam
+      blockParam,
     ]).then(hexToBytes);
   }
 
@@ -356,7 +356,7 @@ class Web3Client {
   /// about the transaction.
   Future<String> sendRawTransaction(Uint8List signedTransaction) async {
     return _makeRPCCall('eth_sendRawTransaction', [
-      bytesToHex(signedTransaction, include0x: true, padToEvenLength: true)
+      bytesToHex(signedTransaction, include0x: true, padToEvenLength: true),
     ]);
   }
 
