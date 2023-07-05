@@ -1,3 +1,11 @@
+## 1.0.4
+
+- Fix `Transaction.callContract`.
+
+## 1.0.3
+
+- Improve address parse.
+
 ## 1.0.2
 
 - Support parsing JSON-RPC `id` of non-int type.

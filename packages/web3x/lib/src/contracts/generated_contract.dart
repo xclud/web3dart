@@ -52,7 +52,6 @@ abstract class GeneratedContract {
           maxFeePerGas: additional?.maxFeePerGas,
           maxPriorityFeePerGas: additional?.maxPriorityFeePerGas,
           nonce: additional?.nonce,
-          value: additional?.value,
           from: additional?.from,
           maxGas: additional?.maxGas,
         );
