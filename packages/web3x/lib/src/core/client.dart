@@ -218,8 +218,10 @@ class Web3Client {
     String blockNumber = 'latest',
     bool isContainFullObj = true,
   }) {
-    return getBlockInformationRaw()
-        .then((json) => BlockInformation.fromJson(json));
+    return getBlockInformationRaw(
+      blockNumber: blockNumber,
+      isContainFullObj: isContainFullObj,
+    ).then((json) => BlockInformation.fromJson(json));
   }
 
   Future<Map<String, dynamic>> getBlockInformationRaw({
