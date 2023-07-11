@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Fix `getBlockInformation` params
+
 ## 1.0.4
 
 - Fix `Transaction.callContract`.
