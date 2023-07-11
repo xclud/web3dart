@@ -48,7 +48,7 @@ extension DartOkxWallet on OkxWallet {
   /// Asks the user to select an account and give your application access to it.
   Future<CredentialsWithKnownAddress> requestAccount() {
     return rawRequest('eth_requestAccounts').then((res) {
-      return OkxWalletCredentials((res as List).single as String, this);
+      return OkxWalletCredentials((res as List).first as String, this);
     });
   }
 

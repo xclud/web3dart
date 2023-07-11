@@ -1,3 +1,6 @@
+## 2.5.1
+
+- Fix multiple address connections.
 ## 2.5.0
 
 - Support OKX Wallet for browser connection.
