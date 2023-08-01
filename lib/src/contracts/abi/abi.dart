@@ -336,7 +336,7 @@ class ContractEvent {
   /// Indexed parameters which would take more than 32 bytes to encode are not
   /// included in the result. Apart from that, the order of the data returned
   /// is identical to the order of the [components].
-  List<dynamic> decodeResults(List<String> topics, String data) {
+  List<dynamic> decodeResults(List<String?> topics, String data) {
     final topicOffset = anonymous ? 0 : 1;
 
     // non-indexed parameters are decoded like a tuple
@@ -361,12 +361,14 @@ class ContractEvent {
         // dynamic type, are not included in [topics]. A hash of the data will
         // be included instead. We can't decode these, so they will be skipped.
         final length = component.parameter.type.encodingLength;
-        if (length.isDynamic || length.length! > 32) {
+        if (length.isDynamic ||
+            length.length! > 32 ||
+            topics[topicIndex] == null) {
           topicIndex++;
           continue;
         }
 
-        final topicBuffer = hexToBytes(topics[topicIndex]).buffer;
+        final topicBuffer = hexToBytes(topics[topicIndex]!).buffer;
         result.add(component.parameter.type.decode(topicBuffer, 0).data);
 
         topicIndex++;
