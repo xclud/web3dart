@@ -100,7 +100,7 @@ Uint8List prependTransactionType(int type, Uint8List transaction) {
     ..setAll(1, transaction);
 }
 
-Uint8List _signTransaction(
+Uint8List signTransactionRaw(
   Transaction transaction,
   Credentials c,
   int? chainId,

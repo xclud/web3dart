@@ -380,7 +380,7 @@ class Web3Client {
       client: this,
     );
 
-    return _signTransaction(
+    return signTransactionRaw(
       signingInput.transaction,
       signingInput.credentials,
       signingInput.chainId,
