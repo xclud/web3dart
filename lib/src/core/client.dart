@@ -383,7 +383,7 @@ class Web3Client {
     return signTransactionRaw(
       signingInput.transaction,
       signingInput.credentials,
-      signingInput.chainId,
+      chainId: signingInput.chainId,
     );
   }
 

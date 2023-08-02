@@ -174,7 +174,7 @@ void main() {
         data: tx['data'] ?? Uint8List(0),
       );
 
-      final signature = signTransactionRaw(transaction, credentials, 4);
+      final signature = signTransactionRaw(transaction, credentials, chainId: 4);
 
       expect(
         bytesToHex(

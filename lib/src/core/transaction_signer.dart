@@ -102,9 +102,9 @@ Uint8List prependTransactionType(int type, Uint8List transaction) {
 
 Uint8List signTransactionRaw(
   Transaction transaction,
-  Credentials c,
-  int? chainId,
-) {
+  Credentials c, {
+  int? chainId = 1,
+  }) {
   if (transaction.isEIP1559 && chainId != null) {
     final encodedTx = LengthTrackingByteSink();
     encodedTx.addByte(0x02);
