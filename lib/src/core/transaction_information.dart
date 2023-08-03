@@ -165,6 +165,23 @@ class TransactionReceipt {
 
   final EtherAmount? effectiveGasPrice;
 
+  Map<String, dynamic> toMap() {
+    return {
+      'transactionHash': bytesToHex(transactionHash, include0x: true),
+      'transactionIndex': '0x${transactionIndex.toRadixString(16)}',
+      'blockHash': bytesToHex(blockHash, include0x: true),
+      'blockNumber': '0x${blockNumber.blockNum.toRadixString(16)}',
+      'from': from?.hex,
+      'to': to?.hex,
+      'cumulativeGasUsed': '0x${cumulativeGasUsed.toRadixString(16)}',
+      'gasUsed': gasUsed == null ? '0x0' : '0x${gasUsed!.toRadixString(16)}',
+      'contractAddress': contractAddress?.hex,
+      'logs': logs.map((log) => log.toMap()).toList(),
+      'status': status == null ? '0x0' : '0x${status! ? "1" : "0"}',
+    };
+  }
+
+
   @override
   String toString() {
     return 'TransactionReceipt{transactionHash: ${bytesToHex(transactionHash)}, '

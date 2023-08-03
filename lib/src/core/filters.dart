@@ -189,6 +189,23 @@ class FilterEvent {
   /// values of indexed parameters.
   final List<String?>? topics;
 
+  Map<String, dynamic> toMap() {
+    return {
+      'removed': removed,
+      'logIndex': logIndex == null ? null : '0x${logIndex!.toRadixString(16)}',
+      'transactionIndex': transactionIndex == null
+          ? null
+          : '0x${transactionIndex!.toRadixString(16)}',
+      'transactionHash': transactionHash,
+      'blockHash': blockHash,
+      'blockNumber':
+          blockNum == null ? null : '0x${blockNum!.toRadixString(16)}',
+      'address': address?.hex,
+      'data': data,
+      'topics': topics
+    };
+  }
+
   @override
   String toString() {
     return 'FilterEvent('
