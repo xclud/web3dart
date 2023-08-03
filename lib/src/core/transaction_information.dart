@@ -23,6 +23,25 @@ class TransactionInformation {
         r = hexToInt(map['r'] as String),
         s = hexToInt(map['s'] as String);
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'blockHash': blockHash,
+      'blockNumber': blockNumber.toString(),
+      'from': from.toString(),
+      'gas': gas.toString(),
+      'gasPrice': '0x${gasPrice.getInWei.toRadixString(16)}',
+      'hash': hash,
+      'input': bytesToHex(input, include0x: true),
+      'nonce': nonce.toString(),
+      'to': to?.toString(),
+      'transactionIndex': '0x${transactionIndex?.toRadixString(16) ?? '0'}',
+      'value': '0x${value.getInWei.toRadixString(16)}',
+      'v': v.toString(),
+      'r': '0x${r.toRadixString(16)}',
+      's': '0x${s.toRadixString(16)}',
+    };
+  }
+
   /// The hash of the block containing this transaction. If this transaction has
   /// not been mined yet and is thus in no block, it will be `null`
   final String? blockHash;
@@ -180,7 +199,6 @@ class TransactionReceipt {
       'status': status == null ? '0x0' : '0x${status! ? "1" : "0"}',
     };
   }
-
 
   @override
   String toString() {
