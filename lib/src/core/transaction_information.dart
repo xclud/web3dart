@@ -26,17 +26,17 @@ class TransactionInformation {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'blockHash': blockHash,
-      'blockNumber': blockNumber.toString(),
+      'blockNumber': '0x${blockNumber.blockNum.toRadixString(16)}',
       'from': from.toString(),
-      'gas': gas.toString(),
+      'gas': '0x${gas.toRadixString(16)}',
       'gasPrice': '0x${gasPrice.getInWei.toRadixString(16)}',
       'hash': hash,
       'input': bytesToHex(input, include0x: true),
-      'nonce': nonce.toString(),
+      'nonce': '0x${nonce.toRadixString(16)}',
       'to': to?.toString(),
       'transactionIndex': '0x${transactionIndex?.toRadixString(16) ?? '0'}',
       'value': '0x${value.getInWei.toRadixString(16)}',
-      'v': v.toString(),
+      'v': '0x${v.toRadixString(16)}',
       'r': '0x${r.toRadixString(16)}',
       's': '0x${s.toRadixString(16)}',
     };
