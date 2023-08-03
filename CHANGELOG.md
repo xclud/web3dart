@@ -1,3 +1,7 @@
+## 2.7.1
+
+* Nullable topics.
+
 ## 2.7.0
 
 * Use http package version ^1.1.0.
