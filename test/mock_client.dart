@@ -5,15 +5,18 @@ import 'package:http/http.dart';
 import 'package:test/test.dart';
 
 class MockClient extends BaseClient {
+  MockClient(this.handler);
   static final _jsonUtf8 = json.fuse(utf8);
 
   final Object? Function(String method, Object? payload) handler;
 
-  MockClient(this.handler);
-
   @override
-  Future<Response> post(Uri url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
+  Future<Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) async {
     if (body is! String) {
       fail('Invalid request, expected string as request body');
     }
@@ -29,7 +32,7 @@ class MockClient extends BaseClient {
     final response = {
       'body': body,
       'id': id,
-      'result': handler(method, params)
+      'result': handler(method, params),
     };
 
     return Response(json.encode(response), 200);

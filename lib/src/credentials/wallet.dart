@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/block/aes.dart';
 import 'package:pointycastle/digests/sha256.dart';
@@ -27,6 +26,7 @@ abstract class _KeyDerivator {
 }
 
 class _PBDKDF2KeyDerivator extends _KeyDerivator {
+  _PBDKDF2KeyDerivator(this.iterations, this.salt, this.dklen);
   final int iterations;
   final Uint8List salt;
   final int dklen;
@@ -34,8 +34,6 @@ class _PBDKDF2KeyDerivator extends _KeyDerivator {
   // The docs (https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition)
   // say that HMAC with SHA-256 is the only mac supported at the moment
   static final Mac mac = HMac(SHA256Digest(), 64);
-
-  _PBDKDF2KeyDerivator(this.iterations, this.salt, this.dklen);
 
   @override
   Uint8List deriveKey(Uint8List password) {
@@ -51,7 +49,7 @@ class _PBDKDF2KeyDerivator extends _KeyDerivator {
       'c': iterations,
       'dklen': dklen,
       'prf': 'hmac-sha256',
-      'salt': bytesToHex(salt)
+      'salt': bytesToHex(salt),
     };
   }
 
@@ -60,13 +58,12 @@ class _PBDKDF2KeyDerivator extends _KeyDerivator {
 }
 
 class _ScryptKeyDerivator extends _KeyDerivator {
+  _ScryptKeyDerivator(this.dklen, this.n, this.r, this.p, this.salt);
   final int dklen;
   final int n;
   final int r;
   final int p;
   final Uint8List salt;
-
-  _ScryptKeyDerivator(this.dklen, this.n, this.r, this.p, this.salt);
 
   @override
   Uint8List deriveKey(Uint8List password) {
@@ -94,45 +91,14 @@ class _ScryptKeyDerivator extends _KeyDerivator {
 /// like a private key belonging to an Ethereum address. The private key in a
 /// wallet is encrypted with a secret password that needs to be known in order
 /// to obtain the private key.
-@immutable
 class Wallet {
-  /// The credentials stored in this wallet file
-  final EthPrivateKey privateKey;
-
-  /// The key derivator used to obtain the aes decryption key from the password
-  final _KeyDerivator _derivator;
-
-  final Uint8List _password;
-  final Uint8List _iv;
-
-  final Uint8List _id;
-
   const Wallet._(
-      this.privateKey, this._derivator, this._password, this._iv, this._id);
-
-  /// Gets the random uuid assigned to this wallet file
-  String get uuid => formatUuid(_id);
-
-  /// Encrypts the private key using the secret specified earlier and returns
-  /// a json representation of its data as a v3-wallet file.
-  String toJson() {
-    final ciphertextBytes = _encryptPrivateKey();
-
-    final map = {
-      'crypto': {
-        'cipher': 'aes-128-ctr',
-        'cipherparams': {'iv': bytesToHex(_iv)},
-        'ciphertext': bytesToHex(ciphertextBytes),
-        'kdf': _derivator.name,
-        'kdfparams': _derivator.encode(),
-        'mac': _generateMac(_derivator.deriveKey(_password), ciphertextBytes),
-      },
-      'id': uuid,
-      'version': 3,
-    };
-
-    return json.encode(map);
-  }
+    this.privateKey,
+    this._derivator,
+    this._password,
+    this._iv,
+    this._id,
+  );
 
   /// Creates a new wallet wrapping the specified [credentials] by encrypting
   /// the private key with the [password]. The [random] instance, which should
@@ -141,8 +107,12 @@ class Wallet {
   /// The default value for [scryptN] is 8192. Be aware that this N must be a
   /// power of two.
   factory Wallet.createNew(
-      EthPrivateKey credentials, String password, Random random,
-      {int scryptN = 8192, int p = 1}) {
+    EthPrivateKey credentials,
+    String password,
+    Random random, {
+    int scryptN = 8192,
+    int p = 1,
+  }) {
     final passwordBytes = Uint8List.fromList(utf8.encode(password));
     final dartRandom = RandomBridge(random);
 
@@ -176,11 +146,12 @@ class Wallet {
     final version = data['version'];
     if (version != 3) {
       throw ArgumentError.value(
-          version,
-          'version',
-          'Library only supports '
-              'version 3 of wallet files at the moment. However, the following value'
-              ' has been given:');
+        version,
+        'version',
+        'Library only supports '
+            'version 3 of wallet files at the moment. However, the following value'
+            ' has been given:',
+      );
     }
 
     final crypto = data['crypto'] ?? data['Crypto'];
@@ -194,27 +165,31 @@ class Wallet {
 
         if (derParams['prf'] != 'hmac-sha256') {
           throw ArgumentError(
-              'Invalid prf supplied with the pdf: was ${derParams["prf"]}, expected hmac-sha256');
+            'Invalid prf supplied with the pdf: was ${derParams["prf"]}, expected hmac-sha256',
+          );
         }
 
         derivator = _PBDKDF2KeyDerivator(
-            derParams['c'] as int,
-            Uint8List.fromList(hexToBytes(derParams['salt'] as String)),
-            derParams['dklen'] as int);
+          derParams['c'] as int,
+          Uint8List.fromList(hexToBytes(derParams['salt'] as String)),
+          derParams['dklen'] as int,
+        );
 
         break;
       case 'scrypt':
         final derParams = crypto['kdfparams'] as Map<String, dynamic>;
         derivator = _ScryptKeyDerivator(
-            derParams['dklen'] as int,
-            derParams['n'] as int,
-            derParams['r'] as int,
-            derParams['p'] as int,
-            Uint8List.fromList(hexToBytes(derParams['salt'] as String)));
+          derParams['dklen'] as int,
+          derParams['n'] as int,
+          derParams['r'] as int,
+          derParams['p'] as int,
+          Uint8List.fromList(hexToBytes(derParams['salt'] as String)),
+        );
         break;
       default:
         throw ArgumentError(
-            'Wallet file uses $kdf as key derivation function, which is not supported.');
+          'Wallet file uses $kdf as key derivation function, which is not supported.',
+        );
     }
 
     // Now that we have the derivator, let's obtain the aes key:
@@ -228,13 +203,15 @@ class Wallet {
     final derivedMac = _generateMac(derivedKey, encryptedPrivateKey);
     if (derivedMac != crypto['mac']) {
       throw ArgumentError(
-          'Could not unlock wallet file. You either supplied the wrong password or the file is corrupted');
+        'Could not unlock wallet file. You either supplied the wrong password or the file is corrupted',
+      );
     }
 
     // We only support this mode at the moment
     if (crypto['cipher'] != 'aes-128-ctr') {
       throw ArgumentError(
-          'Wallet file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.');
+        'Wallet file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.',
+      );
     }
     final iv =
         Uint8List.fromList(hexToBytes(crypto['cipherparams']['iv'] as String));
@@ -251,6 +228,41 @@ class Wallet {
     return Wallet._(credentials, derivator, encodedPassword, iv, id);
   }
 
+  /// The credentials stored in this wallet file
+  final EthPrivateKey privateKey;
+
+  /// The key derivator used to obtain the aes decryption key from the password
+  final _KeyDerivator _derivator;
+
+  final Uint8List _password;
+  final Uint8List _iv;
+
+  final Uint8List _id;
+
+  /// Gets the random uuid assigned to this wallet file
+  String get uuid => formatUuid(_id);
+
+  /// Encrypts the private key using the secret specified earlier and returns
+  /// a json representation of its data as a v3-wallet file.
+  String toJson() {
+    final ciphertextBytes = _encryptPrivateKey();
+
+    final map = {
+      'crypto': {
+        'cipher': 'aes-128-ctr',
+        'cipherparams': {'iv': bytesToHex(_iv)},
+        'ciphertext': bytesToHex(ciphertextBytes),
+        'kdf': _derivator.name,
+        'kdfparams': _derivator.encode(),
+        'mac': _generateMac(_derivator.deriveKey(_password), ciphertextBytes),
+      },
+      'id': uuid,
+      'version': 3,
+    };
+
+    return json.encode(map);
+  }
+
   static String _generateMac(List<int> dk, List<int> ciphertext) {
     final macBody = <int>[...dk.sublist(16, 32), ...ciphertext];
 
@@ -258,7 +270,10 @@ class Wallet {
   }
 
   static CTRStreamCipher _initCipher(
-      bool forEncryption, Uint8List key, Uint8List iv) {
+    bool forEncryption,
+    Uint8List key,
+    Uint8List iv,
+  ) {
     return CTRStreamCipher(AESEngine())
       ..init(false, ParametersWithIV(KeyParameter(key), iv));
   }

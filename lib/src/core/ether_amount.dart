@@ -1,49 +1,17 @@
-enum EtherUnit {
-  ///Wei, the smallest and atomic amount of Ether
-  wei,
-
-  ///kwei, 1000 wei
-  kwei,
-
-  ///Mwei, one million wei
-  mwei,
-
-  ///Gwei, one billion wei. Typically a reasonable unit to measure gas prices.
-  gwei,
-
-  ///szabo, 10^12 wei or 1 μEther
-  szabo,
-
-  ///finney, 10^15 wei or 1 mEther
-  finney,
-
-  ether
-}
+part of web3dart;
 
 /// Utility class to easily convert amounts of Ether into different units of
 /// quantities.
 class EtherAmount {
-  static final Map<EtherUnit, BigInt> _factors = {
-    EtherUnit.wei: BigInt.one,
-    EtherUnit.kwei: BigInt.from(10).pow(3),
-    EtherUnit.mwei: BigInt.from(10).pow(6),
-    EtherUnit.gwei: BigInt.from(10).pow(9),
-    EtherUnit.szabo: BigInt.from(10).pow(12),
-    EtherUnit.finney: BigInt.from(10).pow(15),
-    EtherUnit.ether: BigInt.from(10).pow(18)
-  };
-
-  final BigInt _value;
-
-  BigInt get getInWei => _value;
-  BigInt get getInEther => getValueInUnitBI(EtherUnit.ether);
-
   const EtherAmount.inWei(this._value);
 
   EtherAmount.zero() : this.inWei(BigInt.zero);
 
   /// Constructs an amount of Ether by a unit and its amount. [amount] can
-  /// either be a base10 string, an int, or a BigInt.
+  /// either be a base10 string, an int or a BigInt.
+  @Deprecated(
+    'Please use fromInt, fromBigInt or fromBase10String.',
+  )
   factory EtherAmount.fromUnitAndValue(EtherUnit unit, dynamic amount) {
     BigInt parsedAmount;
 
@@ -60,12 +28,48 @@ class EtherAmount {
     return EtherAmount.inWei(parsedAmount * _factors[unit]!);
   }
 
+  /// Constructs an amount of Ether by a unit and its amount.
+  factory EtherAmount.fromInt(EtherUnit unit, int amount) {
+    final wei = _factors[unit]! * BigInt.from(amount);
+
+    return EtherAmount.inWei(wei);
+  }
+
+  /// Constructs an amount of Ether by a unit and its amount.
+  factory EtherAmount.fromBigInt(EtherUnit unit, BigInt amount) {
+    final wei = _factors[unit]! * amount;
+
+    return EtherAmount.inWei(wei);
+  }
+
+  /// Constructs an amount of Ether by a unit and its amount.
+  factory EtherAmount.fromBase10String(EtherUnit unit, String amount) {
+    final wei = _factors[unit]! * BigInt.parse(amount);
+
+    return EtherAmount.inWei(wei);
+  }
+
   /// Gets the value of this amount in the specified unit as a whole number.
   /// **WARNING**: For all units except for [EtherUnit.wei], this method will
   /// discard the remainder occurring in the division, making it unsuitable for
   /// calculations or storage. You should store and process amounts of ether by
   /// using a BigInt storing the amount in wei.
   BigInt getValueInUnitBI(EtherUnit unit) => _value ~/ _factors[unit]!;
+
+  static final Map<EtherUnit, BigInt> _factors = {
+    EtherUnit.wei: BigInt.one,
+    EtherUnit.kwei: BigInt.from(10).pow(3),
+    EtherUnit.mwei: BigInt.from(10).pow(6),
+    EtherUnit.gwei: BigInt.from(10).pow(9),
+    EtherUnit.szabo: BigInt.from(10).pow(12),
+    EtherUnit.finney: BigInt.from(10).pow(15),
+    EtherUnit.ether: BigInt.from(10).pow(18),
+  };
+
+  final BigInt _value;
+
+  BigInt get getInWei => _value;
+  BigInt get getInEther => getValueInUnitBI(EtherUnit.ether);
 
   /// Gets the value of this amount in the specified unit. **WARNING**: Due to
   /// rounding errors, the return value of this function is not reliable,

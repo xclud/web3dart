@@ -23,8 +23,10 @@ class MockRandom implements Random {
     if (BigInt.from(max) > _twoToThePowerOf32) {
       // generating numbers in [0;1<<32] is supported by the RNG implemented in
       // dart.
-      fail('RandomBridge called Random.nextInt with an upper bound that is '
-          'to high: $max');
+      fail(
+        'RandomBridge called Random.nextInt with an upper bound that is '
+        'to high: $max',
+      );
     }
 
     if (nextIntResponses.isNotEmpty) {

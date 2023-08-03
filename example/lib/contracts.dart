@@ -1,11 +1,13 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'token.g.dart';
 
 const String rpcUrl = 'http://localhost:8545';
-const String wsUrl = 'ws://localhost:8545';
+final wsUrl = Uri.parse('ws://localhost:8545');
 
 const String privateKey =
     '9a43d93a50b622761d88c80c90567c02c82442746335a01b72f49b3c867c037d';
@@ -55,11 +57,15 @@ Future<void> main() async {
   // establish a connection to the ethereum rpc node. The socketConnector
   // property allows more efficient event streams over websocket instead of
   // http-polls. However, the socketConnector property is experimental.
-  final client = Web3Client(rpcUrl, Client(), socketConnector: () {
-    return IOWebSocketChannel.connect(wsUrl).cast<String>();
-  });
+  final client = Web3Client(
+    rpcUrl,
+    Client(),
+    socketConnector: () {
+      return WebSocketChannel.connect(wsUrl).cast<String>();
+    },
+  );
   final credentials = EthPrivateKey.fromHex(privateKey);
-  final ownAddress = await credentials.extractAddress();
+  final ownAddress = credentials.address;
 
   // read the contract abi and tell web3dart where it's deployed (contractAddr)
   final token = Token(address: contractAddr, client: client);

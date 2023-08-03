@@ -3,11 +3,6 @@
 /// from previous states of the blockchain as well. This class specifies which
 /// state to use.
 class BlockNum {
-  final bool useAbsolute;
-  final int blockNum;
-
-  bool get isPending => !useAbsolute && blockNum == 2;
-
   /// Use the state of the blockchain at the block specified.
   const BlockNum.exact(this.blockNum) : useAbsolute = true;
 
@@ -26,6 +21,11 @@ class BlockNum {
   const BlockNum.pending()
       : useAbsolute = false,
         blockNum = 2;
+
+  final bool useAbsolute;
+  final int blockNum;
+
+  bool get isPending => !useAbsolute && blockNum == 2;
 
   /// Generates the block parameter as it is accepted by the Ethereum client.
   String toBlockParam() {

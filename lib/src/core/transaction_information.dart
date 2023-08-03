@@ -2,7 +2,7 @@ part of 'package:web3dart/web3dart.dart';
 
 class TransactionInformation {
   TransactionInformation.fromMap(Map<String, dynamic> map)
-      : blockHash = map['blockHash'] as String,
+      : blockHash = map['blockHash'] as String?,
         blockNumber = map['blockNumber'] != null
             ? BlockNum.exact(int.parse(map['blockNumber'] as String))
             : const BlockNum.pending(),
@@ -76,19 +76,20 @@ class TransactionInformation {
 }
 
 class TransactionReceipt {
-  TransactionReceipt(
-      {required this.transactionHash,
-      required this.transactionIndex,
-      required this.blockHash,
-      required this.cumulativeGasUsed,
-      this.blockNumber = const BlockNum.pending(),
-      this.contractAddress,
-      this.status,
-      this.from,
-      this.to,
-      this.gasUsed,
-      this.effectiveGasPrice,
-      this.logs = const []});
+  TransactionReceipt({
+    required this.transactionHash,
+    required this.transactionIndex,
+    required this.blockHash,
+    required this.cumulativeGasUsed,
+    this.blockNumber = const BlockNum.pending(),
+    this.contractAddress,
+    this.status,
+    this.from,
+    this.to,
+    this.gasUsed,
+    this.effectiveGasPrice,
+    this.logs = const [],
+  });
 
   TransactionReceipt.fromMap(Map<String, dynamic> map)
       : transactionHash = hexToBytes(map['transactionHash'] as String),
@@ -108,7 +109,8 @@ class TransactionReceipt {
             map['gasUsed'] != null ? hexToInt(map['gasUsed'] as String) : null,
         effectiveGasPrice = map['effectiveGasPrice'] != null
             ? EtherAmount.inWei(
-                BigInt.parse(map['effectiveGasPrice'] as String))
+                BigInt.parse(map['effectiveGasPrice'] as String),
+              )
             : null,
         contractAddress = map['contractAddress'] != null
             ? EthereumAddress.fromHex(map['contractAddress'] as String)
@@ -118,7 +120,10 @@ class TransactionReceipt {
             : null,
         logs = map['logs'] != null
             ? (map['logs'] as List<dynamic>)
-                .map((log) => FilterEvent.fromMap(log as Map<String, dynamic>))
+                .map(
+                  (dynamic log) =>
+                      FilterEvent.fromMap(log as Map<String, dynamic>),
+                )
                 .toList()
             : [];
 
@@ -160,6 +165,23 @@ class TransactionReceipt {
 
   final EtherAmount? effectiveGasPrice;
 
+  Map<String, dynamic> toMap() {
+    return {
+      'transactionHash': bytesToHex(transactionHash, include0x: true),
+      'transactionIndex': '0x${transactionIndex.toRadixString(16)}',
+      'blockHash': bytesToHex(blockHash, include0x: true),
+      'blockNumber': '0x${blockNumber.blockNum.toRadixString(16)}',
+      'from': from?.hex,
+      'to': to?.hex,
+      'cumulativeGasUsed': '0x${cumulativeGasUsed.toRadixString(16)}',
+      'gasUsed': gasUsed == null ? '0x0' : '0x${gasUsed!.toRadixString(16)}',
+      'contractAddress': contractAddress?.hex,
+      'logs': logs.map((log) => log.toMap()).toList(),
+      'status': status == null ? '0x0' : '0x${status! ? "1" : "0"}',
+    };
+  }
+
+
   @override
   String toString() {
     return 'TransactionReceipt{transactionHash: ${bytesToHex(transactionHash)}, '
@@ -191,9 +213,9 @@ class TransactionReceipt {
       identical(this, other) ||
       other is TransactionReceipt &&
           runtimeType == other.runtimeType &&
-          const ListEquality().equals(transactionHash, other.transactionHash) &&
+          eq.equals(transactionHash, other.transactionHash) &&
           transactionIndex == other.transactionIndex &&
-          const ListEquality().equals(blockHash, other.blockHash) &&
+          eq.equals(blockHash, other.blockHash) &&
           blockNumber == other.blockNumber &&
           from == other.from &&
           to == other.to &&
@@ -202,7 +224,7 @@ class TransactionReceipt {
           contractAddress == other.contractAddress &&
           status == other.status &&
           effectiveGasPrice == other.effectiveGasPrice &&
-          const ListEquality().equals(logs, other.logs);
+          eq.equals(logs, other.logs);
 
   @override
   int get hashCode =>

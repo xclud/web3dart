@@ -40,7 +40,6 @@ class Web3Client {
   /// will use the [StreamChannel] returned by this function as a socket to send
   /// event requests and parse responses. Can be null, in which case a polling
   /// implementation for events will be used.
-  @experimental
   final SocketConnector? socketConnector;
 
   rpc.Peer? _streamRpcPeer;
@@ -74,7 +73,7 @@ class Web3Client {
     _streamRpcPeer = rpc.Peer(socket)
       ..registerMethod('eth_subscription', _filters.handlePubSubNotification);
 
-    _streamRpcPeer?.listen().then((_) {
+    _streamRpcPeer?.listen().then((dynamic _) {
       // .listen() will complete when the socket is closed, so reset client
       _streamRpcPeer = null;
       _filters.handleConnectionClosed();
@@ -174,7 +173,7 @@ class Web3Client {
   Future<EtherAmount> getGasPrice() async {
     final data = await _makeRPCCall<String>('eth_gasPrice');
 
-    return EtherAmount.fromUnitAndValue(EtherUnit.wei, hexToInt(data));
+    return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
   }
 
   /// Returns the number of the most recent block on the chain.
@@ -183,11 +182,14 @@ class Web3Client {
         .then((s) => hexToInt(s).toInt());
   }
 
-  Future<BlockInformation> getBlockInformation(
-      {String blockNumber = 'latest', bool isContainFullObj = true}) {
+  Future<BlockInformation> getBlockInformation({
+    String blockNumber = 'latest',
+    bool isContainFullObj = true,
+  }) {
     return _makeRPCCall<Map<String, dynamic>>(
-            'eth_getBlockByNumber', [blockNumber, isContainFullObj])
-        .then((json) => BlockInformation.fromJson(json));
+      'eth_getBlockByNumber',
+      [blockNumber, isContainFullObj],
+    ).then((json) => BlockInformation.fromJson(json));
   }
 
   /// Gets the balance of the account with the specified address.
@@ -199,7 +201,7 @@ class Web3Client {
 
     return _makeRPCCall<String>('eth_getBalance', [address.hex, blockParam])
         .then((data) {
-      return EtherAmount.fromUnitAndValue(EtherUnit.wei, hexToInt(data));
+      return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
     });
   }
 
@@ -209,14 +211,17 @@ class Web3Client {
   /// more details.
   /// This function allows specifying a custom block mined in the past to get
   /// historical data. By default, [BlockNum.current] will be used.
-  Future<Uint8List> getStorage(EthereumAddress address, BigInt position,
-      {BlockNum? atBlock}) {
+  Future<Uint8List> getStorage(
+    EthereumAddress address,
+    BigInt position, {
+    BlockNum? atBlock,
+  }) {
     final blockParam = _getBlockParam(atBlock);
 
     return _makeRPCCall<String>('eth_getStorageAt', [
       address.hex,
       '0x${position.toRadixString(16)}',
-      blockParam
+      blockParam,
     ]).then(hexToBytes);
   }
 
@@ -224,28 +229,37 @@ class Web3Client {
   ///
   /// This function allows specifying a custom block mined in the past to get
   /// historical data. By default, [BlockNum.current] will be used.
-  Future<int> getTransactionCount(EthereumAddress address,
-      {BlockNum? atBlock}) {
+  Future<int> getTransactionCount(
+    EthereumAddress address, {
+    BlockNum? atBlock,
+  }) {
     final blockParam = _getBlockParam(atBlock);
 
     return _makeRPCCall<String>(
-            'eth_getTransactionCount', [address.hex, blockParam])
-        .then((hex) => hexToInt(hex).toInt());
+      'eth_getTransactionCount',
+      [address.hex, blockParam],
+    ).then((hex) => hexToInt(hex).toInt());
   }
 
   /// Returns the information about a transaction requested by transaction hash
   /// [transactionHash].
-  Future<TransactionInformation> getTransactionByHash(String transactionHash) {
-    return _makeRPCCall<Map<String, dynamic>>(
-            'eth_getTransactionByHash', [transactionHash])
-        .then((s) => TransactionInformation.fromMap(s));
+  Future<TransactionInformation?> getTransactionByHash(
+    String transactionHash,
+  ) async {
+    final map = await _makeRPCCall<Map<String, dynamic>?>(
+      'eth_getTransactionByHash',
+      [transactionHash],
+    );
+    if (map == null) return null;
+    return TransactionInformation.fromMap(map);
   }
 
   /// Returns an receipt of a transaction based on its hash.
   Future<TransactionReceipt?> getTransactionReceipt(String hash) {
     return _makeRPCCall<Map<String, dynamic>?>(
-            'eth_getTransactionReceipt', [hash])
-        .then((s) => s != null ? TransactionReceipt.fromMap(s) : null);
+      'eth_getTransactionReceipt',
+      [hash],
+    ).then((s) => s != null ? TransactionReceipt.fromMap(s) : null);
   }
 
   /// Gets the code of a contract at the specified [address]
@@ -254,7 +268,9 @@ class Web3Client {
   /// historical data. By default, [BlockNum.current] will be used.
   Future<Uint8List> getCode(EthereumAddress address, {BlockNum? atBlock}) {
     return _makeRPCCall<String>(
-        'eth_getCode', [address.hex, _getBlockParam(atBlock)]).then(hexToBytes);
+      'eth_getCode',
+      [address.hex, _getBlockParam(atBlock)],
+    ).then(hexToBytes);
   }
 
   /// Returns all logs matched by the filter in [options].
@@ -265,8 +281,39 @@ class Web3Client {
   Future<List<FilterEvent>> getLogs(FilterOptions options) {
     final filter = _EventFilter(options);
     return _makeRPCCall<List<dynamic>>(
-        'eth_getLogs', [filter._createParamsObject(true)]).then((logs) {
+      'eth_getLogs',
+      [filter._createParamsObject(true)],
+    ).then((logs) {
       return logs.map(filter.parseChanges).toList();
+    });
+  }
+
+  /// Returns fee history of some blocks
+  Future<Map<String, dynamic>> getFeeHistory(
+    int blockCount, {
+    BlockNum? atBlock,
+    List<double>? rewardPercentiles,
+  }) {
+    final blockParam = _getBlockParam(atBlock);
+
+    return _makeRPCCall<Map<String, dynamic>>(
+      'eth_feeHistory',
+      [blockCount, blockParam, rewardPercentiles],
+    ).then((history) {
+      return history.map((key, dynamic value) {
+        if (key == 'baseFeePerGas') {
+          value = value.map((dynamic e) => hexToInt(e.toString())).toList();
+        } else if (key == 'reward') {
+          value = value.map(
+            (dynamic eList) {
+              return eList.map((dynamic e) => hexToInt(e.toString())).toList();
+            },
+          ).toList();
+        } else if (key == 'oldestBlock') {
+          value = hexToInt(value.toString());
+        }
+        return MapEntry(key, value);
+      });
     });
   }
 
@@ -276,14 +323,22 @@ class Web3Client {
   /// Returns a hash of the transaction which, after the transaction has been
   /// included in a mined block, can be used to obtain detailed information
   /// about the transaction.
-  Future<String> sendTransaction(Credentials cred, Transaction transaction,
-      {int? chainId = 1, bool fetchChainIdFromNetworkId = false}) async {
+  Future<String> sendTransaction(
+    Credentials cred,
+    Transaction transaction, {
+    int? chainId = 1,
+    bool fetchChainIdFromNetworkId = false,
+  }) async {
     if (cred is CustomTransactionSender) {
       return cred.sendTransaction(transaction);
     }
 
-    var signed = await signTransaction(cred, transaction,
-        chainId: chainId, fetchChainIdFromNetworkId: fetchChainIdFromNetworkId);
+    var signed = await signTransaction(
+      cred,
+      transaction,
+      chainId: chainId,
+      fetchChainIdFromNetworkId: fetchChainIdFromNetworkId,
+    );
 
     if (transaction.isEIP1559) {
       signed = prependTransactionType(0x02, signed);
@@ -301,7 +356,7 @@ class Web3Client {
   /// about the transaction.
   Future<String> sendRawTransaction(Uint8List signedTransaction) async {
     return _makeRPCCall('eth_sendRawTransaction', [
-      bytesToHex(signedTransaction, include0x: true, padToEvenLength: true)
+      bytesToHex(signedTransaction, include0x: true, padToEvenLength: true),
     ]);
   }
 
@@ -311,8 +366,12 @@ class Web3Client {
   /// See also:
   ///  - [bytesToHex], which can be used to get the more common hexadecimal
   /// representation of the transaction.
-  Future<Uint8List> signTransaction(Credentials cred, Transaction transaction,
-      {int? chainId = 1, bool fetchChainIdFromNetworkId = false}) async {
+  Future<Uint8List> signTransaction(
+    Credentials cred,
+    Transaction transaction, {
+    int? chainId = 1,
+    bool fetchChainIdFromNetworkId = false,
+  }) async {
     final signingInput = await _fillMissingData(
       credentials: cred,
       transaction: transaction,
@@ -321,8 +380,11 @@ class Web3Client {
       client: this,
     );
 
-    return _signTransaction(signingInput.transaction, signingInput.credentials,
-        signingInput.chainId);
+    return _signTransaction(
+      signingInput.transaction,
+      signingInput.credentials,
+      signingInput.chainId,
+    );
   }
 
   /// Calls a [function] defined in the smart [contract] and returns it's
@@ -333,12 +395,13 @@ class Web3Client {
   /// would require a transaction which can be sent via [sendTransaction].
   /// As no data will be written, you can use the [sender] to specify any
   /// Ethereum address that would call that function. To use the address of a
-  /// credential, call [Credentials.extractAddress].
+  /// credential, call [Credentials.address].
   ///
   /// This function allows specifying a custom block mined in the past to get
   /// historical data. By default, [BlockNum.current] will be used.
   Future<List<dynamic>> call({
     EthereumAddress? sender,
+    EtherAmount? value,
     required DeployedContract contract,
     required ContractFunction function,
     required List<dynamic> params,
@@ -346,6 +409,7 @@ class Web3Client {
   }) async {
     final encodedResult = await callRaw(
       sender: sender,
+      value: value,
       contract: contract.address,
       data: function.encodeCall(params),
       atBlock: atBlock,
@@ -390,6 +454,10 @@ class Web3Client {
     return hexToInt(amountHex);
   }
 
+  Future<List<eip1559.Fee>> getGasInEIP1559() async {
+    return eip1559.getGasInEIP1559(_jsonRpc.url);
+  }
+
   /// Sends a raw method call to a smart contract.
   ///
   /// The connected node must be able to calculate the result locally, which
@@ -397,7 +465,7 @@ class Web3Client {
   /// would require a transaction which can be sent via [sendTransaction].
   /// As no data will be written, you can use the [sender] to specify any
   /// Ethereum address that would call that function. To use the address of a
-  /// credential, call [Credentials.extractAddress].
+  /// credential, call [Credentials.address].
   ///
   /// This function allows specifying a custom block mined in the past to get
   /// historical data. By default, [BlockNum.current] will be used.

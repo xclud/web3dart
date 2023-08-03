@@ -6,7 +6,15 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 // ignore: one_member_abstracts
+
+/// RPC Service base class.
 abstract class RpcService {
+  /// Constructor.
+  RpcService(this.url);
+
+  /// Url.
+  final String url;
+
   /// Performs an RPC request, asking the server to execute the function with
   /// the given name and the associated parameters, which need to be encodable
   /// with the [json] class of dart:convert.
@@ -17,10 +25,12 @@ abstract class RpcService {
   Future<RPCResponse> call(String function, [List<dynamic>? params]);
 }
 
+/// Json RPC Service.
 class JsonRPC extends RpcService {
-  JsonRPC(this.url, this.client);
+  /// Constructor.
+  JsonRPC(String url, this.client) : super(url);
 
-  final String url;
+  /// Http client.
   final Client client;
 
   int _currentRequestId = 1;
@@ -50,7 +60,6 @@ class JsonRPC extends RpcService {
     );
 
     final data = json.decode(response.body) as Map<String, dynamic>;
-    final id = data['id'] as int;
 
     if (data.containsKey('error')) {
       final error = data['error'];
@@ -62,6 +71,7 @@ class JsonRPC extends RpcService {
       throw RPCError(code, message, errorData);
     }
 
+    final id = data['id'] as int;
     final result = data['result'];
     return RPCResponse(id, result);
   }
@@ -70,22 +80,32 @@ class JsonRPC extends RpcService {
 /// Response from the server to an rpc request. Contains the id of the request
 /// and the corresponding result as sent by the server.
 class RPCResponse {
-  final int id;
-  final dynamic result;
-
+  /// Constructor.
   const RPCResponse(this.id, this.result);
+
+  /// Id.
+  final int id;
+
+  /// Result.
+  final dynamic result;
 }
 
 /// Exception thrown when an the server returns an error code to an rpc request.
 class RPCError implements Exception {
-  final int errorCode;
-  final String message;
-  final dynamic data;
-
+  /// Constructor.
   const RPCError(this.errorCode, this.message, this.data);
+
+  /// Error code.
+  final int errorCode;
+
+  /// Message.
+  final String message;
+
+  /// Data.
+  final dynamic data;
 
   @override
   String toString() {
-    return 'RPCError: got code $errorCode with msg \"$message\".';
+    return 'RPCError: got code $errorCode with msg "$message".';
   }
 }

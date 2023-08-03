@@ -1,16 +1,14 @@
 part of 'package:web3dart/web3dart.dart';
 
 class _FilterCreationParams {
+  _FilterCreationParams(this.method, this.params);
   final String method;
   final List<dynamic> params;
-
-  _FilterCreationParams(this.method, this.params);
 }
 
 class _PubSubCreationParams {
-  final List<dynamic> params;
-
   _PubSubCreationParams(this.params);
+  final List<dynamic> params;
 }
 
 abstract class _Filter<T> {
@@ -53,7 +51,7 @@ class _PendingTransactionsFilter extends _Filter<String> {
   }
 
   @override
-  String parseChanges(log) {
+  String parseChanges(dynamic log) {
     return log as String;
   }
 
@@ -67,14 +65,14 @@ class _PendingTransactionsFilter extends _Filter<String> {
 class FilterOptions {
   FilterOptions({this.fromBlock, this.toBlock, this.address, this.topics});
 
-  FilterOptions.events(
-      {required DeployedContract contract,
-      required ContractEvent event,
-      this.fromBlock,
-      this.toBlock})
-      : address = contract.address,
+  FilterOptions.events({
+    required DeployedContract contract,
+    required ContractEvent event,
+    this.fromBlock,
+    this.toBlock,
+  })  : address = contract.address,
         topics = [
-          [bytesToHex(event.signature, padToEvenLength: true, include0x: true)]
+          [bytesToHex(event.signature, padToEvenLength: true, include0x: true)],
         ];
 
   /// The earliest block which should be considered for this filter. Optional,
@@ -116,21 +114,22 @@ class FilterOptions {
   /// All further topics are the encoded values of the indexed parameters of the
   /// event. See https://solidity.readthedocs.io/en/develop/contracts.html#events
   /// for a detailed description.
-  final List<List<String>>? topics;
+  final List<List<String?>>? topics;
 }
 
 /// A log event emitted in a transaction.
 class FilterEvent {
-  FilterEvent(
-      {this.removed,
-      this.logIndex,
-      this.transactionIndex,
-      this.transactionHash,
-      this.blockHash,
-      this.blockNum,
-      this.address,
-      this.data,
-      this.topics});
+  FilterEvent({
+    this.removed,
+    this.logIndex,
+    this.transactionIndex,
+    this.transactionHash,
+    this.blockHash,
+    this.blockNum,
+    this.address,
+    this.data,
+    this.topics,
+  });
 
   FilterEvent.fromMap(Map<String, dynamic> log)
       : removed = log['removed'] as bool? ?? false,
@@ -150,7 +149,7 @@ class FilterEvent {
             : null,
         address = EthereumAddress.fromHex(log['address'] as String),
         data = log['data'] as String?,
-        topics = (log['topics'] as List?)?.cast<String>();
+        topics = (log['topics'] as List?)?.cast<String?>();
 
   Map<String, dynamic> toMap() {
     return {
@@ -205,7 +204,24 @@ class FilterEvent {
   /// For solidity events, the first topic is a hash of the event signature
   /// (except for anonymous events). All further topics are the encoded
   /// values of indexed parameters.
-  final List<String>? topics;
+  final List<String?>? topics;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'removed': removed,
+      'logIndex': logIndex == null ? null : '0x${logIndex!.toRadixString(16)}',
+      'transactionIndex': transactionIndex == null
+          ? null
+          : '0x${transactionIndex!.toRadixString(16)}',
+      'transactionHash': transactionHash,
+      'blockHash': blockHash,
+      'blockNumber':
+          blockNum == null ? null : '0x${blockNum!.toRadixString(16)}',
+      'address': address?.hex,
+      'data': data,
+      'topics': topics
+    };
+  }
 
   @override
   String toString() {
@@ -235,7 +251,7 @@ class FilterEvent {
           blockNum == other.blockNum &&
           address == other.address &&
           data == other.data &&
-          const ListEquality().equals(topics, other.topics);
+          eq.equals(topics, other.topics);
 
   @override
   int get hashCode =>
@@ -251,9 +267,8 @@ class FilterEvent {
 }
 
 class _EventFilter extends _Filter<FilterEvent> {
-  final FilterOptions options;
-
   _EventFilter(this.options);
+  final FilterOptions options;
 
   @override
   _FilterCreationParams create() {
@@ -289,7 +304,7 @@ class _EventFilter extends _Filter<FilterEvent> {
   }
 
   @override
-  FilterEvent parseChanges(log) {
+  FilterEvent parseChanges(dynamic log) {
     return FilterEvent.fromMap(log as Map<String, dynamic>);
   }
 }
@@ -347,7 +362,9 @@ class _FilterEngine {
   }
 
   Future<void> _registerToPubSub(
-      _InstantiatedFilter filter, _PubSubCreationParams params) async {
+    _InstantiatedFilter filter,
+    _PubSubCreationParams params,
+  ) async {
     final peer = _client._connectWithPeer();
 
     try {
@@ -435,6 +452,9 @@ class _FilterEngine {
 }
 
 class _InstantiatedFilter<T> {
+  _InstantiatedFilter(this.filter, this.isPubSub, Function() onCancel)
+      : _controller = StreamController(onCancel: onCancel);
+
   /// The id of this filter. This value will be obtained from the API after the
   /// filter has been set up and is `null` before that.
   String? id;
@@ -444,7 +464,4 @@ class _InstantiatedFilter<T> {
   final bool isPubSub;
 
   final StreamController<T> _controller;
-
-  _InstantiatedFilter(this.filter, this.isPubSub, Function() onCancel)
-      : _controller = StreamController(onCancel: onCancel);
 }

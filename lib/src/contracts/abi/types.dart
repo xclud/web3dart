@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
-
-import '../../utils/length_tracking_byte_sink.dart';
 import 'arrays.dart';
 import 'integers.dart';
 import 'tuple.dart';
+
+import '../../../web3dart.dart' show LengthTrackingByteSink;
 
 /// The length of the encoding of a solidity type is always a multiplicative of
 /// this unit size.
@@ -14,6 +13,7 @@ const int sizeUnitBytes = 32;
 /// A type that can be encoded and decoded as specified in the solidity ABI,
 /// available at https://solidity.readthedocs.io/en/develop/abi-spec.html
 abstract class AbiType<T> {
+  /// Constructor.
   const AbiType();
 
   /// The name of this type, as it would appear in a method signature in the
@@ -26,14 +26,20 @@ abstract class AbiType<T> {
   /// Writes [data] into the [buffer].
   void encode(T data, LengthTrackingByteSink buffer);
 
+  /// Decode.
   DecodingResult<T> decode(ByteBuffer buffer, int offset);
 }
 
 /// Information about whether the length of an encoding depends on the data
 /// (dynamic) or is fixed (static). If it's static, also contains information
 /// about the length of the encoding.
-@immutable
 class EncodingLengthInfo {
+  /// Constructor.
+  const EncodingLengthInfo(this.length);
+
+  /// Constructor.
+  const EncodingLengthInfo.dynamic() : length = null;
+
   /// When this encoding length is not [isDynamic], the length (in bytes) of
   /// an encoded payload. Otherwise null.
   final int? length;
@@ -44,9 +50,6 @@ class EncodingLengthInfo {
   /// abi encoding and are treated differently when being a part of a tuple or
   /// an array.
   bool get isDynamic => length == null;
-
-  const EncodingLengthInfo(this.length);
-  const EncodingLengthInfo.dynamic() : length = null;
 }
 
 /// Calculates the amount of padding bytes needed so that the length of the
@@ -63,11 +66,16 @@ int calculatePadLength(int bodyLength, {bool allowEmpty = false}) {
   return remainder == 0 ? 0 : sizeUnitBytes - remainder;
 }
 
+/// Decoding Result.
 class DecodingResult<T> {
-  final T data;
-  final int bytesRead;
-
+  /// Constructor.
   DecodingResult(this.data, this.bytesRead);
+
+  /// Data.
+  final T data;
+
+  /// Bytes read.
+  final int bytesRead;
 
   @override
   String toString() {
@@ -98,7 +106,8 @@ const Map<String, AbiType> _easyTypes = {
 };
 
 final RegExp _trailingDigits = RegExp(r'^(?:\D|\d)*\D(\d*)$');
-@internal
+
+/// Array RegExp.
 final RegExp array = RegExp(r'^(.*)\[(\d*)\]$');
 final RegExp _tuple = RegExp(r'^\((.*)\)$');
 
@@ -156,7 +165,8 @@ AbiType parseAbiType(String name) {
     if (typeBuffer.isNotEmpty) {
       if (openParenthesises != 0) {
         throw ArgumentError(
-            'Could not parse abi type because of mismatched brackets: $name');
+          'Could not parse abi type because of mismatched brackets: $name',
+        );
       }
       types.add(parseAbiType(typeBuffer.toString()));
     }

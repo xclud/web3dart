@@ -18,10 +18,12 @@ String strip0x(String hex) {
 /// representation. If [forcePadLength] is set, the hexadecimal representation
 /// will be expanded with zeroes until the desired length is reached. The "0x"
 /// prefix does not count for the length.
-String bytesToHex(List<int> bytes,
-    {bool include0x = false,
-    int? forcePadLength,
-    bool padToEvenLength = false}) {
+String bytesToHex(
+  List<int> bytes, {
+  bool include0x = false,
+  int? forcePadLength,
+  bool padToEvenLength = false,
+}) {
   var encoded = hex.encode(bytes);
 
   if (forcePadLength != null) {
