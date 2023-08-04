@@ -192,6 +192,16 @@ class Web3Client {
     ).then((json) => BlockInformation.fromJson(json));
   }
 
+  Future<Map<String, dynamic>> getBlockByNumber({
+    String blockNumber = 'latest',
+    bool isContainFullObj = true,
+  }) {
+    return _makeRPCCall<Map<String, dynamic>>(
+      'eth_getBlockByNumber',
+      [blockNumber, isContainFullObj],
+    ).then((json) => json);
+  }
+
   /// Gets the balance of the account with the specified address.
   ///
   /// This function allows specifying a custom block mined in the past to get

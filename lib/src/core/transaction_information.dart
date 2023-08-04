@@ -23,6 +23,25 @@ class TransactionInformation {
         r = hexToInt(map['r'] as String),
         s = hexToInt(map['s'] as String);
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'blockHash': blockHash,
+      'blockNumber': '0x${blockNumber.blockNum.toRadixString(16)}',
+      'from': from.toString(),
+      'gas': '0x${gas.toRadixString(16)}',
+      'gasPrice': '0x${gasPrice.getInWei.toRadixString(16)}',
+      'hash': hash,
+      'input': bytesToHex(input, include0x: true),
+      'nonce': '0x${nonce.toRadixString(16)}',
+      'to': to?.toString(),
+      'transactionIndex': '0x${transactionIndex?.toRadixString(16) ?? '0'}',
+      'value': '0x${value.getInWei.toRadixString(16)}',
+      'v': '0x${v.toRadixString(16)}',
+      'r': '0x${r.toRadixString(16)}',
+      's': '0x${s.toRadixString(16)}',
+    };
+  }
+
   /// The hash of the block containing this transaction. If this transaction has
   /// not been mined yet and is thus in no block, it will be `null`
   final String? blockHash;
@@ -181,7 +200,6 @@ class TransactionReceipt {
     };
   }
 
-
   @override
   String toString() {
     return 'TransactionReceipt{transactionHash: ${bytesToHex(transactionHash)}, '
@@ -190,22 +208,6 @@ class TransactionReceipt {
         'cumulativeGasUsed: $cumulativeGasUsed, gasUsed: $gasUsed, '
         'contractAddress: ${contractAddress?.hex}, status: $status, '
         'effectiveGasPrice: $effectiveGasPrice, logs: $logs}';
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'transactionHash': bytesToHex(transactionHash, include0x: true),
-      'transactionIndex': '0x${transactionIndex.toRadixString(16)}',
-      'blockHash': bytesToHex(blockHash, include0x: true),
-      'blockNumber': '0x${blockNumber.blockNum.toRadixString(16)}',
-      'from': from?.hex,
-      'to': to?.hex,
-      'cumulativeGasUsed': '0x${cumulativeGasUsed.toRadixString(16)}',
-      'gasUsed': gasUsed == null ? '0x0' : '0x${gasUsed!.toRadixString(16)}',
-      'contractAddress': contractAddress?.hex,
-      'logs': logs.map((log) => log.toMap()).toList(),
-      'status': status == null ? '0x0' : '0x${status! ? "1" : "0"}',
-    };
   }
 
   @override
