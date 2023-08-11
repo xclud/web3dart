@@ -17,3 +17,6 @@ dev_dependencies:
   test: ^1.22.0
   coverage: ^1.1.0
   lints: ^2.0.0
+
+dependency_overrides: 
+  http: ^0.13.6
