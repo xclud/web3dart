@@ -1,6 +1,10 @@
+## 1.0.6
+
+- Fix `EthereumAddress.fromHex` address check.
+
 ## 1.0.5
 
-- Fix `getBlockInformation` params
+- Fix `getBlockInformation` params.
 
 ## 1.0.4
 

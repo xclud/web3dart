@@ -56,7 +56,7 @@ class EthereumAddress implements Comparable<EthereumAddress> {
   }
 
   static final RegExp _basicAddress =
-      RegExp('^(0x)?[0-9a-f]{40}', caseSensitive: false);
+      RegExp(r'^(0x)?[0-9a-f]{40}$', caseSensitive: false);
 
   /// The length of an ethereum address, in bytes.
   static const addressByteLength = 20;
