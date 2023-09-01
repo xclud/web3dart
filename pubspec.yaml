@@ -9,9 +9,9 @@ environment:
 
 dependencies:
   pointycastle: ^3.7.3
-  sec: ^1.0.1
-  http: ">=0.13.1 <2.0.0"
-  uuid: ^3.0.7
+  sec: ^1.1.0
+  http: ^1.1.0
+  uuid: ^4.0.0
   json_rpc_2: ^3.0.2
   stream_transform: ^2.1.0
   stream_channel: ^2.1.1
