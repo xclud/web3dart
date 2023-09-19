@@ -48,6 +48,12 @@ class Web3Client {
   ///Whether errors, handled or not, should be printed to the console.
   bool printErrors = false;
 
+  Future<T> makeRPCCall<T>(String function, [List<dynamic>? params]) async {
+    return await _makeRPCCall(function, params);
+  }
+
+  // TODO: Remove
+  @Deprecated('Use the public makeRPCCall')
   Future<T> _makeRPCCall<T>(String function, [List<dynamic>? params]) async {
     try {
       final data = await _jsonRpc.call(function, params);
