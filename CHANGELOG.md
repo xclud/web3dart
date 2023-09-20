@@ -1,3 +1,7 @@
+## 2.7.2
+
+* Minor improvements.
+
 ## 2.7.1
 
 * Nullable topics.

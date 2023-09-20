@@ -49,12 +49,6 @@ class Web3Client {
   bool printErrors = false;
 
   Future<T> makeRPCCall<T>(String function, [List<dynamic>? params]) async {
-    return await _makeRPCCall(function, params);
-  }
-
-  // TODO: Remove
-  @Deprecated('Use the public makeRPCCall')
-  Future<T> _makeRPCCall<T>(String function, [List<dynamic>? params]) async {
     try {
       final data = await _jsonRpc.call(function, params);
       // ignore: only_throw_errors
@@ -101,7 +95,7 @@ class Web3Client {
 
   /// Returns the version of the client we're sending requests to.
   Future<String> getClientVersion() {
-    return _makeRPCCall('web3_clientVersion');
+    return makeRPCCall('web3_clientVersion');
   }
 
   /// Returns the id of the network the client is currently connected to.
@@ -114,27 +108,27 @@ class Web3Client {
   /// 4: Rinkeby Testnet
   /// 42: Kovan Testnet
   Future<int> getNetworkId() {
-    return _makeRPCCall<String>('net_version').then(int.parse);
+    return makeRPCCall<String>('net_version').then(int.parse);
   }
 
   Future<BigInt> getChainId() {
-    return _makeRPCCall<String>('eth_chainId').then(BigInt.parse);
+    return makeRPCCall<String>('eth_chainId').then(BigInt.parse);
   }
 
   /// Returns true if the node is actively listening for network connections.
   Future<bool> isListeningForNetwork() {
-    return _makeRPCCall('net_listening');
+    return makeRPCCall('net_listening');
   }
 
   /// Returns the amount of Ethereum nodes currently connected to the client.
   Future<int> getPeerCount() async {
-    final hex = await _makeRPCCall<String>('net_peerCount');
+    final hex = await makeRPCCall<String>('net_peerCount');
     return hexToInt(hex).toInt();
   }
 
   /// Returns the version of the Ethereum-protocol the client is using.
   Future<int> getEtherProtocolVersion() async {
-    final hex = await _makeRPCCall<String>('eth_protocolVersion');
+    final hex = await makeRPCCall<String>('eth_protocolVersion');
     return hexToInt(hex).toInt();
   }
 
@@ -143,7 +137,7 @@ class Web3Client {
   ///
   /// If so, progress information is returned via [SyncInformation].
   Future<SyncInformation> getSyncStatus() async {
-    final data = await _makeRPCCall<dynamic>('eth_syncing');
+    final data = await makeRPCCall<dynamic>('eth_syncing');
 
     if (data is Map) {
       final startingBlock = hexToInt(data['startingBlock'] as String).toInt();
@@ -157,19 +151,18 @@ class Web3Client {
   }
 
   Future<EthereumAddress> coinbaseAddress() async {
-    final hex = await _makeRPCCall<String>('eth_coinbase');
+    final hex = await makeRPCCall<String>('eth_coinbase');
     return EthereumAddress.fromHex(hex);
   }
 
   /// Returns true if the connected client is currently mining, false if not.
   Future<bool> isMining() {
-    return _makeRPCCall('eth_mining');
+    return makeRPCCall('eth_mining');
   }
 
   /// Returns the amount of hashes per second the connected node is mining with.
   Future<int> getMiningHashrate() {
-    return _makeRPCCall<String>('eth_hashrate')
-        .then((s) => hexToInt(s).toInt());
+    return makeRPCCall<String>('eth_hashrate').then((s) => hexToInt(s).toInt());
   }
 
   /// Returns the amount of Ether typically needed to pay for one unit of gas.
@@ -177,14 +170,14 @@ class Web3Client {
   /// Although not strictly defined, this value will typically be a sensible
   /// amount to use.
   Future<EtherAmount> getGasPrice() async {
-    final data = await _makeRPCCall<String>('eth_gasPrice');
+    final data = await makeRPCCall<String>('eth_gasPrice');
 
     return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
   }
 
   /// Returns the number of the most recent block on the chain.
   Future<int> getBlockNumber() {
-    return _makeRPCCall<String>('eth_blockNumber')
+    return makeRPCCall<String>('eth_blockNumber')
         .then((s) => hexToInt(s).toInt());
   }
 
@@ -192,7 +185,7 @@ class Web3Client {
     String blockNumber = 'latest',
     bool isContainFullObj = true,
   }) {
-    return _makeRPCCall<Map<String, dynamic>>(
+    return makeRPCCall<Map<String, dynamic>>(
       'eth_getBlockByNumber',
       [blockNumber, isContainFullObj],
     ).then((json) => BlockInformation.fromJson(json));
@@ -205,7 +198,7 @@ class Web3Client {
   Future<EtherAmount> getBalance(EthereumAddress address, {BlockNum? atBlock}) {
     final blockParam = _getBlockParam(atBlock);
 
-    return _makeRPCCall<String>('eth_getBalance', [address.hex, blockParam])
+    return makeRPCCall<String>('eth_getBalance', [address.hex, blockParam])
         .then((data) {
       return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
     });
@@ -224,7 +217,7 @@ class Web3Client {
   }) {
     final blockParam = _getBlockParam(atBlock);
 
-    return _makeRPCCall<String>('eth_getStorageAt', [
+    return makeRPCCall<String>('eth_getStorageAt', [
       address.hex,
       '0x${position.toRadixString(16)}',
       blockParam,
@@ -241,7 +234,7 @@ class Web3Client {
   }) {
     final blockParam = _getBlockParam(atBlock);
 
-    return _makeRPCCall<String>(
+    return makeRPCCall<String>(
       'eth_getTransactionCount',
       [address.hex, blockParam],
     ).then((hex) => hexToInt(hex).toInt());
@@ -252,7 +245,7 @@ class Web3Client {
   Future<TransactionInformation?> getTransactionByHash(
     String transactionHash,
   ) async {
-    final map = await _makeRPCCall<Map<String, dynamic>?>(
+    final map = await makeRPCCall<Map<String, dynamic>?>(
       'eth_getTransactionByHash',
       [transactionHash],
     );
@@ -262,7 +255,7 @@ class Web3Client {
 
   /// Returns an receipt of a transaction based on its hash.
   Future<TransactionReceipt?> getTransactionReceipt(String hash) {
-    return _makeRPCCall<Map<String, dynamic>?>(
+    return makeRPCCall<Map<String, dynamic>?>(
       'eth_getTransactionReceipt',
       [hash],
     ).then((s) => s != null ? TransactionReceipt.fromMap(s) : null);
@@ -273,7 +266,7 @@ class Web3Client {
   /// This function allows specifying a custom block mined in the past to get
   /// historical data. By default, [BlockNum.current] will be used.
   Future<Uint8List> getCode(EthereumAddress address, {BlockNum? atBlock}) {
-    return _makeRPCCall<String>(
+    return makeRPCCall<String>(
       'eth_getCode',
       [address.hex, _getBlockParam(atBlock)],
     ).then(hexToBytes);
@@ -286,7 +279,7 @@ class Web3Client {
   ///  - https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getlogs
   Future<List<FilterEvent>> getLogs(FilterOptions options) {
     final filter = _EventFilter(options);
-    return _makeRPCCall<List<dynamic>>(
+    return makeRPCCall<List<dynamic>>(
       'eth_getLogs',
       [filter._createParamsObject(true)],
     ).then((logs) {
@@ -302,7 +295,7 @@ class Web3Client {
   }) {
     final blockParam = _getBlockParam(atBlock);
 
-    return _makeRPCCall<Map<String, dynamic>>(
+    return makeRPCCall<Map<String, dynamic>>(
       'eth_feeHistory',
       [blockCount, blockParam, rewardPercentiles],
     ).then((history) {
@@ -361,7 +354,7 @@ class Web3Client {
   /// included in a mined block, can be used to obtain detailed information
   /// about the transaction.
   Future<String> sendRawTransaction(Uint8List signedTransaction) async {
-    return _makeRPCCall('eth_sendRawTransaction', [
+    return makeRPCCall('eth_sendRawTransaction', [
       bytesToHex(signedTransaction, include0x: true, padToEvenLength: true),
     ]);
   }
@@ -436,7 +429,7 @@ class Web3Client {
     Uint8List? data,
     @Deprecated('Parameter is ignored') BlockNum? atBlock,
   }) async {
-    final amountHex = await _makeRPCCall<String>(
+    final amountHex = await makeRPCCall<String>(
       'eth_estimateGas',
       [
         {
@@ -489,7 +482,7 @@ class Web3Client {
       if (sender != null) 'from': sender.hex,
     };
 
-    return _makeRPCCall<String>('eth_call', [call, _getBlockParam(atBlock)]);
+    return makeRPCCall<String>('eth_call', [call, _getBlockParam(atBlock)]);
   }
 
   /// Listens for new blocks that are added to the chain. The stream will emit
