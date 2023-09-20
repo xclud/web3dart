@@ -104,7 +104,7 @@ Uint8List signTransactionRaw(
   Transaction transaction,
   Credentials c, {
   int? chainId = 1,
-  }) {
+}) {
   if (transaction.isEIP1559 && chainId != null) {
     final encodedTx = LengthTrackingByteSink();
     encodedTx.addByte(0x02);
