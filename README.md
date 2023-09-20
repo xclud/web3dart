@@ -186,3 +186,9 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 If you want to contribute to this library, please submit a Pull Request.
 
 [tracker]: https://github.com/xclud/web3dart/issues/new
+
+## Testing
+
+```dart
+dart test test
+```
