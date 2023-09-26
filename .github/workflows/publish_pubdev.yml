@@ -2,16 +2,17 @@ name: Publish to Pub.dev
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   publishing:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout'
+      - name: "Checkout"
         uses: actions/checkout@v2 # required!
-        
-      - name: 'web3dart'
+
+      - name: "web3dart"
         uses: k-paxian/dart-package-publisher@master
         with:
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
+          format: true
