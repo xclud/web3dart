@@ -25,6 +25,8 @@ export 'credentials.dart';
 
 export 'src/core/block_number.dart';
 export 'src/core/sync_information.dart';
+export 'src/utils/rlp.dart';
+export 'src/utils/typed_data.dart';
 
 part 'src/core/ether_unit.dart';
 part 'src/core/ether_amount.dart';
