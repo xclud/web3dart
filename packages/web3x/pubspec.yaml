@@ -1,6 +1,6 @@
 name: web3x
 description: Dart library to connect to Ethereum clients. Send transactions and interact with smart contracts!
-version: 1.0.6
+version: 1.0.7
 homepage: https://github.com/AstroxNetwork
 repository: https://github.com/AstroxNetwork/web3dart
 issue_tracker: https://github.com/AstroxNetwork/web3dart/issues
@@ -26,4 +26,4 @@ dependencies:
 
 dev_dependencies:
   test: ^1.22.0
-  lints: ^2.0.0
+  lints: any
