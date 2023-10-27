@@ -11,7 +11,7 @@ environment:
 dependencies:
   pointycastle: ^3.6.2
   sec: ^1.0.1
-  http: ^0.13.5
+  http: ^1.0.0
   uuid: ^3.0.7
   json_rpc_2: ^3.0.2
   stream_transform: ^2.1.0
