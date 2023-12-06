@@ -1,9 +1,16 @@
 ## 2.5.1
 
+- Change `eth_sign` to `personal_sign` for Metamask Wallet.
+- Upgrade dependencies.
+
+## 2.5.1
+
 - Fix multiple address connections.
+
 ## 2.5.0
 
 - Support OKX Wallet for browser connection.
+
 ## 2.4.1
 
 - Update readme.
