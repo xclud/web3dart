@@ -1,4 +1,4 @@
-## 2.5.1
+## 2.5.2
 
 - Change `eth_sign` to `personal_sign` for Metamask Wallet.
 - Upgrade dependencies.
