@@ -1,3 +1,6 @@
+## 2.5.3
+ - Small fixes
+
 ## 2.5.2
 
 - Change `eth_sign` to `personal_sign` for Metamask Wallet.
