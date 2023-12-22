@@ -105,33 +105,16 @@ Uint8List signTransactionRaw(
   Credentials c, {
   int? chainId = 1,
 }) {
+  final encoded = transaction.getUnsignedSerialized(chainId: chainId);
+  final signature = c.signToEcSignature(encoded, chainId: chainId, isEIP1559: transaction.isEIP1559);
+
   if (transaction.isEIP1559 && chainId != null) {
-    final encodedTx = LengthTrackingByteSink();
-    encodedTx.addByte(0x02);
-    encodedTx.add(
-      rlp.encode(_encodeEIP1559ToRlp(transaction, null, BigInt.from(chainId))),
-    );
-
-    encodedTx.close();
-    final signature = c.signToEcSignature(
-      encodedTx.asBytes(),
-      chainId: chainId,
-      isEIP1559: transaction.isEIP1559,
-    );
-
     return uint8ListFromList(
       rlp.encode(
         _encodeEIP1559ToRlp(transaction, signature, BigInt.from(chainId)),
       ),
     );
   }
-  final innerSignature =
-      chainId == null ? null : MsgSignature(BigInt.zero, BigInt.zero, chainId);
-
-  final encoded =
-      uint8ListFromList(rlp.encode(_encodeToRlp(transaction, innerSignature)));
-  final signature = c.signToEcSignature(encoded, chainId: chainId);
-
   return uint8ListFromList(rlp.encode(_encodeToRlp(transaction, signature)));
 }
 
