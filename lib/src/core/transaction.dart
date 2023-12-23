@@ -95,4 +95,30 @@ class Transaction {
   }
 
   bool get isEIP1559 => maxFeePerGas != null || maxPriorityFeePerGas != null;
+
+  /// The transaction pre-image.
+  ///
+  /// The hash of this is the digest which needs to be signed to
+  /// authorize this transaction.
+  Uint8List getUnsignedSerialized({
+    int? chainId = 1,
+  }) {
+    if (isEIP1559 && chainId != null) {
+      final encodedTx = LengthTrackingByteSink();
+      encodedTx.addByte(0x02);
+      encodedTx.add(
+        rlp.encode(_encodeEIP1559ToRlp(this, null, BigInt.from(chainId))),
+      );
+
+      encodedTx.close();
+
+      return encodedTx.asBytes();
+    }
+
+    final innerSignature = chainId == null
+        ? null
+        : MsgSignature(BigInt.zero, BigInt.zero, chainId);
+
+    return uint8ListFromList(rlp.encode(_encodeToRlp(this, innerSignature)));
+  }
 }
