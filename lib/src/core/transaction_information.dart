@@ -93,7 +93,7 @@ class TransactionReceipt {
   TransactionReceipt.fromMap(Map<String, dynamic> map)
       : transactionHash = hexToBytes(map['transactionHash'] as String),
         transactionIndex = hexToDartInt(map['transactionIndex'] as String),
-        blockHash = hexToBytes(map['blockHash'] as String),
+        blockHash = map['blockHash'] != null ? hexToBytes(map['blockHash'] as String) : Uint8List(0) ,
         blockNumber = map['blockNumber'] != null
             ? BlockNum.exact(int.parse(map['blockNumber'] as String))
             : const BlockNum.pending(),

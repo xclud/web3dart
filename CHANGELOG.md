@@ -1,3 +1,6 @@
+## 2.5.5
+ - Fix for 'blockHash' empty in TransactionReceipt
+
 ## 2.5.3
  - Small fixes
 
