@@ -1,6 +1,6 @@
 name: web3dart
 description: Dart library to connect to Ethereum clients. Send transactions and interact with smart contracts!
-version: 2.7.2
+version: 2.7.3
 homepage: https://pwa.ir
 repository: https://github.com/xclud/web3dart
 

@@ -1,3 +1,7 @@
+## 2.7.3
+
+* Address parsing regex bug fixed.
+
 ## 2.7.2
 
 * Minor improvements.
