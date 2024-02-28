@@ -288,7 +288,7 @@ class DynamicLengthArray<T> extends BaseArrayType<T> {
   int get hashCode => 31 * type.hashCode;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is DynamicLengthArray && other.type == type);
   }

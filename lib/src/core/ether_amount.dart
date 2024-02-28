@@ -93,6 +93,6 @@ class EtherAmount {
   int get hashCode => getInWei.hashCode;
 
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       other is EtherAmount && other.getInWei == getInWei;
 }

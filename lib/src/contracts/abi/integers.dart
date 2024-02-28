@@ -167,7 +167,7 @@ class BoolType extends AbiType<bool> {
   int get hashCode => runtimeType.hashCode;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return other.runtimeType == BoolType;
   }
 }
