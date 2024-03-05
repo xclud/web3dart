@@ -1,4 +1,4 @@
-part of web3dart;
+part of 'package:web3dart/web3dart.dart';
 
 class BlockInformation {
   BlockInformation({
