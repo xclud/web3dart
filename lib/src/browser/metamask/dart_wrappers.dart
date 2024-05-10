@@ -54,6 +54,12 @@ extension DartEthereum on Ethereum {
     });
   }
 
+  Future<List<String>> connectedAccounts() {
+    return rawRequest('eth_accounts').then((res) {
+      return res;
+    });
+  }
+
   /// Creates a stream of raw ethereum events.
   ///
   /// The returned stream is a broadcast stream, meaning that it can be listened

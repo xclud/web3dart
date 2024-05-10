@@ -1,3 +1,6 @@
+## 2.5.6
+  - Add getConnectedAccounts method to Web3Client
+  
 ## 2.5.5
  - Fix for 'blockHash' empty in TransactionReceipt
 

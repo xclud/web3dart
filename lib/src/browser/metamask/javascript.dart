@@ -27,6 +27,7 @@ class Ethereum {
   external int get chainId;
   external bool autoRefreshOnNetworkChange;
   external bool isConnected();
+  external String get selectedAddress;
 
   /// This should not be used in user code. Use `stream(event)` instead.
   @internal

@@ -7,7 +7,6 @@ import 'package:web3dart_macaron/web3dart.dart';
 
 Future<void> main() async {
   //metamask();
-  metamask();
 }
 
 Future<void> metamask() async {
