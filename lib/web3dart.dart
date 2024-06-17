@@ -35,6 +35,7 @@ part 'src/core/block_information.dart';
 part 'src/core/client.dart';
 part 'src/core/filters.dart';
 part 'src/core/transaction.dart';
+part 'src/core/sidecar.dart';
 part 'src/core/transaction_information.dart';
 part 'src/core/transaction_signer.dart';
 part 'src/utils/length_tracking_byte_sink.dart';

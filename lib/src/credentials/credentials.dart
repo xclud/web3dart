@@ -77,6 +77,7 @@ abstract class Credentials {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool isEIP4844 = false,
   });
 
   /// Signs the [payload] with a private key and returns the obtained
@@ -85,6 +86,7 @@ abstract class Credentials {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool isEIP4844 = false,
   });
 
   /// Signs an Ethereum specific signature. This method is equivalent to
@@ -186,13 +188,14 @@ class EthPrivateKey extends CredentialsWithKnownAddress {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool isEIP4844 = false,
   }) async {
     final signature = secp256k1.sign(keccak256(payload), privateKey);
 
     // https://github.com/ethereumjs/ethereumjs-util/blob/8ffe697fafb33cefc7b7ec01c11e3a7da787fe0e/src/signature.ts#L26
     // be aware that signature.v already is recovery + 27
     int chainIdV;
-    if (isEIP1559) {
+    if (isEIP1559 || isEIP4844) {
       chainIdV = signature.v - 27;
     } else {
       chainIdV = chainId != null
@@ -207,13 +210,14 @@ class EthPrivateKey extends CredentialsWithKnownAddress {
     Uint8List payload, {
     int? chainId,
     bool isEIP1559 = false,
+    bool isEIP4844 = false,
   }) {
     final signature = secp256k1.sign(keccak256(payload), privateKey);
 
     // https://github.com/ethereumjs/ethereumjs-util/blob/8ffe697fafb33cefc7b7ec01c11e3a7da787fe0e/src/signature.ts#L26
     // be aware that signature.v already is recovery + 27
     int chainIdV;
-    if (isEIP1559) {
+    if (isEIP1559 || isEIP4844) {
       chainIdV = signature.v - 27;
     } else {
       chainIdV = chainId != null

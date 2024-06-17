@@ -36,14 +36,14 @@ Future<_SigningInput> _fillMissingData({
     throw ArgumentError('Client is required to perform network actions');
   }
 
-  if (!transaction.isEIP1559 && gasPrice == null) {
+  if (!transaction.isEIP1559 && !transaction.isEIP4844 && gasPrice == null) {
     gasPrice = await client!.getGasPrice();
   }
 
   var maxFeePerGas = transaction.maxFeePerGas;
   var maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
 
-  if (transaction.isEIP1559) {
+  if (transaction.isEIP1559 || transaction.isEIP4844) {
     maxPriorityFeePerGas ??= await _getMaxPriorityFeePerGas();
     maxFeePerGas ??= await _getMaxFeePerGas(
       client!,
@@ -110,6 +110,7 @@ Uint8List signTransactionRaw(
     encoded,
     chainId: chainId,
     isEIP1559: transaction.isEIP1559,
+    isEIP4844: transaction.isEIP4844,
   );
 
   if (transaction.isEIP1559 && chainId != null) {
@@ -118,6 +119,12 @@ Uint8List signTransactionRaw(
         _encodeEIP1559ToRlp(transaction, signature, BigInt.from(chainId)),
       ),
     );
+  } else if (transaction.isEIP4844 && chainId != null) {
+    final values =
+        _wrap4844ToRlpValues(transaction, signature, BigInt.from(chainId));
+
+    final encode = rlp.encode(values);
+    return uint8ListFromList(encode);
   }
   return uint8ListFromList(rlp.encode(_encodeToRlp(transaction, signature)));
 }
@@ -155,6 +162,86 @@ List<dynamic> _encodeEIP1559ToRlp(
   }
 
   return list;
+}
+
+List<dynamic> _encodeEIP4844ToRlpWithSidecar(
+  Transaction transaction,
+  MsgSignature? signature,
+  BigInt chainId,
+) {
+  final list = [
+    chainId,
+    transaction.nonce,
+    transaction.maxPriorityFeePerGas!.getInWei,
+    transaction.maxFeePerGas!.getInWei,
+    transaction.maxGas,
+  ];
+
+  if (transaction.to != null) {
+    list.add(transaction.to!.addressBytes);
+  } else {
+    list.add('');
+  }
+
+  list
+    ..add(transaction.value?.getInWei)
+    ..add(transaction.data);
+
+  list.add([]); // access list
+
+  list.add(transaction.maxFeePerBlobGas!.getInWei);
+  list.add(transaction.blobVersionedHashes!);
+
+  if (signature != null) {
+    list
+      ..add(signature.v)
+      ..add(signature.r)
+      ..add(signature.s);
+  }
+  return list;
+}
+
+// https://github.com/hyperledger/web3j/blob/main/crypto/src/main/java/org/web3j/crypto/transaction/type/Transaction4844.java
+// [chain_id, nonce, max_priority_fee_per_gas, max_fee_per_gas, gas_limit, to, value, data, access_list, max_fee_per_blob_gas, blob_versioned_hashes, y_parity, r, s]
+List<dynamic> _wrap4844ToRlpValues(
+  Transaction transaction,
+  MsgSignature? signature,
+  BigInt chainId,
+) {
+  final resultTx = [];
+
+  resultTx.add(chainId);
+  resultTx.add(transaction.nonce);
+  resultTx.add(transaction.maxPriorityFeePerGas!.getInWei);
+  resultTx.add(transaction.maxFeePerGas!.getInWei);
+  resultTx.add(transaction.maxGas);
+  if (transaction.to != null) {
+    resultTx.add(transaction.to!.addressBytes);
+  } else {
+    resultTx.add('');
+  }
+
+  resultTx.add(transaction.value!.getInWei);
+  resultTx.add(transaction.data);
+  resultTx.add([]);
+  resultTx.add(transaction.maxFeePerBlobGas!.getInWei);
+  resultTx.add(transaction.blobVersionedHashes);
+  if (signature != null) {
+    resultTx.add(signature.v);
+    resultTx.add(signature.r);
+    resultTx.add(signature.s);
+  }
+
+  final result = [];
+  result.add(resultTx);
+
+  if (transaction.sidecar != null) {
+    result.add(transaction.sidecar!.blobs);
+    result.add(transaction.sidecar!.commitment);
+    result.add(transaction.sidecar!.proof);
+  }
+
+  return result;
 }
 
 List<dynamic> _encodeToRlp(Transaction transaction, MsgSignature? signature) {

@@ -191,6 +191,16 @@ class Web3Client {
     ).then((json) => BlockInformation.fromJson(json));
   }
 
+  Future<Map<String,dynamic>> getBlockInformationRaw({
+    String blockNumber = 'latest',
+    bool isContainFullObj = true,
+  }) {
+    return makeRPCCall<Map<String, dynamic>>(
+      'eth_getBlockByNumber',
+      [blockNumber, isContainFullObj],
+    ).then((json) => json);
+  }
+
   /// Gets the balance of the account with the specified address.
   ///
   /// This function allows specifying a custom block mined in the past to get
@@ -341,8 +351,9 @@ class Web3Client {
 
     if (transaction.isEIP1559) {
       signed = prependTransactionType(0x02, signed);
+    } else if(transaction.isEIP4844){
+      signed = prependTransactionType(0x03, signed);
     }
-
     return sendRawTransaction(signed);
   }
 

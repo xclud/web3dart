@@ -11,6 +11,9 @@ class Transaction {
     this.nonce,
     this.maxFeePerGas,
     this.maxPriorityFeePerGas,
+    this.maxFeePerBlobGas,
+    this.blobVersionedHashes,
+    this.sidecar,
   });
 
   /// Constructs a transaction that can be used to call a contract function.
@@ -25,6 +28,9 @@ class Transaction {
     this.nonce,
     this.maxFeePerGas,
     this.maxPriorityFeePerGas,
+    this.maxFeePerBlobGas,
+    this.blobVersionedHashes,
+    this.sidecar,
   })  : to = contract.address,
         data = function.encodeCall(parameters);
 
@@ -69,6 +75,9 @@ class Transaction {
 
   final EtherAmount? maxPriorityFeePerGas;
   final EtherAmount? maxFeePerGas;
+  final EtherAmount? maxFeePerBlobGas;
+  final List<Uint8List>? blobVersionedHashes;
+  final Sidecar? sidecar;
 
   Transaction copyWith({
     EthereumAddress? from,
@@ -80,6 +89,9 @@ class Transaction {
     int? nonce,
     EtherAmount? maxPriorityFeePerGas,
     EtherAmount? maxFeePerGas,
+    EtherAmount? maxFeePerBlobGas,
+    List<Uint8List>? blobVersionedHashes,
+    Sidecar? sidecar,
   }) {
     return Transaction(
       from: from ?? this.from,
@@ -91,10 +103,21 @@ class Transaction {
       nonce: nonce ?? this.nonce,
       maxFeePerGas: maxFeePerGas ?? this.maxFeePerGas,
       maxPriorityFeePerGas: maxPriorityFeePerGas ?? this.maxPriorityFeePerGas,
+      maxFeePerBlobGas: maxFeePerBlobGas ?? this.maxFeePerBlobGas,
+      blobVersionedHashes: blobVersionedHashes ?? this.blobVersionedHashes,
+      sidecar: sidecar ?? this.sidecar,
     );
   }
 
-  bool get isEIP1559 => maxFeePerGas != null || maxPriorityFeePerGas != null;
+  bool get isEIP1559 =>
+      (maxFeePerGas != null || maxPriorityFeePerGas != null) &&
+      maxFeePerBlobGas == null &&
+      blobVersionedHashes == null;
+
+  bool get isEIP4844 =>
+      (maxFeePerGas != null || maxPriorityFeePerGas != null) &&
+      maxFeePerBlobGas != null &&
+      blobVersionedHashes != null;
 
   /// The transaction pre-image.
   ///
@@ -112,6 +135,12 @@ class Transaction {
 
       encodedTx.close();
 
+      return encodedTx.asBytes();
+    } else if (isEIP4844 && chainId != null) {
+      final encodedTx = LengthTrackingByteSink();
+      encodedTx.addByte(0x03);
+      encodedTx.add(rlp.encode(_encodeEIP4844ToRlpWithSidecar(this, null, BigInt.from(chainId))));
+      encodedTx.close();
       return encodedTx.asBytes();
     }
 
