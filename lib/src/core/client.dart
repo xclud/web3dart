@@ -48,6 +48,8 @@ class Web3Client {
   ///Whether errors, handled or not, should be printed to the console.
   bool printErrors = false;
 
+  BigInt? chainId;
+
   Future<T> _makeRPCCall<T>(String function, [List<dynamic>? params]) async {
     try {
       final data = await _jsonRpc.call(function, params);
@@ -112,7 +114,13 @@ class Web3Client {
   }
 
   Future<BigInt> getChainId() {
-    return _makeRPCCall<String>('eth_chainId').then(BigInt.parse);
+    if (chainId != null) {
+      return Future.value(chainId!);
+    }
+    return _makeRPCCall<String>('eth_chainId').then((result) {
+      chainId = BigInt.parse(result);
+      return chainId!;
+    });
   }
 
   /// Returns true if the node is actively listening for network connections.
@@ -174,9 +182,9 @@ class Web3Client {
     final data = await _makeRPCCall<String>('eth_gasPrice');
     var gasPrice = hexToInt(data);
     if ((await getChainId()) == BigInt.from(42161)) {
-      // not sure why Arb usually returns a lower gas price which causes tx to fail, so add 10% here
+      // not sure why Arb usually returns a lower gas price which causes tx to fail, so add 3% here
       gasPrice =
-          (Decimal.fromBigInt(gasPrice) * Decimal.parse('1.1')).toBigInt();
+          (Decimal.fromBigInt(gasPrice) * Decimal.parse('1.03')).toBigInt();
     }
 
     return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
