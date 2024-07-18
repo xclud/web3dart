@@ -164,7 +164,7 @@ class FilterEvent {
           blockNum == null ? null : '0x${blockNum!.toRadixString(16)}',
       'address': address?.hex,
       'data': data,
-      'topics': topics
+      'topics': topics,
     };
   }
 

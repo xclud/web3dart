@@ -10,6 +10,7 @@ import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'package:stream_channel/stream_channel.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:eip1559/eip1559.dart' as eip1559;
+import 'package:decimal/decimal.dart';
 
 import 'contracts.dart';
 import 'credentials.dart';
