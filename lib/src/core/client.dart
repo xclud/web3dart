@@ -182,9 +182,9 @@ class Web3Client {
     final data = await _makeRPCCall<String>('eth_gasPrice');
     var gasPrice = hexToInt(data);
     if ((await getChainId()) == BigInt.from(42161)) {
-      // not sure why Arb usually returns a lower gas price which causes tx to fail, so add 3% here
+      // not sure why Arb usually returns a lower gas price which causes tx to fail, so add 5% here
       gasPrice =
-          (Decimal.fromBigInt(gasPrice) * Decimal.parse('1.03')).toBigInt();
+          (Decimal.fromBigInt(gasPrice) * Decimal.parse('1.05')).toBigInt();
     }
 
     return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
