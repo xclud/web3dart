@@ -204,7 +204,7 @@ Future<EtherAmount> _getMaxPriorityFeePerGas() {
   return Future.value(EtherAmount.inWei(BigInt.from(1000000000)));
 }
 
-// Max Fee = (2 * Base Fee) + Max Priority Fee
+// Max Fee = (2.2 * Base Fee) + Max Priority Fee
 Future<EtherAmount> _getMaxFeePerGas(
   Web3Client client,
   BigInt maxPriorityFeePerGas,
@@ -217,6 +217,6 @@ Future<EtherAmount> _getMaxFeePerGas(
   }
 
   return EtherAmount.inWei(
-    baseFeePerGas.getInWei * BigInt.from(2) + maxPriorityFeePerGas,
+    (baseFeePerGas.getInWei * BigInt.from(220) ~/ BigInt.from(100)) + maxPriorityFeePerGas,
   );
 }
