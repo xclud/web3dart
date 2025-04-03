@@ -137,6 +137,54 @@ obtained from the connected node when not explicitly specified. If you only need
 the signed transaction but don't intend to send it, you can use
 `client.signTransaction`.
 
+## Request with multiple querys
+
+As of JSON-RPC specification, one can make several queries in one http request.
+For using this feature, instead of using the common Web3Client, you have to instantiate
+a `MultiQueryWeb3Client`, which has the same functionality as ao  Web3Client, but adds the
+`client.multiQueryCall` method.
+For usability purposes, some helper classes have been implemented to ask for different required queries inside the same request.
+
+The `multiqueryCall` method requires a list of `ETHRpcQuery` instances
+You can easily construct them thanks to these useful custom constructors. For instance, to ask for the balance, you can use `ETHRpcQuery.getBalance`.
+
+All queries inside this list must satisfy a condition: either all of them or none of them should have an rpc query id assigned (to manage the responses id from the server).
+
+For any other not specified rpc method, you can construct it yourself using the normal `ETHRpcQuery` constructor. The trick here would be correctly parsing the result as desired with the `decodeFn` parameter.
+
+Example usage:
+
+```dart
+final client = MultiQueryWeb3Client(apiUrl, Client());
+final queries = [
+        EthRPCQuery.getBalance(
+          id: 2,
+          address: EthereumAddress.fromHex(
+            '0x81bEdCC7314baf7606b665909CeCDB4c68b180d6',
+          ),
+        ),
+        EthRPCQuery.callContract(
+          id: 1,
+          contractCallParams: EthContractCallParams(
+            contract: contract,
+            function: contract.function('balanceOf'),
+            params: [
+              EthereumAddress.fromHex(
+                '0x81bEdCC7314baf7606b665909CeCDB4c68b180d6',
+              ),
+            ],
+          ),
+        ),
+        EthRPCQuery.getBlockInformation(
+          block: BlockNum.exact(8302276),
+          id: 3,
+        )
+      ];
+
+      final responses = await client.multiQueryCall(queries);
+```
+
+
 ### Smart contracts
 
 The library can parse the abi of a smart contract and send data to it. It can also
