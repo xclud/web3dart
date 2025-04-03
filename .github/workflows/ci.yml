@@ -11,7 +11,7 @@ jobs:
     name: "Get dependencies"
     runs-on: ubuntu-latest
     steps:
-     - uses: actions/checkout@v2
+     - uses: actions/checkout@v4
      - uses: dart-lang/setup-dart@v1
      - name: "Print Dart SDK Version"
        run: dart --version
@@ -29,8 +29,8 @@ jobs:
     needs: get_dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
@@ -43,8 +43,8 @@ jobs:
     needs: get_dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
