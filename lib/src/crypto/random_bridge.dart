@@ -1,8 +1,4 @@
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:pointycastle/api.dart';
-import 'package:web3dart/crypto.dart';
+part of '../../web3dart.dart';
 
 /// Utility to use dart:math's Random class to generate numbers used by
 /// pointycastle.

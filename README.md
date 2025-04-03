@@ -44,7 +44,7 @@ Credentials random = EthPrivateKey.createRandom(rng);
 
 // In either way, the library can derive the public key and the address
 // from a private key:
-var address = await credentials.extractAddress();
+var address = credentials.address;
 print(address.hex);
 ```
 
@@ -101,7 +101,7 @@ var httpClient = Client();
 var ethClient = Web3Client(apiUrl, httpClient);
 
 var credentials = EthPrivateKey.fromHex("0x...");
-var address = await credentials.extractAddress();
+var address = credentials.address;
 
 // You can now call rpc methods. This one will query the amount of Ether you own
 EtherAmount balance = ethClient.getBalance(address);
@@ -196,6 +196,12 @@ for an example.
 By using [Dart's build system](https://github.com/dart-lang/build/), web3dart can
 generate Dart code to easily access smart contracts.
 
+Install web3dart_builders package
+
+```dart
+pub add web3dart_builders --dev
+```
+
 To use this feature, put a contract abi json somewhere into `lib/`.
 The filename has to end with `.abi.json`.
 Then, add a `dev_dependency` on the `build_runner` package and run
@@ -228,3 +234,9 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 If you want to contribute to this library, please submit a Pull Request.
 
 [tracker]: https://github.com/xclud/web3dart/issues/new
+
+## Testing
+
+```dart
+dart test test
+```

@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:wallet/wallet.dart';
 
 import '../mock_client.dart';
 
@@ -14,68 +15,68 @@ void main() {
     {
       'name': 'one topic',
       'input': [
-        [alice]
+        [alice],
       ],
       'expected': [
-        [alice]
-      ]
+        [alice],
+      ],
     },
     {
       'name': 'two topics one item',
       'input': [
-        [alice, bob]
+        [alice, bob],
       ],
       'expected': [
-        [alice, bob]
-      ]
+        [alice, bob],
+      ],
     },
     {
       'name': 'two topics two items',
       'input': [
         [alice],
-        [bob]
+        [bob],
       ],
       'expected': [
         [alice],
-        [bob]
-      ]
+        [bob],
+      ],
     },
     {
       'name': 'two topics first null',
       'input': [
         [],
-        [bob]
+        [bob],
       ],
       'expected': [
         null,
-        [bob]
-      ]
+        [bob],
+      ],
     },
     {
       'name': 'three topics first null',
       'input': [
         [],
         [alice],
-        [bob]
+        [bob],
       ],
       'expected': [
         null,
         [alice],
-        [bob]
-      ]
+        [bob],
+      ],
     },
     {
       'name': 'three topics second null',
       'input': [
         [alice],
         [],
-        [bob]
+        [bob],
       ],
       'expected': [
         [alice],
         null,
-        [bob]
-      ]
+        [bob],
+      ],
     }
   ];
 
@@ -90,7 +91,7 @@ void main() {
 
         // return a valid response from eth_getLogs
         return [
-          {'address': contract}
+          {'address': contract},
         ];
       }),
     );

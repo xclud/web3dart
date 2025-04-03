@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/src/utils/rlp.dart' as rlp;
-import 'package:web3dart/src/utils/typed_data.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:wallet/wallet.dart';
 
 const rawJson = '''[
     {
@@ -124,11 +124,11 @@ void main() {
         nonce: tx['nonce'] as int,
         maxGas: tx['gasLimit'] as int,
         value: EtherAmount.inWei(BigInt.from(tx['value'] as int)),
-        maxFeePerGas: EtherAmount.fromUnitAndValue(
+        maxFeePerGas: EtherAmount.fromBigInt(
           EtherUnit.wei,
           BigInt.from(tx['maxFeePerGas'] as int),
         ),
-        maxPriorityFeePerGas: EtherAmount.fromUnitAndValue(
+        maxPriorityFeePerGas: EtherAmount.fromBigInt(
           EtherUnit.wei,
           BigInt.from(tx['maxPriorityFeePerGas'] as int),
         ),
@@ -137,6 +137,44 @@ void main() {
       final client = Web3Client('', Client());
       final signature =
           await client.signTransaction(credentials, transaction, chainId: 4);
+
+      expect(
+        bytesToHex(
+          uint8ListFromList(
+            rlp.encode(prependTransactionType(0x02, signature)),
+          ),
+        ),
+        strip0x(tx['signedTransactionRLP'] as String),
+      );
+    });
+  });
+
+  test('sign eip 1559 transaction without client', () {
+    final data = jsonDecode(rawJson) as List<dynamic>;
+
+    Future.forEach(data, (element) {
+      final tx = element as Map<String, dynamic>;
+      final credentials =
+          EthPrivateKey.fromHex(strip0x(tx['privateKey'] as String));
+      final transaction = Transaction(
+        from: credentials.address,
+        to: EthereumAddress.fromHex(tx['to'] as String),
+        nonce: tx['nonce'] as int,
+        maxGas: tx['gasLimit'] as int,
+        value: EtherAmount.inWei(BigInt.from(tx['value'] as int)),
+        maxFeePerGas: EtherAmount.fromBigInt(
+          EtherUnit.wei,
+          BigInt.from(tx['maxFeePerGas'] as int),
+        ),
+        maxPriorityFeePerGas: EtherAmount.fromBigInt(
+          EtherUnit.wei,
+          BigInt.from(tx['maxPriorityFeePerGas'] as int),
+        ),
+        data: tx['data'] ?? Uint8List(0),
+      );
+
+      final signature =
+          signTransactionRaw(transaction, credentials, chainId: 4);
 
       expect(
         bytesToHex(

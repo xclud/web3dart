@@ -72,7 +72,7 @@ class FilterOptions {
     this.toBlock,
   })  : address = contract.address,
         topics = [
-          [bytesToHex(event.signature, padToEvenLength: true, include0x: true)]
+          [bytesToHex(event.signature, padToEvenLength: true, include0x: true)],
         ];
 
   /// The earliest block which should be considered for this filter. Optional,
@@ -114,7 +114,7 @@ class FilterOptions {
   /// All further topics are the encoded values of the indexed parameters of the
   /// event. See https://solidity.readthedocs.io/en/develop/contracts.html#events
   /// for a detailed description.
-  final List<List<String>>? topics;
+  final List<List<String?>>? topics;
 }
 
 /// A log event emitted in a transaction.
@@ -149,7 +149,7 @@ class FilterEvent {
             : null,
         address = EthereumAddress.fromHex(log['address'] as String),
         data = log['data'] as String?,
-        topics = (log['topics'] as List?)?.cast<String>();
+        topics = (log['topics'] as List?)?.cast<String?>();
 
   /// Whether the log was removed, due to a chain reorganization. False if it's
   /// a valid log.
@@ -187,7 +187,7 @@ class FilterEvent {
   /// For solidity events, the first topic is a hash of the event signature
   /// (except for anonymous events). All further topics are the encoded
   /// values of indexed parameters.
-  final List<String>? topics;
+  final List<String?>? topics;
 
   @override
   String toString() {
@@ -258,7 +258,7 @@ class _EventFilter extends _Filter<FilterEvent> {
       encodedOptions['toBlock'] = options.toBlock?.toBlockParam();
     }
     if (options.address != null) {
-      encodedOptions['address'] = options.address?.hex;
+      encodedOptions['address'] = options.address?.with0x;
     }
     if (options.topics != null) {
       final topics = <dynamic>[];

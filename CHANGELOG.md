@@ -1,3 +1,27 @@
+## 3.0.0
+
+* Refactor and cleanup deprecated methods/classes.
+
+## 2.7.3
+
+* Address parsing regex bug fixed.
+
+## 2.7.2
+
+* Minor improvements.
+
+## 2.7.1
+
+* Nullable topics.
+
+## 2.7.0
+
+* Use http package version ^1.1.0.
+
+## 2.6.1
+
+* EIP-1559.
+
 ## 2.5.3
 
 * Ditch dependency on collection.

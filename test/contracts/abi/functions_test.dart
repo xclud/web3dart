@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:web3dart/contracts.dart';
-import 'package:web3dart/crypto.dart';
-import 'package:web3dart/src/utils/typed_data.dart';
+import 'package:web3dart/web3dart.dart';
 
 void main() {
   const baz = ContractFunction('baz', [
@@ -22,12 +20,12 @@ void main() {
     [
       FunctionParameter('b1', DynamicBytes()),
       FunctionParameter('b2', BoolType()),
-      FunctionParameter('b3', DynamicLengthArray(type: UintType()))
+      FunctionParameter('b3', DynamicLengthArray(type: UintType())),
     ],
     outputs: [
       FunctionParameter('b1', DynamicBytes()),
       FunctionParameter('b2', BoolType()),
-      FunctionParameter('b3', DynamicLengthArray(type: UintType()))
+      FunctionParameter('b3', DynamicLengthArray(type: UintType())),
     ],
   );
 
@@ -158,7 +156,7 @@ void main() {
         sam.encodeCall([
           uint8ListFromList(utf8.encode('dave')),
           true,
-          [BigInt.from(1), BigInt.from(2), BigInt.from(3)]
+          [BigInt.from(1), BigInt.from(2), BigInt.from(3)],
         ]),
         include0x: true,
       ),

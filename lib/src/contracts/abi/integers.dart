@@ -1,9 +1,6 @@
-import 'dart:typed_data';
+part of '../../../web3dart.dart';
 
-import '../../../credentials.dart';
-import '../../crypto/formatting.dart';
-import '../../utils/length_tracking_byte_sink.dart';
-import 'types.dart';
+const int _ethereumAddressByteLength = 20;
 
 abstract class _IntTypeBase extends AbiType<BigInt> {
   const _IntTypeBase(this.length)
@@ -44,9 +41,11 @@ abstract class _IntTypeBase extends AbiType<BigInt> {
   }
 }
 
-/// The solidity uint<M> type that encodes unsigned integers.
+/// The solidity uint&lt;M&gt; type that encodes unsigned integers.
 class UintType extends _IntTypeBase {
+  /// Constructor.
   const UintType({int length = 256}) : super(length);
+
   @override
   String get _namePrefix => 'uint';
 
@@ -62,6 +61,7 @@ class UintType extends _IntTypeBase {
       ..add(bytes);
   }
 
+  /// Encode Replace.
   void encodeReplace(
     int startIndex,
     BigInt data,
@@ -94,9 +94,10 @@ class UintType extends _IntTypeBase {
 
 /// Solidity address type
 class AddressType extends AbiType<EthereumAddress> {
+  /// Constructor.
   const AddressType();
 
-  static const _paddingLen = sizeUnitBytes - EthereumAddress.addressByteLength;
+  static const _paddingLen = sizeUnitBytes - _ethereumAddressByteLength;
 
   @override
   EncodingLengthInfo get encodingLength =>
@@ -109,14 +110,14 @@ class AddressType extends AbiType<EthereumAddress> {
   void encode(EthereumAddress data, LengthTrackingByteSink buffer) {
     buffer
       ..add(Uint8List(_paddingLen))
-      ..add(data.addressBytes);
+      ..add(data.value);
   }
 
   @override
   DecodingResult<EthereumAddress> decode(ByteBuffer buffer, int offset) {
     final addressBytes = buffer.asUint8List(
       offset + _paddingLen,
-      EthereumAddress.addressByteLength,
+      _ethereumAddressByteLength,
     );
     return DecodingResult(EthereumAddress(addressBytes), sizeUnitBytes);
   }
@@ -132,6 +133,7 @@ class AddressType extends AbiType<EthereumAddress> {
 
 /// Solidity bool type
 class BoolType extends AbiType<bool> {
+  /// Constructor.
   const BoolType();
   static final Uint8List _false = Uint8List(sizeUnitBytes);
   static final Uint8List _true = Uint8List(sizeUnitBytes)
@@ -161,13 +163,14 @@ class BoolType extends AbiType<bool> {
   int get hashCode => runtimeType.hashCode;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return other.runtimeType == BoolType;
   }
 }
 
-/// The solidity int<M> types that encodes twos-complement integers.
+/// The solidity int&lt;M&gt; types that encodes twos-complement integers.
 class IntType extends _IntTypeBase {
+  /// Constructor.
   const IntType({int length = 256}) : super(length);
   @override
   String get _namePrefix => 'int';

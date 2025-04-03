@@ -19,7 +19,7 @@ void main() {
       RPCQuery(
         'eth_getBalance',
         ['0x95222290dd7278aa32dd189cc1e1d165cc4bafe5'],
-      )
+      ),
     ];
     await JsonRPCMultiQuery('url', client).callMultiQuery(queries);
 
@@ -47,7 +47,7 @@ void main() {
       RPCQuery(
         'eth_getBalance',
         ['0x95222290dd7278aa32dd189cc1e1d165cc4bafe5'],
-      )
+      ),
     ];
     await rpc.callMultiQuery(queries);
 

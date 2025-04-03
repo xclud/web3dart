@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:web3dart/credentials.dart';
+import 'package:wallet/wallet.dart';
 
 // https://eips.ethereum.org/EIPS/eip-55#test-cases
 const _lowerCaseToEip55 = {
@@ -21,11 +21,38 @@ const _lowerCaseToEip55 = {
       '0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb',
 };
 
+const _addressValidation = {
+  '0x4d7920656d61696c206973206a6f686e40646f652e636f6d202d2031373037373336343236393430':
+      false,
+  '4d7920656d61696c206973206a6f686e40646f652e636f6d202d2031373037373336343236393430':
+      false,
+  '0x4d7920656d61696c206973206a6f686e40646f650': false,
+  '4d7920656d61696c206973206a6f686e40646f650': false,
+  '0x52908400098527886e0f7030069857d2e4169ee7': true,
+  '52908400098527886e0f7030069857d2e4169ee7': true,
+  '0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb': true,
+};
+
 void main() {
+  bool _isValid(String address) {
+    try {
+      EthereumAddress.fromHex(address);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   group('accepts and parses EIP 55', () {
     _lowerCaseToEip55.forEach((lower, eip55) {
       test('parses $lower -> $eip55', () {
-        expect(EthereumAddress.fromHex(lower).hexEip55, eip55);
+        expect(EthereumAddress.fromHex(lower).eip55With0x, eip55);
+      });
+    });
+
+    _addressValidation.forEach((address, valid) {
+      test('parses $address -> valid $valid', () {
+        expect(_isValid(address), valid);
       });
     });
   });

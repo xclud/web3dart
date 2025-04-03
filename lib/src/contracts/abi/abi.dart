@@ -1,16 +1,14 @@
-import 'dart:convert';
-import 'dart:typed_data';
+part of '../../../web3dart.dart';
 
-import '../../crypto/formatting.dart';
-import '../../crypto/keccak.dart';
-import '../../utils/length_tracking_byte_sink.dart';
-import 'arrays.dart';
-import 'tuple.dart';
-import 'types.dart';
-
+/// Contract Function Type
 enum ContractFunctionType {
+  /// Function
   function,
+
+  /// Constructor
   constructor,
+
+  /// Fallback
   fallback,
 }
 
@@ -58,8 +56,10 @@ String _encodeParameters(Iterable<FunctionParameter> params) {
 /// Defines the abi of a deployed Ethereum contract. The abi contains
 /// information about the functions defined in that contract.
 class ContractAbi {
+  /// Constructor.
   ContractAbi(this.name, this.functions, this.events);
 
+  /// From JSON
   factory ContractAbi.fromJson(String jsonData, String name) {
     final data = json.decode(jsonData);
     final functions = <ContractFunction>[];
@@ -113,6 +113,8 @@ class ContractAbi {
   /// All functions (including constructors) that the ABI of the contract
   /// defines.
   final List<ContractFunction> functions;
+
+  /// Events.
   final List<ContractEvent> events;
 
   static List<FunctionParameter> _parseParams(List? data) {
@@ -172,6 +174,7 @@ class ContractAbi {
 
 /// A function defined in the ABI of an compiled contract.
 class ContractFunction {
+  /// Constructor.
   const ContractFunction(
     this.name,
     this.parameters, {
@@ -235,7 +238,7 @@ class ContractFunction {
   /// 	accept a list of ints that should be in [0; 256].
   /// * strings will accept an dart string
   /// * bool will accept a dart bool
-  /// * uint<x> and int<x> will accept a dart int
+  /// * uint&lt;x&gt; and int&lt;x&gt; will accept a dart int
   ///
   /// Other types are not supported at the moment.
   Uint8List encodeCall(List<dynamic> params) {
@@ -291,10 +294,13 @@ class ContractFunction {
 
 /// An event that can be emitted by a smart contract during a transaction.
 class ContractEvent {
+  /// Constructor.
   ContractEvent(this.anonymous, this.name, this.components);
 
   /// Whether this events was declared as anonymous in solidity.
   final bool anonymous;
+
+  /// Name.
   final String name;
 
   /// A list of types that represent the parameters required to call this
@@ -321,7 +327,7 @@ class ContractEvent {
   /// Indexed parameters which would take more than 32 bytes to encode are not
   /// included in the result. Apart from that, the order of the data returned
   /// is identical to the order of the [components].
-  List<dynamic> decodeResults(List<String> topics, String data) {
+  List<dynamic> decodeResults(List<String?> topics, String data) {
     final topicOffset = anonymous ? 0 : 1;
 
     // non-indexed parameters are decoded like a tuple
@@ -346,12 +352,14 @@ class ContractEvent {
         // dynamic type, are not included in [topics]. A hash of the data will
         // be included instead. We can't decode these, so they will be skipped.
         final length = component.parameter.type.encodingLength;
-        if (length.isDynamic || length.length! > 32) {
+        if (length.isDynamic ||
+            length.length! > 32 ||
+            topics[topicIndex] == null) {
           topicIndex++;
           continue;
         }
 
-        final topicBuffer = hexToBytes(topics[topicIndex]).buffer;
+        final topicBuffer = hexToBytes(topics[topicIndex]!).buffer;
         result.add(component.parameter.type.decode(topicBuffer, 0).data);
 
         topicIndex++;
@@ -368,15 +376,25 @@ class ContractEvent {
 /// A [FunctionParameter] that is a component of an event. Contains additional
 /// information about whether the parameter is [indexed].
 class EventComponent<T> {
+  /// Constructor.
   const EventComponent(this.parameter, this.indexed);
+
+  /// Parameter.
   final FunctionParameter<T> parameter;
+
+  /// Indexed.
   final bool indexed;
 }
 
 /// The parameter of a function with its name and the expected type.
 class FunctionParameter<T> {
+  /// Constructor.
   const FunctionParameter(this.name, this.type);
+
+  /// Name.
   final String name;
+
+  /// Type.
   final AbiType<T> type;
 }
 
@@ -385,7 +403,7 @@ class FunctionParameter<T> {
 ///
 /// Consider this contract:
 /// ```solidity
-/// pragma solidity >=0.4.19 <0.7.0;
+/// pragma solidity &gt;=0.4.19 &lt;0.7.0;
 /// pragma experimental ABIEncoderV2;
 ///
 /// contract Test {
@@ -400,8 +418,11 @@ class FunctionParameter<T> {
 /// enough. Similarly, we want to know the names of the parameters of `T` in
 /// `S.c`.
 class CompositeFunctionParameter extends FunctionParameter<dynamic> {
+  /// Constructor.
   CompositeFunctionParameter(String name, this.components, this.arrayLengths)
       : super(name, _constructType(components, arrayLengths));
+
+  /// Components.
   final List<FunctionParameter> components;
 
   /// If the composite type is wrapped in arrays, contains the length of these

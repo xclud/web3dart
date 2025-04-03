@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:wallet/wallet.dart';
 
 void main() {
   test('parses full object', () async {
@@ -77,9 +77,9 @@ void main() {
             data:
                 '0x0000000000000000000000000000000000000000000000000000000000000000',
             topics: [
-              '0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5'
+              '0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5',
             ],
-          )
+          ),
         ],
       ),
     );

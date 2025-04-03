@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:web3dart/contracts.dart';
+import 'package:web3dart/web3dart.dart';
 
 final abiTypes = <String, AbiType>{
   'uint256': const UintType(),
@@ -28,7 +28,7 @@ final invalidTypes = [
   'bööl',
   '(uint,string',
   'uint19',
-  'int32[three]'
+  'int32[three]',
 ];
 
 void main() {

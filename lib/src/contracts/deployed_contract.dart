@@ -1,5 +1,4 @@
-import '../credentials/address.dart';
-import 'abi/abi.dart';
+part of '../../web3dart.dart';
 
 /// Helper class that defines a contract with a known ABI that has been deployed
 /// on a Ethereum blockchain.
@@ -7,6 +6,7 @@ import 'abi/abi.dart';
 /// A future version of this library will automatically generate subclasses of
 /// this based on the abi given, making it easier to call methods in contracts.
 class DeployedContract {
+  /// Constructor.
   DeployedContract(this.abi, this.address);
 
   /// The lower-level ABI of this contract used to encode data to send in

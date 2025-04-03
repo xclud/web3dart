@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
+import 'package:wallet/wallet.dart';
 import 'package:web3dart/web3dart.dart';
 
 const infuraProjectId = String.fromEnvironment('INFURA_ID');
@@ -50,7 +51,7 @@ void main() {
         EthRPCQuery.getBlockInformation(
           block: BlockNum.exact(8302276),
           id: 3,
-        )
+        ),
       ];
 
       final responses = await client.multiQueryCall(queries);
@@ -160,7 +161,7 @@ void main() {
           EthRPCQuery.getBlockInformation(
             block: BlockNum.exact(8302276),
             // here we avoid specifying an id to make it throw
-          )
+          ),
         ];
 
         expect(

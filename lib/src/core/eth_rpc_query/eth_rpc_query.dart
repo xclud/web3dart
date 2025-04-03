@@ -40,7 +40,7 @@ class EthRPCQuery<D, R> extends RPCQuery {
       EthRPCQuery<D, R>._(
         id: id,
         function: function,
-        params: params ?? [],
+        params: this.params ?? [],
         decodeFn: _decodeFunction,
       );
 
@@ -53,7 +53,7 @@ class EthRPCQuery<D, R> extends RPCQuery {
       EthRPCQuery<BigInt, String>._(
         function: 'eth_getBalance',
         params: [
-          address.hex,
+          address.with0x,
           atBlock.toBlockParam(),
         ],
         id: id,
@@ -87,7 +87,7 @@ class EthRPCQuery<D, R> extends RPCQuery {
         function: 'eth_call',
         params: [
           {
-            'to': contractCallParams.contract.address.hex,
+            'to': contractCallParams.contract.address.with0x,
             'data': bytesToHex(
               contractCallParams.function.encodeCall(
                 contractCallParams.params,
@@ -96,7 +96,7 @@ class EthRPCQuery<D, R> extends RPCQuery {
               padToEvenLength: true,
             ),
             if (contractCallParams.sender != null)
-              'from': contractCallParams.sender!.hex,
+              'from': contractCallParams.sender!.with0x,
           },
           block.toBlockParam(),
         ],
@@ -146,7 +146,7 @@ class EthRPCQuery<D, R> extends RPCQuery {
             signedTransaction,
             include0x: true,
             padToEvenLength: true,
-          )
+          ),
         ],
         id: id,
         decodeFn: (r) => r,
@@ -246,7 +246,7 @@ class EthRPCQuery<D, R> extends RPCQuery {
       EthRPCQuery<Uint8List, String>._(
         function: 'eth_getCode',
         params: [
-          address.hex,
+          address.with0x,
           block.toBlockParam(),
         ],
         id: id,

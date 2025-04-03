@@ -1,11 +1,11 @@
-import '../../crypto.dart';
-import '../../web3dart.dart';
+part of '../../web3dart.dart';
 
 /// Base classes for generated contracts.
 ///
 /// web3dart can generate contract classes from abi specifications. For more
 /// information, see its readme!
 abstract class GeneratedContract {
+  /// Constructor.
   GeneratedContract(this.self, this.client, this.chainId);
   final DeployedContract self;
   final Web3Client client;
