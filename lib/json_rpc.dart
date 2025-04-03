@@ -95,7 +95,7 @@ class RPCError implements Exception {
   /// Constructor.
   const RPCError(this.errorCode, this.message, this.data, [this.id]);
 
-/// Id.
+  /// Id.
   final int? id;
 
   /// Error code.
