@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:pointycastle/digests/keccak.dart';
-import '../utils/typed_data.dart';
+part of '../../web3dart.dart';
 
 final KeccakDigest keccakDigest = KeccakDigest(256);
 

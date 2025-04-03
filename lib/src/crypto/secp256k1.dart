@@ -1,20 +1,4 @@
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/digests/sha256.dart';
-import 'package:pointycastle/ecc/api.dart';
-import 'package:pointycastle/ecc/curves/secp256k1.dart';
-import 'package:pointycastle/key_generators/api.dart';
-import 'package:pointycastle/key_generators/ec_key_generator.dart';
-import 'package:pointycastle/macs/hmac.dart';
-import 'package:pointycastle/signers/ecdsa_signer.dart';
-import 'package:sec/sec.dart';
-
-import '../utils/typed_data.dart';
-import 'formatting.dart';
-import 'keccak.dart';
-import 'random_bridge.dart';
+part of '../../web3dart.dart';
 
 final ECDomainParameters params = ECCurve_secp256k1();
 final BigInt _halfCurveOrder = params.n >> 1;
@@ -44,7 +28,7 @@ BigInt generateNewPrivateKey(Random random) {
   generator.init(ParametersWithRandom(keyParams, RandomBridge(random)));
 
   final key = generator.generateKeyPair();
-  final privateKey = key.privateKey as ECPrivateKey;
+  final privateKey = key.privateKey;
   return privateKey.d!;
 }
 

@@ -1,13 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import '../../crypto/formatting.dart';
-import '../../crypto/keccak.dart';
-import 'arrays.dart';
-import 'tuple.dart';
-import 'types.dart';
-
-import '../../../web3dart.dart' show LengthTrackingByteSink;
+part of '../../../web3dart.dart';
 
 /// Contract Function Type
 enum ContractFunctionType {

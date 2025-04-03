@@ -86,13 +86,6 @@ class Web3Client {
     return (block ?? _defaultBlock).toBlockParam();
   }
 
-  /// Constructs a new [Credentials] with the provided [privateKey] by using
-  /// an [EthPrivateKey].
-  @Deprecated('Use EthPrivateKey.fromHex instead')
-  Future<EthPrivateKey> credentialsFromPrivateKey(String privateKey) {
-    return Future.value(EthPrivateKey.fromHex(privateKey));
-  }
-
   /// Returns the version of the client we're sending requests to.
   Future<String> getClientVersion() {
     return makeRPCCall('web3_clientVersion');
@@ -198,7 +191,7 @@ class Web3Client {
   Future<EtherAmount> getBalance(EthereumAddress address, {BlockNum? atBlock}) {
     final blockParam = _getBlockParam(atBlock);
 
-    return makeRPCCall<String>('eth_getBalance', [address.hex, blockParam])
+    return makeRPCCall<String>('eth_getBalance', [address.with0x, blockParam])
         .then((data) {
       return EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(data));
     });
@@ -218,7 +211,7 @@ class Web3Client {
     final blockParam = _getBlockParam(atBlock);
 
     return makeRPCCall<String>('eth_getStorageAt', [
-      address.hex,
+      address.with0x,
       '0x${position.toRadixString(16)}',
       blockParam,
     ]).then(hexToBytes);
@@ -236,7 +229,7 @@ class Web3Client {
 
     return makeRPCCall<String>(
       'eth_getTransactionCount',
-      [address.hex, blockParam],
+      [address.with0x, blockParam],
     ).then((hex) => hexToInt(hex).toInt());
   }
 
@@ -268,7 +261,7 @@ class Web3Client {
   Future<Uint8List> getCode(EthereumAddress address, {BlockNum? atBlock}) {
     return makeRPCCall<String>(
       'eth_getCode',
-      [address.hex, _getBlockParam(atBlock)],
+      [address.with0x, _getBlockParam(atBlock)],
     ).then(hexToBytes);
   }
 
@@ -433,8 +426,8 @@ class Web3Client {
       'eth_estimateGas',
       [
         {
-          if (sender != null) 'from': sender.hex,
-          if (to != null) 'to': to.hex,
+          if (sender != null) 'from': sender.with0x,
+          if (to != null) 'to': to.with0x,
           if (amountOfGas != null) 'gas': '0x${amountOfGas.toRadixString(16)}',
           if (gasPrice != null)
             'gasPrice': '0x${gasPrice.getInWei.toRadixString(16)}',
@@ -477,9 +470,9 @@ class Web3Client {
     BlockNum? atBlock,
   }) {
     final call = {
-      'to': contract.hex,
+      'to': contract.with0x,
       'data': bytesToHex(data, include0x: true, padToEvenLength: true),
-      if (sender != null) 'from': sender.hex,
+      if (sender != null) 'from': sender.with0x,
     };
 
     return makeRPCCall<String>('eth_call', [call, _getBlockParam(atBlock)]);

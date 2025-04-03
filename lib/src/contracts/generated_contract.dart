@@ -1,5 +1,4 @@
-import '../../crypto.dart';
-import '../../web3dart.dart';
+part of '../../web3dart.dart';
 
 /// Base classes for generated contracts.
 ///

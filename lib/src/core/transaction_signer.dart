@@ -1,4 +1,4 @@
-part of 'package:web3dart/web3dart.dart';
+part of '../../web3dart.dart';
 
 class _SigningInput {
   _SigningInput({
@@ -136,7 +136,7 @@ List<dynamic> _encodeEIP1559ToRlp(
   ];
 
   if (transaction.to != null) {
-    list.add(transaction.to!.addressBytes);
+    list.add(transaction.to!.value);
   } else {
     list.add('');
   }
@@ -165,7 +165,7 @@ List<dynamic> _encodeToRlp(Transaction transaction, MsgSignature? signature) {
   ];
 
   if (transaction.to != null) {
-    list.add(transaction.to!.addressBytes);
+    list.add(transaction.to!.value);
   } else {
     list.add('');
   }

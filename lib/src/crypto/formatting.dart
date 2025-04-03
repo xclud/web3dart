@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-import 'package:convert/convert.dart';
-// ignore: implementation_imports
-import 'package:pointycastle/src/utils.dart' as p_utils;
+part of '../../web3dart.dart';
 
 /// If present, removes the 0x from the start of a hex-string.
 String strip0x(String hex) {

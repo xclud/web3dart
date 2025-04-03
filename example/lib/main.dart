@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:http/http.dart';
+import 'package:wallet/wallet.dart';
 import 'package:web3dart/web3dart.dart';
 
 const String privateKey =
@@ -14,7 +15,7 @@ Future<void> main() async {
   final credentials = EthPrivateKey.fromHex(privateKey);
   final address = credentials.address;
 
-  print(address.hexEip55);
+  print(address.eip55With0x);
   print(await client.getBalance(address));
 
   await client.sendTransaction(

@@ -1,5 +1,4 @@
-import '../credentials/address.dart';
-import 'abi/abi.dart';
+part of '../../web3dart.dart';
 
 /// Helper class that defines a contract with a known ABI that has been deployed
 /// on a Ethereum blockchain.

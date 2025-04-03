@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:web3dart/contracts.dart';
+import 'package:web3dart/web3dart.dart';
 
 import 'utils.dart';
 

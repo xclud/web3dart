@@ -1,3 +1,7 @@
+## 3.0.0
+
+* Refactor and cleanup deprecated methods/classes.
+
 ## 2.7.3
 
 * Address parsing regex bug fixed.

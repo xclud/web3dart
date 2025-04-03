@@ -169,9 +169,9 @@ class TransactionReceipt {
   String toString() {
     return 'TransactionReceipt{transactionHash: ${bytesToHex(transactionHash)}, '
         'transactionIndex: $transactionIndex, blockHash: ${bytesToHex(blockHash)}, '
-        'blockNumber: $blockNumber, from: ${from?.hex}, to: ${to?.hex}, '
+        'blockNumber: $blockNumber, from: ${from?.with0x}, to: ${to?.with0x}, '
         'cumulativeGasUsed: $cumulativeGasUsed, gasUsed: $gasUsed, '
-        'contractAddress: ${contractAddress?.hex}, status: $status, '
+        'contractAddress: ${contractAddress?.with0x}, status: $status, '
         'effectiveGasPrice: $effectiveGasPrice, logs: $logs}';
   }
 

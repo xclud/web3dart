@@ -258,7 +258,7 @@ class _EventFilter extends _Filter<FilterEvent> {
       encodedOptions['toBlock'] = options.toBlock?.toBlockParam();
     }
     if (options.address != null) {
-      encodedOptions['address'] = options.address?.hex;
+      encodedOptions['address'] = options.address?.with0x;
     }
     if (options.topics != null) {
       final topics = <dynamic>[];

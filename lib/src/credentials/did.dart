@@ -1,5 +1,4 @@
-import '../../credentials.dart';
-import '../../crypto.dart';
+part of '../../web3dart.dart';
 
 class EthrDID {
   const EthrDID(this.did);
@@ -19,7 +18,7 @@ class EthrDID {
     required EthereumAddress address,
     required String chainNameOrId,
   }) {
-    var did = 'did:ethr:$chainNameOrId:${address.hexEip55}';
+    var did = 'did:ethr:$chainNameOrId:${address.eip55With0x}';
     return EthrDID(did);
   }
 

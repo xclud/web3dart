@@ -1,10 +1,6 @@
-import 'dart:typed_data';
+part of '../../../web3dart.dart';
 
-import '../../../credentials.dart';
-import '../../crypto/formatting.dart';
-import 'types.dart';
-
-import '../../../web3dart.dart' show LengthTrackingByteSink;
+const int _ethereumAddressByteLength = 20;
 
 abstract class _IntTypeBase extends AbiType<BigInt> {
   const _IntTypeBase(this.length)
@@ -101,7 +97,7 @@ class AddressType extends AbiType<EthereumAddress> {
   /// Constructor.
   const AddressType();
 
-  static const _paddingLen = sizeUnitBytes - EthereumAddress.addressByteLength;
+  static const _paddingLen = sizeUnitBytes - _ethereumAddressByteLength;
 
   @override
   EncodingLengthInfo get encodingLength =>
@@ -114,14 +110,14 @@ class AddressType extends AbiType<EthereumAddress> {
   void encode(EthereumAddress data, LengthTrackingByteSink buffer) {
     buffer
       ..add(Uint8List(_paddingLen))
-      ..add(data.addressBytes);
+      ..add(data.value);
   }
 
   @override
   DecodingResult<EthereumAddress> decode(ByteBuffer buffer, int offset) {
     final addressBytes = buffer.asUint8List(
       offset + _paddingLen,
-      EthereumAddress.addressByteLength,
+      _ethereumAddressByteLength,
     );
     return DecodingResult(EthereumAddress(addressBytes), sizeUnitBytes);
   }

@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/src/utils/typed_data.dart';
 
-import '../../web3dart.dart' show LengthTrackingByteSink;
+import '../../web3dart.dart' show LengthTrackingByteSink, unsignedIntToBytes;
 
 void _encodeString(Uint8List string, LengthTrackingByteSink builder) {
   // For a single byte in [0x00, 0x7f], that byte is its own RLP encoding

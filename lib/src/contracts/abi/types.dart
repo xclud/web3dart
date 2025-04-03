@@ -1,10 +1,4 @@
-import 'dart:typed_data';
-
-import 'arrays.dart';
-import 'integers.dart';
-import 'tuple.dart';
-
-import '../../../web3dart.dart' show LengthTrackingByteSink;
+part of '../../../web3dart.dart';
 
 /// The length of the encoding of a solidity type is always a multiplicative of
 /// this unit size.
