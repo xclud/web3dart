@@ -238,7 +238,7 @@ class ContractFunction {
   /// 	accept a list of ints that should be in [0; 256].
   /// * strings will accept an dart string
   /// * bool will accept a dart bool
-  /// * uint<x> and int<x> will accept a dart int
+  /// * uint&lt;x&gt; and int&lt;x&gt; will accept a dart int
   ///
   /// Other types are not supported at the moment.
   Uint8List encodeCall(List<dynamic> params) {
@@ -403,7 +403,7 @@ class FunctionParameter<T> {
 ///
 /// Consider this contract:
 /// ```solidity
-/// pragma solidity >=0.4.19 <0.7.0;
+/// pragma solidity &gt;=0.4.19 &lt;0.7.0;
 /// pragma experimental ABIEncoderV2;
 ///
 /// contract Test {

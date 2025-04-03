@@ -11,7 +11,7 @@ part of 'package:web3dart/web3dart.dart';
 /// import "package:web_socket_channel/io.dart";
 ///
 /// final client = Web3Client(rpcUrl, Client(), socketConnector: () {
-///    return IOWebSocketChannel.connect(wsUrl).cast<String>();
+///    return IOWebSocketChannel.connect(wsUrl).cast&lt;String&gt;();
 /// });
 /// ```
 typedef SocketConnector = StreamChannel<String> Function();
