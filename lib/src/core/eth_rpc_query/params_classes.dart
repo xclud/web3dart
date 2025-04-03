@@ -1,4 +1,4 @@
-part of web3dart;
+part of '../../../web3dart.dart';
 
 class EthContractCallParams {
   EthContractCallParams({

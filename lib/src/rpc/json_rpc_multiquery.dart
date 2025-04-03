@@ -1,4 +1,4 @@
-part of web3dart;
+part of '../../web3dart.dart';
 
 abstract class MultiQueryRpcService {
   /// Performs a single RPC request, asking the server to execute several queries

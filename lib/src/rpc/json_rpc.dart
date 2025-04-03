@@ -1,11 +1,4 @@
-library json_rpc;
-
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:http/http.dart';
-
-// ignore: one_member_abstracts
+part of '../../web3dart.dart';
 
 /// RPC Service base class.
 abstract class RpcService {
