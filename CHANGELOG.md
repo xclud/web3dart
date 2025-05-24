@@ -1,3 +1,7 @@
+## 3.0.1
+
+* Improve package score.
+
 ## 3.0.0
 
 * Refactor and cleanup deprecated methods/classes.

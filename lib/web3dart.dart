@@ -23,14 +23,12 @@ import 'package:web3dart/web3dart.dart' as secp256k1;
 
 import 'json_rpc.dart';
 import 'src/core/block_number.dart';
-import 'src/core/sync_information.dart';
 
 import 'src/utils/rlp.dart' as rlp;
 import 'src/utils/typed_data.dart';
 import 'src/utils/uuid.dart';
 
 export 'src/core/block_number.dart';
-export 'src/core/sync_information.dart';
 export 'src/utils/rlp.dart';
 export 'src/utils/typed_data.dart';
 
