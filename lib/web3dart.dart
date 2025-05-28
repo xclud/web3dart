@@ -1,9 +1,9 @@
 library web3dart;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:math';
-import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:pointycastle/export.dart';
 import 'package:sec/sec.dart';
@@ -21,7 +21,6 @@ import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
 import 'package:pointycastle/src/utils.dart' as p_utils;
 import 'package:web3dart/web3dart.dart' as secp256k1;
 
-import 'json_rpc.dart';
 import 'src/core/block_number.dart';
 
 import 'src/utils/rlp.dart' as rlp;
@@ -32,11 +31,15 @@ export 'src/core/block_number.dart';
 export 'src/utils/rlp.dart';
 export 'src/utils/typed_data.dart';
 
+part 'src/core/eth_rpc_query/eth_rpc_query.dart';
+part 'src/core/eth_rpc_query/params_classes.dart';
+part 'src/core/multiquery_client.dart';
 part 'src/core/client.dart';
 part 'src/core/filters.dart';
 part 'src/core/transaction.dart';
 part 'src/core/transaction_information.dart';
 part 'src/core/transaction_signer.dart';
+
 part 'src/utils/length_tracking_byte_sink.dart';
 
 part 'src/credentials/credentials.dart';
@@ -55,3 +58,6 @@ part 'src/crypto/formatting.dart';
 part 'src/crypto/keccak.dart';
 part 'src/crypto/random_bridge.dart';
 part 'src/crypto/secp256k1.dart';
+
+part 'src/rpc/json_rpc.dart';
+part 'src/rpc/json_rpc_multiquery.dart';

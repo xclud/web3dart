@@ -1,4 +1,4 @@
-part of 'package:web3dart/web3dart.dart';
+part of '../../web3dart.dart';
 
 /// Signature for a function that opens a socket on which json-rpc operations
 /// can be performed.
