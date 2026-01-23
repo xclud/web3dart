@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 
-import 'package:web3dart_celo/web3dart.dart';
+import 'package:web3dart/web3dart.dart';
 
 void expectEncodes<T>(AbiType<T> type, T data, String encoded) {
   final buffer = LengthTrackingByteSink();

@@ -8,7 +8,7 @@ import 'package:convert/convert.dart';
 import 'package:pointycastle/export.dart';
 import 'package:sec/sec.dart';
 import 'package:typed_data/typed_data.dart';
-import 'package:web3dart_celo/src/utils/equality.dart' as eq;
+import 'package:web3dart/src/utils/equality.dart' as eq;
 import 'package:http/http.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'package:stream_channel/stream_channel.dart';
@@ -19,7 +19,7 @@ import 'package:wallet/wallet.dart';
 import 'package:pointycastle/key_derivators/pbkdf2.dart' as pbkdf2;
 import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
 import 'package:pointycastle/src/utils.dart' as p_utils;
-import 'package:web3dart_celo/web3dart.dart' as secp256k1;
+import 'package:web3dart/web3dart.dart' as secp256k1;
 
 import 'json_rpc.dart';
 import 'src/core/block_number.dart';

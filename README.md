@@ -7,7 +7,6 @@
 [![forks](https://img.shields.io/github/forks/simolus3/web3dart)](https://github.com/xclud/web3dart/network/members)
 [![sdk version](https://badgen.net/pub/sdk-version/web3dart)](https://pub.dartlang.org/packages/web3dart)
 
-Fork of [web3dart](https://pub.dartlang.org/packages/web3dart) with added support for celo `type 123` transactions. This allows for paying transaction fees using fee currencies on the Celo blockchain.
 
 A dart library that connects to interact with the Ethereum blockchain. It connects
 to an Ethereum node to send transactions, interact with smart contracts and much

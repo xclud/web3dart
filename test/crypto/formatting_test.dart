@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:web3dart_celo/web3dart.dart';
+import 'package:web3dart/web3dart.dart';
 
 void main() {
   test('strip 0x prefix', () {
