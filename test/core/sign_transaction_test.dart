@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
-import 'package:web3dart/src/utils/rlp.dart' as rlp;
-import 'package:web3dart/web3dart.dart';
+import 'package:web3dart_celo/src/utils/rlp.dart' as rlp;
+import 'package:web3dart_celo/web3dart.dart';
 import 'package:wallet/wallet.dart';
 
 const rawJson = '''[
@@ -109,6 +109,20 @@ const rawJson = '''[
        "signedTransactionRLP":"0xb86e02f86b04778260918301a4d182f38594000000000000000000000000000000000000aaaa8403e6c7f380c001a05e40977f4064a2bc08785e422ed8a47b56aa219abe93251d2b3b4d0cf937b8c0a071e600cd15589c3607bd9627314b99e9b5976bd427b774aa685bd0d036b1771e"
     }
  ]''';
+
+const celoRawJson = '''[
+  {
+    "nonce": 1,
+    "value": 1000,
+    "gasLimit": 80000,
+    "maxPriorityFeePerGas": 2,
+    "maxFeePerGas": 100,
+    "to": "0x000000000000000000000000000000000000aaaa",
+    "feeCurrency": "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B",
+    "privateKey": "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
+    "signedTransactionRLP": "b87f7bf87c82a4ec0102648301388094000000000000000000000000000000000000aaaa8203e880c0942f25deb3848c207fc8e0c34035b3ba7fc157602b80a0d8055cdb601f233201adaaa12b3baa01cf921ce6675610ca2d4934367b883229a0225e8e31382e8f12ef0999be925c5443b3c07336edff560f0c26544ac12448f2"
+  }
+]''';
 
 void main() {
   test('sign eip 1559 transaction', () async {
@@ -233,5 +247,51 @@ void main() {
       '3c71ff63e1590620aa636276a067cbe9d8997f761aecb703304b3800ccf55'
       '5c9f3dc64214b297fb1966a3b6d83',
     );
+  });
+
+  test('sign celo type-123 transaction', () async {
+    final data = jsonDecode(celoRawJson) as List<dynamic>;
+
+    await Future.forEach(data, (element) async {
+      final tx = element as Map<String, dynamic>;
+
+      final credentials =
+          EthPrivateKey.fromHex(strip0x(tx['privateKey'] as String));
+
+      final transaction = Transaction(
+        from: credentials.address,
+        to: EthereumAddress.fromHex(tx['to'] as String),
+        nonce: tx['nonce'] as int,
+        maxGas: tx['gasLimit'] as int,
+        value: EtherAmount.inWei(BigInt.from(tx['value'] as int)),
+        maxFeePerGas: EtherAmount.fromBigInt(
+          EtherUnit.wei,
+          BigInt.from(tx['maxFeePerGas'] as int),
+        ),
+        maxPriorityFeePerGas: EtherAmount.fromBigInt(
+          EtherUnit.wei,
+          BigInt.from(tx['maxPriorityFeePerGas'] as int),
+        ),
+        feeCurrency: EthereumAddress.fromHex(
+          tx['feeCurrency'] as String,
+        ),
+      );
+
+      final client = Web3Client('', Client());
+
+      final signature = await client.signTransaction(
+        credentials,
+        transaction,
+        chainId: 42220, // Celo mainnet
+      );
+      expect(
+        bytesToHex(
+          uint8ListFromList(
+            rlp.encode(prependTransactionType(0x7b, signature)),
+          ),
+        ),
+        strip0x(tx['signedTransactionRLP'] as String),
+      );
+    });
   });
 }

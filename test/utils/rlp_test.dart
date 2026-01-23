@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:web3dart/web3dart.dart';
+import 'package:web3dart_celo/web3dart.dart';
 
 import 'rlp_test_vectors.dart' as data;
 

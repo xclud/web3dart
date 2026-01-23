@@ -1,3 +1,7 @@
+## 3.0.2
+
+* Added support for Celo `type 123` transactions
+
 ## 3.0.1
 
 * Improve package score.

@@ -42,6 +42,7 @@ Future<_SigningInput> _fillMissingData({
 
   var maxFeePerGas = transaction.maxFeePerGas;
   var maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+  var feeCurrency = transaction.feeCurrency;
 
   if (transaction.isEIP1559) {
     maxPriorityFeePerGas ??= await _getMaxPriorityFeePerGas();
@@ -65,6 +66,7 @@ Future<_SigningInput> _fillMissingData({
             gasPrice: gasPrice,
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             maxFeePerGas: maxFeePerGas,
+            feeCurrency: feeCurrency,
           )
           .then((bigInt) => bigInt.toInt());
 
@@ -113,11 +115,19 @@ Uint8List signTransactionRaw(
   );
 
   if (transaction.isEIP1559 && chainId != null) {
-    return uint8ListFromList(
-      rlp.encode(
-        _encodeEIP1559ToRlp(transaction, signature, BigInt.from(chainId)),
-      ),
-    );
+    if (transaction.isCeloTx) {
+      return uint8ListFromList(
+        rlp.encode(
+          _encodeCeloType123ToRlp(transaction, signature, BigInt.from(chainId)),
+        ),
+      );
+    } else {
+      return uint8ListFromList(
+        rlp.encode(
+          _encodeEIP1559ToRlp(transaction, signature, BigInt.from(chainId)),
+        ),
+      );
+    }
   }
   return uint8ListFromList(rlp.encode(_encodeToRlp(transaction, signature)));
 }
@@ -146,6 +156,44 @@ List<dynamic> _encodeEIP1559ToRlp(
     ..add(transaction.data);
 
   list.add([]); // access list
+
+  if (signature != null) {
+    list
+      ..add(signature.v)
+      ..add(signature.r)
+      ..add(signature.s);
+  }
+
+  return list;
+}
+
+List<dynamic> _encodeCeloType123ToRlp(
+  Transaction transaction,
+  MsgSignature? signature,
+  BigInt chainId,
+) {
+  final list = [
+    chainId,
+    transaction.nonce,
+    transaction.maxPriorityFeePerGas!.getInWei,
+    transaction.maxFeePerGas!.getInWei,
+    transaction.maxGas,
+  ];
+
+  if (transaction.to != null) {
+    list.add(transaction.to!.value);
+  } else {
+    list.add('');
+  }
+
+  list
+    ..add(transaction.value?.getInWei)
+    ..add(transaction.data);
+
+  list.add([]);
+
+  // 👇 Celo-specific extension
+  list.add(transaction.feeCurrency!.value);
 
   if (signature != null) {
     list

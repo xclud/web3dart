@@ -1,4 +1,4 @@
-part of 'package:web3dart/web3dart.dart';
+part of 'package:web3dart_celo/web3dart.dart';
 
 class Transaction {
   Transaction({
@@ -11,6 +11,7 @@ class Transaction {
     this.nonce,
     this.maxFeePerGas,
     this.maxPriorityFeePerGas,
+    this.feeCurrency,
   });
 
   /// Constructs a transaction that can be used to call a contract function.
@@ -25,6 +26,7 @@ class Transaction {
     this.nonce,
     this.maxFeePerGas,
     this.maxPriorityFeePerGas,
+    this.feeCurrency,
   })  : to = contract.address,
         data = function.encodeCall(parameters);
 
@@ -69,6 +71,7 @@ class Transaction {
 
   final EtherAmount? maxPriorityFeePerGas;
   final EtherAmount? maxFeePerGas;
+  final EthereumAddress? feeCurrency;
 
   Transaction copyWith({
     EthereumAddress? from,
@@ -80,6 +83,7 @@ class Transaction {
     int? nonce,
     EtherAmount? maxPriorityFeePerGas,
     EtherAmount? maxFeePerGas,
+    EthereumAddress? feeCurrency,
   }) {
     return Transaction(
       from: from ?? this.from,
@@ -91,28 +95,47 @@ class Transaction {
       nonce: nonce ?? this.nonce,
       maxFeePerGas: maxFeePerGas ?? this.maxFeePerGas,
       maxPriorityFeePerGas: maxPriorityFeePerGas ?? this.maxPriorityFeePerGas,
+      feeCurrency: feeCurrency ?? this.feeCurrency,
     );
   }
 
   bool get isEIP1559 => maxFeePerGas != null || maxPriorityFeePerGas != null;
+  bool get isCeloTx => feeCurrency != null && isEIP1559;
 
   /// The transaction pre-image.
   ///
   /// The hash of this is the digest which needs to be signed to
   /// authorize this transaction.
-  Uint8List getUnsignedSerialized({
-    int? chainId = 1,
-  }) {
+  Uint8List getUnsignedSerialized({int? chainId = 1}) {
     if (isEIP1559 && chainId != null) {
-      final encodedTx = LengthTrackingByteSink();
-      encodedTx.addByte(0x02);
-      encodedTx.add(
-        rlp.encode(_encodeEIP1559ToRlp(this, null, BigInt.from(chainId))),
-      );
+      if (isCeloTx) {
+        final encodedTx = LengthTrackingByteSink();
 
-      encodedTx.close();
+        encodedTx.addByte(0x7b);// 👈 Celo type 123
 
-      return encodedTx.asBytes();
+        encodedTx.add(
+          rlp.encode(
+            _encodeCeloType123ToRlp(
+              this,
+              null,
+              BigInt.from(chainId),
+            ),
+          ),
+        );
+
+        encodedTx.close();
+        return encodedTx.asBytes();
+      } else {
+        final encodedTx = LengthTrackingByteSink();
+        encodedTx.addByte(0x02);
+        encodedTx.add(
+          rlp.encode(_encodeEIP1559ToRlp(this, null, BigInt.from(chainId))),
+        );
+
+        encodedTx.close();
+
+        return encodedTx.asBytes();
+      }
     }
 
     final innerSignature = chainId == null

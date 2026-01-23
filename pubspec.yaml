@@ -1,8 +1,8 @@
-name: web3dart
-description: Dart library to connect to Ethereum clients. Send transactions and interact with smart contracts!
-version: 3.0.1
+name: web3dart_celo
+description: A Celo compatible Dart library to connect to Ethereum clients. Send transactions and interact with smart contracts! Pay transaction fees using `feeCurrencies` on Celo.
+version: 3.0.2
 homepage: https://pwa.ir
-repository: https://github.com/xclud/web3dart
+repository: https://github.com/soloseng/web3dart
 
 environment:
   sdk: ">=2.12.0 <4.0.0"

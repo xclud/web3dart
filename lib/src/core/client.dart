@@ -1,4 +1,4 @@
-part of 'package:web3dart/web3dart.dart';
+part of 'package:web3dart_celo/web3dart.dart';
 
 /// Signature for a function that opens a socket on which json-rpc operations
 /// can be performed.
@@ -7,7 +7,7 @@ part of 'package:web3dart/web3dart.dart';
 /// pub is suitable to create websockets. An implementation using that library
 /// could look like this:
 /// ```dart
-/// import "package:web3dart/web3dart.dart";
+/// import "package:web3dart_celo/web3dart.dart";
 /// import "package:web_socket_channel/io.dart";
 ///
 /// final client = Web3Client(rpcUrl, Client(), socketConnector: () {
@@ -333,7 +333,11 @@ class Web3Client {
     );
 
     if (transaction.isEIP1559) {
-      signed = prependTransactionType(0x02, signed);
+      if (transaction.isCeloTx) {
+        signed = prependTransactionType(0x7b, signed);
+      } else {
+        signed = prependTransactionType(0x02, signed);
+      }
     }
 
     return sendRawTransaction(signed);
@@ -420,6 +424,7 @@ class Web3Client {
     EtherAmount? maxPriorityFeePerGas,
     EtherAmount? maxFeePerGas,
     Uint8List? data,
+    EthereumAddress? feeCurrency,
     @Deprecated('Parameter is ignored') BlockNum? atBlock,
   }) async {
     final amountHex = await makeRPCCall<String>(
@@ -438,6 +443,7 @@ class Web3Client {
             'maxFeePerGas': '0x${maxFeePerGas.getInWei.toRadixString(16)}',
           if (value != null) 'value': '0x${value.getInWei.toRadixString(16)}',
           if (data != null) 'data': bytesToHex(data, include0x: true),
+          if (feeCurrency != null) 'feeCurrency': feeCurrency.with0x,
         },
       ],
     );

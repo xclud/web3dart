@@ -11,7 +11,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2 # required!
 
-      - name: "web3dart"
+      - name: "web3dart_celo"
         uses: k-paxian/dart-package-publisher@master
         with:
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
