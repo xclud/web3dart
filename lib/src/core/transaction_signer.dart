@@ -115,19 +115,22 @@ Uint8List signTransactionRaw(
   );
 
   if (transaction.isEIP1559 && chainId != null) {
-    if (transaction.isCeloTx) {
-      return uint8ListFromList(
-        rlp.encode(
-          _encodeCeloType123ToRlp(transaction, signature, BigInt.from(chainId)),
-        ),
-      );
-    } else {
-      return uint8ListFromList(
-        rlp.encode(
-          _encodeEIP1559ToRlp(transaction, signature, BigInt.from(chainId)),
-        ),
-      );
-    }
+    final body = transaction.isCeloTx
+        ? rlp.encode(
+            _encodeCeloType123ToRlp(
+              transaction,
+              signature,
+              BigInt.from(chainId),
+            ),
+          )
+        : rlp.encode(
+            _encodeEIP1559ToRlp(transaction, signature, BigInt.from(chainId)),
+          );
+
+    return prependTransactionType(
+      transaction.isCeloTx ? 0x7b : 0x02,
+      uint8ListFromList(body),
+    );
   }
   return uint8ListFromList(rlp.encode(_encodeToRlp(transaction, signature)));
 }
