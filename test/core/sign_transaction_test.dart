@@ -3,9 +3,10 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
-import 'package:web3dart/src/utils/rlp.dart' as rlp;
 import 'package:web3dart/web3dart.dart';
 import 'package:wallet/wallet.dart';
+
+import '../mock_client.dart';
 
 const rawJson = '''[
     {
@@ -124,14 +125,25 @@ const celoRawJson = '''[
   }
 ]''';
 
+String _unwrapRlpEncodedBytes(String value) {
+  final hex = strip0x(value);
+
+  if (!hex.startsWith('b8')) {
+    return hex;
+  }
+
+  return hex.substring(4);
+}
+
 void main() {
   test('sign eip 1559 transaction', () async {
     final data = jsonDecode(rawJson) as List<dynamic>;
 
     await Future.forEach(data, (element) async {
       final tx = element as Map<String, dynamic>;
-      final credentials =
-          EthPrivateKey.fromHex(strip0x(tx['privateKey'] as String));
+      final credentials = EthPrivateKey.fromHex(
+        strip0x(tx['privateKey'] as String),
+      );
       final transaction = Transaction(
         from: credentials.address,
         to: EthereumAddress.fromHex(tx['to'] as String),
@@ -149,27 +161,28 @@ void main() {
       );
 
       final client = Web3Client('', Client());
-      final signature =
-          await client.signTransaction(credentials, transaction, chainId: 4);
+      final signature = await client.signTransaction(
+        credentials,
+        transaction,
+        chainId: 4,
+      );
 
+      expect(signature[0], 0x02);
       expect(
-        bytesToHex(
-          uint8ListFromList(
-            rlp.encode(prependTransactionType(0x02, signature)),
-          ),
-        ),
-        strip0x(tx['signedTransactionRLP'] as String),
+        bytesToHex(signature),
+        _unwrapRlpEncodedBytes(tx['signedTransactionRLP'] as String),
       );
     });
   });
 
-  test('sign eip 1559 transaction without client', () {
+  test('sign eip 1559 transaction without client', () async {
     final data = jsonDecode(rawJson) as List<dynamic>;
 
-    Future.forEach(data, (element) {
+    await Future.forEach(data, (element) {
       final tx = element as Map<String, dynamic>;
-      final credentials =
-          EthPrivateKey.fromHex(strip0x(tx['privateKey'] as String));
+      final credentials = EthPrivateKey.fromHex(
+        strip0x(tx['privateKey'] as String),
+      );
       final transaction = Transaction(
         from: credentials.address,
         to: EthereumAddress.fromHex(tx['to'] as String),
@@ -187,16 +200,16 @@ void main() {
         data: tx['data'] ?? Uint8List(0),
       );
 
-      final signature =
-          signTransactionRaw(transaction, credentials, chainId: 4);
+      final signature = signTransactionRaw(
+        transaction,
+        credentials,
+        chainId: 4,
+      );
 
+      expect(signature[0], 0x02);
       expect(
-        bytesToHex(
-          uint8ListFromList(
-            rlp.encode(prependTransactionType(0x02, signature)),
-          ),
-        ),
-        strip0x(tx['signedTransactionRLP'] as String),
+        bytesToHex(signature),
+        _unwrapRlpEncodedBytes(tx['signedTransactionRLP'] as String),
       );
     });
   });
@@ -255,8 +268,9 @@ void main() {
     await Future.forEach(data, (element) async {
       final tx = element as Map<String, dynamic>;
 
-      final credentials =
-          EthPrivateKey.fromHex(strip0x(tx['privateKey'] as String));
+      final credentials = EthPrivateKey.fromHex(
+        strip0x(tx['privateKey'] as String),
+      );
 
       final transaction = Transaction(
         from: credentials.address,
@@ -272,9 +286,7 @@ void main() {
           EtherUnit.wei,
           BigInt.from(tx['maxPriorityFeePerGas'] as int),
         ),
-        feeCurrency: EthereumAddress.fromHex(
-          tx['feeCurrency'] as String,
-        ),
+        feeCurrency: EthereumAddress.fromHex(tx['feeCurrency'] as String),
       );
 
       final client = Web3Client('', Client());
@@ -284,14 +296,47 @@ void main() {
         transaction,
         chainId: 42220, // Celo mainnet
       );
+      expect(signature[0], 0x7b);
       expect(
-        bytesToHex(
-          uint8ListFromList(
-            rlp.encode(prependTransactionType(0x7b, signature)),
-          ),
-        ),
-        strip0x(tx['signedTransactionRLP'] as String),
+        bytesToHex(signature),
+        _unwrapRlpEncodedBytes(tx['signedTransactionRLP'] as String),
       );
     });
   });
+
+  test(
+    'sendTransaction does not double-prefix eip 1559 transactions',
+    () async {
+      final credentials = EthPrivateKey.fromHex(
+        '0x4646464646464646464646464646464646464646464646464646464646464646',
+      );
+      final transaction = Transaction(
+        from: credentials.address,
+        to: EthereumAddress.fromHex(
+          '0x3535353535353535353535353535353535353535',
+        ),
+        value: EtherAmount.inWei(BigInt.from(1000000000000000000)),
+        maxGas: 21000,
+        nonce: 9,
+        maxFeePerGas: EtherAmount.inWei(BigInt.from(2000000000)),
+        maxPriorityFeePerGas: EtherAmount.inWei(BigInt.from(1000000000)),
+      );
+      late final String rawTransaction;
+
+      final client = Web3Client(
+        '',
+        MockClient((method, payload) {
+          expect(method, 'eth_sendRawTransaction');
+          final params = payload as List<dynamic>;
+          rawTransaction = params.single as String;
+          return '0xtransactionHash';
+        }),
+      );
+
+      await client.sendTransaction(credentials, transaction, chainId: 1);
+
+      expect(rawTransaction.startsWith('0x02'), isTrue);
+      expect(rawTransaction.startsWith('0x0202'), isFalse);
+    },
+  );
 }
