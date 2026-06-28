@@ -1,3 +1,7 @@
+## 3.0.3
+
+* Fix EIP-1559 signed transaction prefix (#169).
+
 ## 3.0.2
 
 * Added support for Celo `type 123` transactions
