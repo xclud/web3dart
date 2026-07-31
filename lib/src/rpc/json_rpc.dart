@@ -1,11 +1,4 @@
-library json_rpc;
-
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:http/http.dart';
-
-// ignore: one_member_abstracts
+part of '../../web3dart.dart';
 
 /// RPC Service base class.
 abstract class RpcService {
@@ -93,7 +86,10 @@ class RPCResponse {
 /// Exception thrown when an the server returns an error code to an rpc request.
 class RPCError implements Exception {
   /// Constructor.
-  const RPCError(this.errorCode, this.message, this.data);
+  const RPCError(this.errorCode, this.message, this.data, [this.id]);
+
+  /// Id.
+  final int? id;
 
   /// Error code.
   final int errorCode;
