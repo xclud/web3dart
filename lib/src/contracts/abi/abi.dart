@@ -290,6 +290,15 @@ class ContractFunction {
     final parsedData = tuple.decode(buffer, 0);
     return parsedData.data;
   }
+
+  /// Uses the known types of the function parameters to parse them from
+  /// the binary call data. The reverse of [encodeCall].
+  List<dynamic> decodeCall(Uint8List data) {
+    final tuple = TupleType(parameters.map((p) => p.type).toList());
+
+    final parsedData = tuple.decode(data.buffer, 0);
+    return parsedData.data;
+  }
 }
 
 /// An event that can be emitted by a smart contract during a transaction.
